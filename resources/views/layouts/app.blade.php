@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@yield('title', 'Dashboard') - Ponpes</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <!-- SweetAlert2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+        <style>
+            body {
+                min-height: 100vh;
+                display: flex;
+                overflow: hidden;
+            }
+
+            .sidebar {
+                width: 280px;
+                height: 100vh;
+                background: white;
+                box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar.collapsed {
+                left: -280px;
+            }
+
+            .sidebar-logo {
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .sidebar-logo img {
+                max-width: 100px;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+            .welcome-text {
+                text-align: center;
+                padding: 0 1rem 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, .1);
+                color: #333;
+            }
+
+            .welcome-text h6 {
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .welcome-text p {
+                margin-bottom: 0;
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
+
+            @media (max-width: 767.98px) {
+                .sidebar {
+                    left: -280px;
+                }
+
+                .content {
+                    margin-left: 0;
+                }
+
+                .sidebar.show {
+                    left: 0;
+                }
+            }
+
+            .sidebar-sticky {
+                flex: 1;
+                overflow-x: hidden;
+                overflow-y: auto;
+                padding: 1rem;
+            }
+
+            .nav-link {
+                color: #333;
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+                border-radius: 0.25rem;
+            }
+
+            .nav-link:hover {
+                background: #f8f9fa;
+            }
+
+            .nav-link.active {
+                color: #0d6efd;
+            }
+
+            .submenu {
+                padding-left: 1rem;
+            }
+
+            .content {
+                flex: 1;
+                margin-left: 280px;
+                overflow-y: auto;
+                height: 100vh;
+                transition: all 0.3s ease;
+            }
+
+            .content.expanded {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                position: fixed;
+                left: 280px;
+                top: 1rem;
+                z-index: 1001;
+                transition: all 0.3s ease;
+                background: white;
+                border: 1px solid #dee2e6;
+                width: 35px;
+                height: 35px;
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            .sidebar-toggle.collapsed {
+                left: 1rem;
+            }
+
+            .sidebar-toggle:hover {
+                background: #f8f9fa;
+            }
+
+            /* Card Styles */
+            .border-left-primary {
+                border-left: 4px solid #4e73df !important;
+            }
+            
+            .border-left-success {
+                border-left: 4px solid #1cc88a !important;
+            }
+            
+            .border-left-info {
+                border-left: 4px solid #36b9cc !important;
+            }
+            
+            .border-left-warning {
+                border-left: 4px solid #f6c23e !important;
+            }
+
+            .text-gray-300 {
+                color: #dddfeb !important;
+            }
+
+            .text-gray-800 {
+                color: #5a5c69 !important;
+            }
+
+            .sidebar-footer {
+                padding: 1rem;
+                border-top: 1px solid rgba(0, 0, 0, .1);
+            }
+
+            .logout-btn {
+                width: 100%;
+                color: #333;
+                background: #f8f9fa;
+                border: none;
+                padding: 0.5rem;
+                border-radius: 0.25rem;
+                text-align: left;
+            }
+
+            .logout-btn:hover {
+                background: #e9ecef;
+            }
+
+            .navbar {
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            }
+        </style>
+        @stack('styles')
+    </head>
+    <body>
+        <!-- Sidebar Toggle Button -->
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list" id="toggleIcon"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="{{ asset('img/logo.png') }}" alt="Logo Ponpes" class="img-fluid">
+                <div class="welcome-text">
+                    <h6>Assalamualaikum</h6>
+                    <p>Selamat Datang</p>
+                </div>
+            </div>
+
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Pengaturan -->
+                    <li class="nav-item">
+                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link">
+                            <i class="bi bi-gear me-2"></i>
+                            Pengaturan
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="pengaturanSubmenu">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('users.index') }}" class="nav-link">User</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('roles.index') }}" class="nav-link">Hak User Role</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- Master Data -->
+                    <li class="nav-item">
+                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link">
+                            <i class="bi bi-database me-2"></i>
+                            Master Data
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="masterDataSubmenu">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('pengajar.index') }}" class="nav-link">Pengajar</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link">
+                                        Santri
+                                        <i class="bi bi-chevron-down float-end"></i>
+                                    </a>
+                                    <div class="collapse" id="santriSubmenu">
+                                        <ul class="nav flex-column submenu">
+                                            <li class="nav-item">
+                                                <a href="{{ route('santri.index') }}" class="nav-link">Data Santri</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('mahrom.index') }}" class="nav-link">Mahrom</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link">
+                                        Pengurus
+                                        <i class="bi bi-chevron-down float-end"></i>
+                                    </a>
+                                    <div class="collapse" id="pengurusSubmenu">
+                                        <ul class="nav flex-column submenu">
+                                            <li class="nav-item">
+                                                <a href="{{ route('pengurus.index') }}" class="nav-link">Data Pengurus</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('divisi.index') }}" class="nav-link">Divisi</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- Koperasi -->
+                    <li class="nav-item">
+                        <a href="{{ route('koperasi.index') }}" class="nav-link">
+                            <i class="bi bi-shop me-2"></i>
+                            Koperasi
+                        </a>
+                    </li>
+
+                    <!-- Saldo -->
+                    <li class="nav-item">
+                        <a href="{{ route('saldo.index') }}" class="nav-link">
+                            <i class="bi bi-wallet2 me-2"></i>
+                            Saldo
+                        </a>
+                    </li>
+
+                    <!-- Tabungan -->
+                    <li class="nav-item">
+                        <a href="{{ route('tabungan.index') }}" class="nav-link">
+                            <i class="bi bi-piggy-bank me-2"></i>
+                            Tabungan
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="sidebar-footer">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="logout-btn">
+                        <i class="bi bi-box-arrow-right me-2"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-link d-md-none" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <!-- Kosongkan bagian kiri navbar -->
+                        <ul class="navbar-nav me-auto">
+                        </ul>
+                        <!-- Item navbar di kanan -->
+                        <ul class="navbar-nav align-items-center">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Help</a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    <span class="text-muted">{{ Auth::user()->name }}</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid py-4">
+                @yield('content')
+            </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('show');
+            }
+
+            // Fungsi untuk konfirmasi hapus
+            function confirmDelete(formId) {
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(formId).submit();
+                    }
+                });
+                return false;
+            }
+            // Tampilkan SweetAlert untuk pesan sukses
+            if (sessionStorage.getItem('success')) {
+                Swal.fire({
+                    icon: 'success', 
+                    title: 'Berhasil!',
+                    text: sessionStorage.getItem('success'),
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                sessionStorage.removeItem('success');
+            }
+
+            // Fungsi untuk toggle sidebar
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                const content = document.querySelector('.content');
+                const toggleBtn = document.getElementById('sidebarToggle');
+                
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('expanded');
+                toggleBtn.classList.toggle('collapsed');
+            });
+        </script>
+    </body>
+</html>
