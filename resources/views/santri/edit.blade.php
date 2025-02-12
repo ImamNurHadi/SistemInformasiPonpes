@@ -28,9 +28,9 @@
         <h1 class="h3 mb-0 text-gray-800">Edit Santri</h1>
     </div>
 
-    <form action="{{ route('santri.update', $santri->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+            <form action="{{ route('santri.update', $santri->id) }}" method="POST">
+                @csrf
+                @method('PUT')
         
         <!-- Data Pribadi -->
         <div class="form-section">
@@ -374,10 +374,10 @@
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="{{ route('santri.index') }}" class="btn btn-secondary">Kembali</a>
-        </div>
+    </div>
     </form>
 </div>
-@endsection
+@endsection 
 
 @push('scripts')
 <script>

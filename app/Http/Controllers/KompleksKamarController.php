@@ -45,4 +45,27 @@ class KompleksKamarController extends Controller
         return redirect()->route('kompleks-kamar.index')
             ->with('success', 'Data kamar berhasil dihapus');
     }
+
+    public function edit($id)
+    {
+        $kompleks = MasterKompleks::findOrFail($id);
+        return view('kompleks-kamar.edit', compact('kompleks'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_gedung' => 'required|string|max:255',
+            'nama_kamar' => 'required|string|max:255',
+        ]);
+
+        $kompleks = MasterKompleks::findOrFail($id);
+        $kompleks->update([
+            'nama_gedung' => $request->nama_gedung,
+            'nama_kamar' => $request->nama_kamar,
+        ]);
+
+        return redirect()->route('kompleks-kamar.index')
+            ->with('success', 'Data kamar berhasil diperbarui');
+    }
 } 

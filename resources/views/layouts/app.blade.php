@@ -260,6 +260,65 @@
                 top: 0;
                 z-index: 999;
             }
+
+            /* Breadcrumb Styles */
+            .page-header {
+                padding: 1rem 0;
+                margin-bottom: 1rem;
+            }
+
+            .breadcrumb-navigation {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .back-button {
+                color: #058B42;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                padding: 0.5rem 0;
+                transition: all 0.3s ease;
+            }
+
+            .back-button:hover {
+                color: #02361A;
+            }
+
+            .breadcrumb {
+                margin: 0;
+                padding: 0;
+                background: none;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .breadcrumb-item {
+                color: #6c757d;
+                font-size: 1rem;
+            }
+
+            .breadcrumb-item a {
+                color: #058B42;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            .breadcrumb-item a:hover {
+                color: #02361A;
+            }
+
+            .breadcrumb-item.active {
+                color: #343a40;
+                font-weight: 600;
+            }
+
+            .breadcrumb-item + .breadcrumb-item::before {
+                content: "/";
+                color: #6c757d;
+            }
         </style>
         @stack('styles')
     </head>
@@ -415,6 +474,72 @@
             </nav>
 
             <div class="container-fluid py-4">
+                <!-- Page Header with Breadcrumb -->
+                <div class="page-header">
+                    <div class="d-flex align-items-center">
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                @php
+                                    $currentRoute = request()->route()->getName();
+                                    $routeParts = explode('.', $currentRoute);
+                                    $breadcrumbs = [];
+                                    
+                                    // Tentukan struktur breadcrumb berdasarkan route
+                                    if (in_array($routeParts[0], ['santri', 'tingkatan', 'kompleks-kamar'])) {
+                                        $breadcrumbs[] = ['title' => 'Master Data', 'route' => '#'];
+                                        $breadcrumbs[] = ['title' => 'Santri', 'route' => 'santri.index'];
+                                    } elseif ($routeParts[0] === 'pengurus') {
+                                        $breadcrumbs[] = ['title' => 'Master Data', 'route' => '#'];
+                                        $breadcrumbs[] = ['title' => 'Pengurus', 'route' => 'pengurus.index'];
+                                    } elseif ($routeParts[0] === 'pengajar') {
+                                        $breadcrumbs[] = ['title' => 'Master Data', 'route' => '#'];
+                                        $breadcrumbs[] = ['title' => 'Pengajar', 'route' => 'pengajar.index'];
+                                    } elseif ($routeParts[0] === 'divisi') {
+                                        $breadcrumbs[] = ['title' => 'Master Data', 'route' => '#'];
+                                        $breadcrumbs[] = ['title' => 'Divisi', 'route' => 'divisi.index'];
+                                    }
+                                    
+                                    // Tambahkan judul halaman saat ini
+                                    if (isset($routeParts[1])) {
+                                        switch ($routeParts[1]) {
+                                            case 'create':
+                                                $breadcrumbs[] = ['title' => 'Tambah Data', 'route' => '#'];
+                                                break;
+                                            case 'edit':
+                                                $breadcrumbs[] = ['title' => 'Edit Data', 'route' => '#'];
+                                                break;
+                                            case 'show':
+                                                $breadcrumbs[] = ['title' => 'Detail Data', 'route' => '#'];
+                                                break;
+                                            default:
+                                                if ($routeParts[0] === 'tingkatan') {
+                                                    $breadcrumbs[] = ['title' => 'Tingkatan', 'route' => '#'];
+                                                } elseif ($routeParts[0] === 'kompleks-kamar') {
+                                                    $breadcrumbs[] = ['title' => 'Kamar', 'route' => '#'];
+                                                }
+                                                break;
+                                        }
+                                    }
+                                @endphp
+
+                                @foreach($breadcrumbs as $key => $breadcrumb)
+                                    <li class="breadcrumb-item {{ $loop->last ? 'active fw-bold' : '' }}">
+                                        @if($loop->last || $breadcrumb['route'] === '#')
+                                            {{ $breadcrumb['title'] }}
+                                        @else
+                                            <a href="{{ route($breadcrumb['route']) }}" class="text-success">
+                                                {{ $breadcrumb['title'] }}
+                                            </a>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
                 @yield('content')
             </div>
         </main>
@@ -497,5 +622,149 @@
                 toggleBtn.classList.toggle('collapsed');
             });
         </script>
+
+        @push('scripts')
+        <script>
+            $(document).ready(function() {
+                // Fungsi untuk menyimpan status menu ke localStorage
+                function saveMenuState(key, value) {
+                    localStorage.setItem(key, JSON.stringify(value));
+                }
+
+                // Fungsi untuk mendapatkan status menu dari localStorage
+                function getMenuState(key) {
+                    const state = localStorage.getItem(key);
+                    return state ? JSON.parse(state) : null;
+                }
+
+                // Fungsi untuk mengatur status menu aktif
+                function setActiveMenu() {
+                    const currentRoute = '{{ request()->route()->getName() }}';
+                    const routeBase = currentRoute.split('.')[0];
+
+                    // Definisi struktur menu
+                    const menuStructure = {
+                        'santri': ['tingkatan', 'kompleks-kamar'],
+                        'pengurus': [],
+                        'pengajar': [],
+                        'divisi': [],
+                        'koperasi': [],
+                        'saldo': [],
+                        'tabungan': []
+                    };
+
+                    // Cek apakah route saat ini adalah bagian dari menu Santri
+                    if (routeBase === 'santri' || menuStructure['santri'].includes(routeBase)) {
+                        // Buka Master Data submenu
+                        $('#masterDataSubmenu').addClass('show');
+                        $('[href="#masterDataSubmenu"]').addClass('active');
+
+                        // Buka Santri submenu
+                        $('#santriSubmenu').addClass('show');
+                        $('[href="#santriSubmenu"]').addClass('active');
+
+                        // Simpan status
+                        saveMenuState('masterDataSubmenu', true);
+                        saveMenuState('santriSubmenu', true);
+
+                        // Khusus untuk tingkatan dan kompleks-kamar
+                        if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                            // Pastikan parent menu tetap terbuka
+                            $('#masterDataSubmenu').addClass('show');
+                            $('#santriSubmenu').addClass('show');
+                            
+                            // Tambahkan kelas active pada parent menu
+                            $('[href="#masterDataSubmenu"]').addClass('active');
+                            $('[href="#santriSubmenu"]').addClass('active');
+                            
+                            // Simpan state
+                            saveMenuState('masterDataSubmenu', true);
+                            saveMenuState('santriSubmenu', true);
+                        }
+                    }
+
+                    // Aktifkan link yang sesuai
+                    $('.nav-link').each(function() {
+                        const href = $(this).attr('href');
+                        if (href && href.includes(routeBase)) {
+                            $(this).addClass('active');
+                            
+                            // Jika ini adalah link tingkatan atau kamar, cegah collapse
+                            if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                                $(this).on('click', function(e) {
+                                    e.stopPropagation();
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Event listener untuk klik pada menu
+                $('.nav-link[data-bs-toggle="collapse"]').on('click', function(e) {
+                    const target = $(this).attr('data-bs-target').replace('#', '');
+                    const isExpanded = !$(target).hasClass('show');
+                    
+                    // Jika menu yang diklik adalah parent dari tingkatan atau kamar
+                    if (target === 'santriSubmenu' || target === 'masterDataSubmenu') {
+                        const currentRoute = '{{ request()->route()->getName() }}';
+                        const routeBase = currentRoute.split('.')[0];
+                        
+                        // Jika sedang di halaman tingkatan atau kamar, cegah collapse
+                        if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        }
+                    }
+                    
+                    saveMenuState(target, isExpanded);
+                });
+
+                // Inisialisasi status menu saat halaman dimuat
+                $('.collapse').each(function() {
+                    const menuId = $(this).attr('id');
+                    const savedState = getMenuState(menuId);
+                    
+                    if (savedState) {
+                        $(this).addClass('show');
+                        $(`[data-bs-target="#${menuId}"]`).addClass('active');
+                    }
+                });
+
+                // Set menu aktif berdasarkan route saat ini
+                setActiveMenu();
+
+                // Sidebar toggle dengan penyimpanan state
+                $('#sidebarToggle').click(function() {
+                    const sidebar = $('#sidebar');
+                    const content = $('.content');
+                    const toggleBtn = $(this);
+                    const isCollapsed = !sidebar.hasClass('collapsed');
+                    
+                    saveMenuState('sidebarCollapsed', isCollapsed);
+                    
+                    sidebar.toggleClass('collapsed');
+                    content.toggleClass('expanded');
+                    toggleBtn.toggleClass('collapsed');
+                });
+
+                // Inisialisasi status sidebar
+                const sidebarCollapsed = getMenuState('sidebarCollapsed');
+                if (sidebarCollapsed) {
+                    $('#sidebar').addClass('collapsed');
+                    $('.content').addClass('expanded');
+                    $('#sidebarToggle').addClass('collapsed');
+                }
+
+                // Tambahkan event listener untuk mencegah collapse menu saat mengklik link aktif
+                $('.nav-link').on('click', function(e) {
+                    if ($(this).hasClass('active')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            });
+        </script>
+        @endpush
     </body>
 </html>

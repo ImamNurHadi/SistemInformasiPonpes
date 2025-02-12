@@ -20,44 +20,52 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Data Kamar</h1>
-    </div>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h2 class="m-0 font-weight-bold text-primary">Data Kamar</h2>
+        </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="row mb-4">
                 <!-- Form Tambah Kamar -->
                 <div class="col-md-4">
-                    <form action="{{ route('kompleks-kamar.store-kamar') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="nama_gedung" class="form-label">Nama Gedung</label>
-                            <input type="text" class="form-control @error('nama_gedung') is-invalid @enderror" 
-                                id="nama_gedung" name="nama_gedung" value="{{ old('nama_gedung') }}" 
-                                placeholder="Masukkan Nama Gedung" required>
-                            @error('nama_gedung')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Tambah Kamar Baru</h5>
                         </div>
+                        <div class="card-body">
+                            <form action="{{ route('kompleks-kamar.store-kamar') }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="nama_gedung" class="form-label">Nama Gedung</label>
+                                    <input type="text" class="form-control @error('nama_gedung') is-invalid @enderror" 
+                                        id="nama_gedung" name="nama_gedung" value="{{ old('nama_gedung') }}" 
+                                        placeholder="Masukkan Nama Gedung" required>
+                                    @error('nama_gedung')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="nama_kamar" class="form-label">Nama Kamar</label>
-                            <input type="text" class="form-control @error('nama_kamar') is-invalid @enderror" 
-                                id="nama_kamar" name="nama_kamar" value="{{ old('nama_kamar') }}" 
-                                placeholder="Masukkan Nama Kamar" required>
-                            @error('nama_kamar')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                                <div class="mb-3">
+                                    <label for="nama_kamar" class="form-label">Nama Kamar</label>
+                                    <input type="text" class="form-control @error('nama_kamar') is-invalid @enderror" 
+                                        id="nama_kamar" name="nama_kamar" value="{{ old('nama_kamar') }}" 
+                                        placeholder="Masukkan Nama Kamar" required>
+                                    @error('nama_kamar')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Tambah Kamar
+                                </button>
+                            </form>
                         </div>
-                        <button type="submit" class="btn btn-primary">Tambah Kamar</button>
-                    </form>
+                    </div>
                 </div>
 
                 <!-- Tabel Kamar -->
@@ -81,15 +89,20 @@
                                         <td>{{ $k->nama_kamar }}</td>
                                         <td>{{ $k->santri->count() }}</td>
                                         <td>
-                                            <form action="{{ route('kompleks-kamar.destroy-kamar', $k->id) }}" 
-                                                method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" 
-                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('kompleks-kamar.edit', $k->id) }}" class="btn btn-warning btn-sm me-1">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form action="{{ route('kompleks-kamar.destroy-kamar', $k->id) }}" 
+                                                    method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
