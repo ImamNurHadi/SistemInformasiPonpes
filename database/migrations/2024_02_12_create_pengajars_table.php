@@ -6,14 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('pengurus', function (Blueprint $table) {
+        Schema::create('pengajars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('nama');
             $table->string('nik')->unique();
-            $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('telepon');
             
@@ -27,16 +25,16 @@ return new class extends Migration
             $table->string('kecamatan_kk');
             $table->string('kota_kk');
             
-            // Divisi
-            $table->foreignId('divisi_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('sub_divisi')->nullable();
+            // Pendidikan
+            $table->enum('pendidikan_terakhir', ['SMA/Sederajat', 'S-1/Sederajat', 'S-2/Sederajat', 'S-3/Sederajat']);
+            $table->string('asal_kampus')->nullable();
             
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('pengurus');
+        Schema::dropIfExists('pengajars');
     }
 }; 

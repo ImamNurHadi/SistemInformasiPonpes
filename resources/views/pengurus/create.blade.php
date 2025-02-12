@@ -1,50 +1,191 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Pengurus')
+@section('title', 'Tambah Data Pengurus')
+
+@push('styles')
+<style>
+    .loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    .loading-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+</style>
+@endpush
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Tambah Pengurus</h1>
+<div class="loading">
+    <div class="loading-content">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Menyimpan Data...</div>
     </div>
+</div>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <form action="{{ route('pengurus.store') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label for="nama" class="form-label">Nama</label>
-                    <input type="text" class="form-control @error('nama') is-invalid @enderror" 
-                        id="nama" name="nama" value="{{ old('nama') }}" required>
-                    @error('nama')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Data Pengurus</h2>
                 </div>
+                <div class="card-body">
+                    <!-- Alert untuk error -->
+                    <div id="errorAlert" class="alert alert-danger" style="display: none;">
+                    </div>
 
-                <div class="mb-3">
-                    <label for="divisi" class="form-label">Divisi</label>
-                    <input type="text" class="form-control @error('divisi') is-invalid @enderror" 
-                        id="divisi" name="divisi" value="{{ old('divisi') }}" required>
-                    @error('divisi')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <!-- Form Data Pribadi dan Divisi -->
+                    <form action="{{ route('pengurus.store') }}" method="POST">
+                        @csrf
+                        
+                        <!-- Data Pribadi Section -->
+                        <h4 class="mb-3">Data Pribadi</h4>
+                        <div class="row">
+                            <!-- Kolom Kiri -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
+                                    @error('nama')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                <div class="mb-3">
-                    <label for="sub_divisi" class="form-label">Sub Divisi</label>
-                    <input type="text" class="form-control @error('sub_divisi') is-invalid @enderror" 
-                        id="sub_divisi" name="sub_divisi" value="{{ old('sub_divisi') }}" required>
-                    @error('sub_divisi')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                                <div class="mb-3">
+                                    <label for="nik" class="form-label">NIK</label>
+                                    <input type="text" class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik') }}" required>
+                                    @error('nik')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="{{ route('pengurus.index') }}" class="btn btn-secondary">Kembali</a>
+                                <div class="mb-3">
+                                    <label for="telepon" class="form-label">Nomor Telepon</label>
+                                    <input type="text" class="form-control @error('telepon') is-invalid @enderror" id="telepon" name="telepon" value="{{ old('telepon') }}" required>
+                                    @error('telepon')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                                            <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" required>
+                                            @error('tempat_lahir')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                                            <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required>
+                                            @error('tanggal_lahir')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kolom Kanan -->
+                            <div class="col-md-6">
+                                <h5>Alamat Domisili</h5>
+                                <div class="mb-3">
+                                    <label for="kelurahan_domisili" class="form-label">Kelurahan</label>
+                                    <input type="text" class="form-control @error('kelurahan_domisili') is-invalid @enderror" id="kelurahan_domisili" name="kelurahan_domisili" value="{{ old('kelurahan_domisili') }}" required>
+                                    @error('kelurahan_domisili')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="kecamatan_domisili" class="form-label">Kecamatan</label>
+                                    <input type="text" class="form-control @error('kecamatan_domisili') is-invalid @enderror" id="kecamatan_domisili" name="kecamatan_domisili" value="{{ old('kecamatan_domisili') }}" required>
+                                    @error('kecamatan_domisili')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="kota_domisili" class="form-label">Kota/Kabupaten</label>
+                                    <input type="text" class="form-control @error('kota_domisili') is-invalid @enderror" id="kota_domisili" name="kota_domisili" value="{{ old('kota_domisili') }}" required>
+                                    @error('kota_domisili')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <h5 class="mt-4">Alamat KK</h5>
+                                <div class="mb-3">
+                                    <label for="kelurahan_kk" class="form-label">Kelurahan</label>
+                                    <input type="text" class="form-control @error('kelurahan_kk') is-invalid @enderror" id="kelurahan_kk" name="kelurahan_kk" value="{{ old('kelurahan_kk') }}" required>
+                                    @error('kelurahan_kk')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="kecamatan_kk" class="form-label">Kecamatan</label>
+                                    <input type="text" class="form-control @error('kecamatan_kk') is-invalid @enderror" id="kecamatan_kk" name="kecamatan_kk" value="{{ old('kecamatan_kk') }}" required>
+                                    @error('kecamatan_kk')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="kota_kk" class="form-label">Kota/Kabupaten</label>
+                                    <input type="text" class="form-control @error('kota_kk') is-invalid @enderror" id="kota_kk" name="kota_kk" value="{{ old('kota_kk') }}" required>
+                                    @error('kota_kk')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divisi Section -->
+                        <h4 class="mb-3 mt-4">Divisi</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="divisi_id" class="form-label">Divisi</label>
+                                    <select class="form-select @error('divisi_id') is-invalid @enderror" id="divisi_id" name="divisi_id">
+                                        <option value="">Pilih Divisi</option>
+                                        @foreach($divisis as $divisi)
+                                            <option value="{{ $divisi->id }}">{{ $divisi->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('divisi_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="{{ route('pengurus.index') }}" class="btn btn-secondary">Kembali</a>
+                            <button type="submit" class="btn btn-primary">Simpan Data</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+@endpush
 @endsection 

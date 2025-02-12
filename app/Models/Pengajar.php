@@ -13,16 +13,20 @@ class Pengajar extends Model
 
     protected $fillable = [
         'nama',
-        'nuptk',
         'nik',
         'tanggal_lahir',
         'telepon',
-        'alamat',
-        'bidang_mata_pelajaran',
-        'status'
+        'kelurahan_domisili',
+        'kecamatan_domisili',
+        'kota_domisili',
+        'kelurahan_kk',
+        'kecamatan_kk',
+        'kota_kk',
+        'pendidikan_terakhir',
+        'asal_kampus',
     ];
 
     protected $casts = [
-        'tanggal_lahir' => 'date'
+        'tanggal_lahir' => 'date',
     ];
 } 

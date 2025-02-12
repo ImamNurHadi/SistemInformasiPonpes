@@ -175,8 +175,8 @@
                         <p class="register-subtitle">Silakan lengkapi data diri Anda</p>
                     </div>
                     
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" 
@@ -193,7 +193,7 @@
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+        </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -202,17 +202,17 @@
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+        </div>
 
                         <div class="mb-3">
                             <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                             <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
                                 id="password_confirmation" name="password_confirmation" required>
-                        </div>
+        </div>
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Daftar</button>
-                        </div>
+        </div>
 
                         <div class="auth-links">
                             <span class="d-block">

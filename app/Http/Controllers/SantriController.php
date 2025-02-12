@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Santri;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SantriController extends Controller
@@ -12,8 +13,8 @@ class SantriController extends Controller
      */
     public function index()
     {
-        $santri = Santri::all();
-        return view('santri.index', compact('santri'));
+        $santris = Santri::all();
+        return view('santri.index', compact('santris'));
     }
 
     /**
@@ -29,19 +30,20 @@ class SantriController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'id_emoney' => 'required|unique:santri',
-            'nis' => 'required|unique:santri',
+        $request->validate([
             'nama' => 'required',
-            'asrama' => 'required',
-            'kamar' => 'required',
-            'tingkatan_masuk' => 'required'
+            'nik' => 'required|unique:santris',
+            'tanggal_lahir' => 'required|date',
+            'telepon' => 'required',
+            'alamat' => 'required',
+            'nama_wali' => 'required',
+            'telepon_wali' => 'required',
         ]);
 
-        Santri::create($validated);
+        Santri::create($request->all());
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil ditambahkan');
+            ->with('success', 'Data santri berhasil ditambahkan!');
     }
 
     /**
@@ -65,19 +67,20 @@ class SantriController extends Controller
      */
     public function update(Request $request, Santri $santri)
     {
-        $validated = $request->validate([
-            'id_emoney' => 'required|unique:santri,id_emoney,' . $santri->id,
-            'nis' => 'required|unique:santri,nis,' . $santri->id,
+        $request->validate([
             'nama' => 'required',
-            'asrama' => 'required',
-            'kamar' => 'required',
-            'tingkatan_masuk' => 'required'
+            'nik' => 'required|unique:santris,nik,' . $santri->id,
+            'tanggal_lahir' => 'required|date',
+            'telepon' => 'required',
+            'alamat' => 'required',
+            'nama_wali' => 'required',
+            'telepon_wali' => 'required',
         ]);
 
-        $santri->update($validated);
+        $santri->update($request->all());
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil diupdate');
+            ->with('success', 'Data santri berhasil diperbarui!');
     }
 
     /**
@@ -85,9 +88,12 @@ class SantriController extends Controller
      */
     public function destroy(Santri $santri)
     {
+        if ($santri->user) {
+            $santri->user->delete();
+        }
         $santri->delete();
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil dihapus');
+            ->with('success', 'Data santri berhasil dihapus!');
     }
 }

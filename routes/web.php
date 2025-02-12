@@ -26,6 +26,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('santri', \App\Http\Controllers\SantriController::class);
     Route::resource('mahrom', \App\Http\Controllers\MahromController::class);
     Route::resource('pengurus', \App\Http\Controllers\PengurusController::class);
+    Route::get('pengurus/{pengurus}/divisi', [\App\Http\Controllers\PengurusController::class, 'showDivisiForm'])->name('pengurus.divisi');
+    Route::put('pengurus/{pengurus}/divisi', [\App\Http\Controllers\PengurusController::class, 'updateDivisi'])->name('pengurus.update-divisi');
     Route::resource('divisi', \App\Http\Controllers\DivisiController::class);
 
     // Koperasi, Saldo, Tabungan
