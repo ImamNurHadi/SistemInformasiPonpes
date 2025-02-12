@@ -26,8 +26,7 @@
                             <th>No</th>
                             <th>NIS</th>
                             <th>Nama</th>
-                            <th>Asrama</th>
-                            <th>Kamar</th>
+                            <th>Gedung/Kamar</th>
                             <th>Tingkatan</th>
                             <th>Aksi</th>
                         </tr>
@@ -38,9 +37,8 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $s->nis }}</td>
                                 <td>{{ $s->nama }}</td>
-                                <td>{{ $s->asrama }}</td>
-                                <td>{{ $s->kamar }}</td>
-                                <td>{{ $s->tingkatan->nama }}</td>
+                                <td>{{ $s->kompleks ? $s->kompleks->nama_gedung . ' / ' . $s->kompleks->nama_kamar : '-' }}</td>
+                                <td>{{ $s->tingkatanSaatIni ? $s->tingkatanSaatIni->nama : '-' }}</td>
                                 <td>
                                     <a href="{{ route('santri.edit', $s->id) }}" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil"></i>

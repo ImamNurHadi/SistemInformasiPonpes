@@ -24,12 +24,9 @@ class Santri extends Model
         'kecamatan',
         'kabupaten_kota',
         'nomor_induk_santri',
-        'asrama',
-        'kamar_id',
-        'tingkatan_masuk',
         'tingkatan_id',
         'kompleks_id',
-        'kelas_wali',
+        'kamar_id'
     ];
 
     protected $casts = [
@@ -64,5 +61,10 @@ class Santri extends Model
     public function kompleks()
     {
         return $this->belongsTo(MasterKompleks::class, 'kompleks_id');
+    }
+
+    public function kelasWali()
+    {
+        return $this->belongsTo(MasterTingkatan::class, 'kelas_wali');
     }
 } 

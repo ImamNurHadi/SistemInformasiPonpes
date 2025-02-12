@@ -208,30 +208,6 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-
-                <!-- Tingkatan Masuk -->
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Pilih tingkatan masuk santri
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="tingkatan_masuk" class="form-label">Tingkatan Masuk</label>
-                    <select class="form-control @error('tingkatan_masuk') is-invalid @enderror" 
-                        id="tingkatan_masuk" name="tingkatan_masuk" required>
-                        <option value="">Pilih Tingkatan</option>
-                        @foreach($tingkatan as $t)
-                            <option value="{{ $t->id }}" {{ old('tingkatan_masuk') == $t->id ? 'selected' : '' }}>
-                                {{ $t->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('tingkatan_masuk')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
             </div>
         </div>
 
@@ -245,22 +221,6 @@
                         id="nama_wali" name="nama_wali" value="{{ old('nama_wali') }}" 
                         placeholder="Masukkan Nama Wali" required>
                     @error('nama_wali')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="kelas_wali" class="form-label">Kelas</label>
-                    <select class="form-control @error('kelas_wali') is-invalid @enderror" 
-                        id="kelas_wali" name="kelas_wali">
-                        <option value="">Pilih Kelas</option>
-                        @foreach($tingkatan as $k)
-                            <option value="{{ $k->id }}" {{ old('kelas_wali') == $k->id ? 'selected' : '' }}>
-                                {{ $k->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('kelas_wali')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -439,23 +399,9 @@
 <script>
     $(document).ready(function() {
         // Inisialisasi select2 untuk dropdown tingkatan
-        $('#tingkatan_masuk').select2({
-            theme: 'bootstrap-5',
-            placeholder: 'Pilih Tingkatan',
-            allowClear: true
-        });
-
-        // Inisialisasi select2 untuk dropdown tingkatan saat ini
         $('#tingkatan_id').select2({
             theme: 'bootstrap-5',
             placeholder: 'Pilih Tingkatan',
-            allowClear: true
-        });
-
-        // Inisialisasi select2 untuk dropdown kelas wali
-        $('#kelas_wali').select2({
-            theme: 'bootstrap-5',
-            placeholder: 'Pilih Kelas',
             allowClear: true
         });
 
@@ -467,7 +413,7 @@
         });
 
         // Auto-capitalize input gedung dan kamar
-        $('#nama_gedung, #nama_kamar').on('input', function() {
+        $('#nama_gedung').on('input', function() {
             $(this).val(function(_, val) {
                 return val.toUpperCase();
             });
