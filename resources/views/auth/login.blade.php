@@ -8,36 +8,31 @@
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #1d976c 0%, #93f9b9 100%);
+            background: url('{{ asset('img/santri.jpeg') }}') center/cover no-repeat;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(5, 139, 66, 0.95) 0%, rgba(2, 54, 26, 0.95) 100%);
+            backdrop-filter: blur(0.1px);
         }
         .login-container {
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            display: flex;
         }
-        .brand-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+        .content-section {
             color: white;
             padding: 3rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .brand-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('{{ asset('img/santri.jpeg') }}') center/cover no-repeat;
-            opacity: 0.3;
-            z-index: 0;
-        }
-        .brand-section > * {
-            position: relative;
-            z-index: 1;
         }
         .brand-title {
             font-size: 2.5rem;
@@ -50,72 +45,99 @@
             opacity: 0.9;
             line-height: 1.6;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            max-width: 600px;
         }
         .login-section {
+            padding: 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.9);
         }
         .login-card {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
             padding: 2rem;
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         .form-control {
             padding: 0.75rem 1rem;
             border: 1px solid #e2e8f0;
         }
         .form-control:focus {
-            border-color: #1d976c;
-            box-shadow: 0 0 0 0.2rem rgba(29, 151, 108, 0.25);
+            border-color: #058B42;
+            box-shadow: 0 0 0 0.2rem rgba(5, 139, 66, 0.25);
+        }
+        .form-label {
+            color: #4a5568;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
         }
         .btn-primary {
-            background-color: #1d976c;
-            border-color: #1d976c;
+            background-color: #058B42;
+            border-color: #058B42;
             padding: 0.75rem 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-primary:hover {
-            background-color: #167d58;
-            border-color: #167d58;
+            background-color: #02361A;
+            border-color: #02361A;
         }
         .auth-links {
             text-align: center;
             margin-top: 1.5rem;
+            font-size: 0.875rem;
         }
         .auth-links a {
-            color: #1d976c;
+            color: #058B42;
             text-decoration: none;
         }
         .auth-links a:hover {
+            color: #02361A;
             text-decoration: underline;
+        }
+        .form-check-input:checked {
+            background-color: #058B42;
+            border-color: #058B42;
+        }
+        .form-check-label {
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 992px) {
+            .content-section {
+                padding: 2rem;
+                text-align: center;
+            }
+            .brand-subtitle {
+                margin: 0 auto;
+            }
+            .login-section {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row login-container">
-            <!-- Brand Section (Left) -->
-            <div class="col-lg-7 brand-section d-none d-lg-flex">
-                <div>
-                    <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
-                    <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
-                </div>
+            <div class="col-lg-7 content-section">
+                <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
+                <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
             </div>
 
-            <!-- Login Section (Right) -->
             <div class="col-lg-5 login-section">
                 <div class="login-card">
-                    <h3 class="text-center mb-4">Login</h3>
+                    <h3 class="text-center mb-4">LOGIN</h3>
                     
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">E-MAIL</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                 id="email" name="email" value="{{ old('email') }}" required autofocus>
                             @error('email')
@@ -124,7 +146,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label">KATA SANDI</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                 id="password" name="password" required>
                             @error('password')
@@ -132,27 +154,28 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Ingat Saya</label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-
-                        <div class="auth-links">
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label" for="remember">Ingat Saya</label>
+                            </div>
                             @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="d-block mb-2">
+                                <a href="{{ route('password.request') }}" class="text-end">
                                     Lupa kata sandi?
                                 </a>
                             @endif
-                            
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary">MASUK</button>
+                        </div>
+
+                        <div class="auth-links">
                             @if (Route::has('register'))
-                                <span class="d-block">
+                                <div class="text-muted">
                                     Belum punya akun? 
                                     <a href="{{ route('register') }}">Daftar</a>
-                                </span>
+                                </div>
                             @endif
                         </div>
                     </form>

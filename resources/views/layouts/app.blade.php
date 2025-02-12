@@ -18,7 +18,7 @@
             .sidebar {
                 width: 280px;
                 height: 100vh;
-                background: white;
+                background: #058B42;
                 box-shadow: 0 0 10px rgba(0, 0, 0, .1);
                 display: flex;
                 flex-direction: column;
@@ -47,19 +47,20 @@
             .welcome-text {
                 text-align: center;
                 padding: 0 1rem 1rem;
-                border-bottom: 1px solid rgba(0, 0, 0, .1);
-                color: #333;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
             }
 
             .welcome-text h6 {
                 margin-bottom: 0.5rem;
                 font-weight: 600;
+                color: white;
             }
 
             .welcome-text p {
                 margin-bottom: 0;
                 font-size: 0.9rem;
-                opacity: 0.8;
+                color: rgba(255, 255, 255, 0.95);
             }
 
             @media (max-width: 767.98px) {
@@ -83,23 +84,80 @@
                 padding: 1rem;
             }
 
+            .nav-item {
+                margin-bottom: 0.5rem;
+            }
+
             .nav-link {
-                color: #333;
+                color: rgba(255, 255, 255, 0.95);
                 font-weight: 500;
-                padding: 0.5rem 1rem;
+                padding: 0.75rem 1rem;
                 border-radius: 0.25rem;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .nav-link.main-menu {
+                background: rgba(2, 54, 26, 0.3);
+                margin-bottom: 0.25rem;
+                color: white;
+                font-weight: 600;
+            }
+
+            .nav-link.main-menu:hover,
+            .nav-link.main-menu.active {
+                background: #02361A;
+                color: white;
             }
 
             .nav-link:hover {
-                background: #f8f9fa;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
             }
 
             .nav-link.active {
-                color: #0d6efd;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                font-weight: 600;
+            }
+
+            .nav-link i {
+                width: 20px;
+                text-align: center;
+                margin-right: 8px;
             }
 
             .submenu {
                 padding-left: 1rem;
+                margin-top: 0.25rem;
+                margin-bottom: 0.5rem;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .submenu .nav-link {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                color: rgba(255, 255, 255, 0.9);
+                font-weight: 500;
+            }
+
+            .submenu .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+
+            .submenu .nav-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                font-weight: 600;
+            }
+
+            .bi-chevron-down {
+                transition: transform 0.3s ease;
+            }
+
+            [aria-expanded="true"] .bi-chevron-down {
+                transform: rotate(180deg);
             }
 
             .content {
@@ -108,6 +166,7 @@
                 overflow-y: auto;
                 height: 100vh;
                 transition: all 0.3s ease;
+                background: #f8f9fa;
             }
 
             .content.expanded {
@@ -117,14 +176,15 @@
             .sidebar-toggle {
                 position: fixed;
                 left: 280px;
-                top: 1rem;
+                top: 0;
                 z-index: 1001;
                 transition: all 0.3s ease;
-                background: white;
-                border: 1px solid #dee2e6;
-                width: 35px;
-                height: 35px;
-                border-radius: 4px;
+                background: #02361A;
+                color: white;
+                border: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -132,55 +192,66 @@
             }
 
             .sidebar-toggle.collapsed {
-                left: 1rem;
+                left: 0;
             }
 
             .sidebar-toggle:hover {
-                background: #f8f9fa;
+                background: #02361A;
             }
 
             /* Card Styles */
             .border-left-primary {
-                border-left: 4px solid #4e73df !important;
+                border-left: 4px solid #058B42 !important;
             }
             
             .border-left-success {
-                border-left: 4px solid #1cc88a !important;
+                border-left: 4px solid #058B42 !important;
             }
             
             .border-left-info {
-                border-left: 4px solid #36b9cc !important;
+                border-left: 4px solid #058B42 !important;
             }
             
             .border-left-warning {
-                border-left: 4px solid #f6c23e !important;
+                border-left: 4px solid #058B42 !important;
             }
 
-            .text-gray-300 {
-                color: #dddfeb !important;
+            .text-primary {
+                color: #058B42 !important;
             }
 
-            .text-gray-800 {
-                color: #5a5c69 !important;
+            .bg-primary {
+                background-color: #058B42 !important;
+            }
+
+            .btn-primary {
+                background-color: #058B42;
+                border-color: #058B42;
+            }
+
+            .btn-primary:hover {
+                background-color: #02361A;
+                border-color: #02361A;
             }
 
             .sidebar-footer {
                 padding: 1rem;
-                border-top: 1px solid rgba(0, 0, 0, .1);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             .logout-btn {
                 width: 100%;
-                color: #333;
-                background: #f8f9fa;
+                color: white;
+                background: rgba(255, 255, 255, 0.1);
                 border: none;
                 padding: 0.5rem;
                 border-radius: 0.25rem;
                 text-align: left;
+                transition: all 0.3s ease;
             }
 
             .logout-btn:hover {
-                background: #e9ecef;
+                background: rgba(255, 255, 255, 0.2);
             }
 
             .navbar {
@@ -210,7 +281,7 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}" class="nav-link main-menu {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="bi bi-speedometer2 me-2"></i>
                             Dashboard
                         </a>
@@ -218,18 +289,18 @@
 
                     <!-- Pengaturan -->
                     <li class="nav-item">
-                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link">
+                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
                             <i class="bi bi-gear me-2"></i>
                             Pengaturan
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse" id="pengaturanSubmenu">
+                        <div class="collapse {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'show' : '' }}" id="pengaturanSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('users.index') }}" class="nav-link">User</a>
+                                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">User</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('roles.index') }}" class="nav-link">Hak User Role</a>
+                                    <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Hak User Role</a>
                                 </li>
                             </ul>
                         </div>
@@ -237,74 +308,59 @@
 
                     <!-- Master Data -->
                     <li class="nav-item">
-                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link">
+                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'active' : '' }}">
                             <i class="bi bi-database me-2"></i>
                             Master Data
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse" id="masterDataSubmenu">
+                        <div class="collapse {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'show' : '' }}" id="masterDataSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('pengajar.index') }}" class="nav-link">Pengajar</a>
+                                    <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Pengajar</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link">
+                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('mahrom.*') ? 'active' : '' }}">
                                         Santri
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse" id="santriSubmenu">
+                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('mahrom.*') ? 'show' : '' }}" id="santriSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
-                                                <a href="{{ route('santri.index') }}" class="nav-link">Data Santri</a>
+                                                <a href="{{ route('santri.index') }}" class="nav-link {{ request()->routeIs('santri.*') ? 'active' : '' }}">Data Santri</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('mahrom.index') }}" class="nav-link">Mahrom</a>
+                                                <a href="{{ route('mahrom.index') }}" class="nav-link {{ request()->routeIs('mahrom.*') ? 'active' : '' }}">Mahrom</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link">
+                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') ? 'active' : '' }}">
                                         Pengurus
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse" id="pengurusSubmenu">
+                                    <div class="collapse {{ request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') ? 'show' : '' }}" id="pengurusSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
-                                                <a href="{{ route('pengurus.index') }}" class="nav-link">Data Pengurus</a>
+                                                <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Data Pengurus</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('divisi.index') }}" class="nav-link">Divisi</a>
+                                                <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">Divisi</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('saldo.index') }}" class="nav-link {{ request()->routeIs('saldo.*') ? 'active' : '' }}">Saldo</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('tabungan.index') }}" class="nav-link {{ request()->routeIs('tabungan.*') ? 'active' : '' }}">Tabungan</a>
+                                </li>
                             </ul>
                         </div>
-                    </li>
-
-                    <!-- Koperasi -->
-                    <li class="nav-item">
-                        <a href="{{ route('koperasi.index') }}" class="nav-link">
-                            <i class="bi bi-shop me-2"></i>
-                            Koperasi
-                        </a>
-                    </li>
-
-                    <!-- Saldo -->
-                    <li class="nav-item">
-                        <a href="{{ route('saldo.index') }}" class="nav-link">
-                            <i class="bi bi-wallet2 me-2"></i>
-                            Saldo
-                        </a>
-                    </li>
-
-                    <!-- Tabungan -->
-                    <li class="nav-item">
-                        <a href="{{ route('tabungan.index') }}" class="nav-link">
-                            <i class="bi bi-piggy-bank me-2"></i>
-                            Tabungan
-                        </a>
                     </li>
                 </ul>
             </div>
