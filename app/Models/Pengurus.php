@@ -12,11 +12,29 @@ class Pengurus extends Model
     protected $table = 'pengurus';
 
     protected $fillable = [
-        'user_id',
         'nama',
-        'divisi',
+        'nik',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'telepon',
+        'kelurahan_domisili',
+        'kecamatan_domisili',
+        'kota_domisili',
+        'kelurahan_kk',
+        'kecamatan_kk',
+        'kota_kk',
+        'divisi_id',
         'sub_divisi',
     ];
+
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
+    public function divisi()
+    {
+        return $this->belongsTo(Divisi::class);
+    }
 
     public function user()
     {

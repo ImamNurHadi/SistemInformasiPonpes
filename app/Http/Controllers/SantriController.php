@@ -107,10 +107,13 @@ class SantriController extends Controller
      */
     public function destroy(Santri $santri)
     {
+        if ($santri->user) {
+            $santri->user->delete();
+        }
         $santri->delete();
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil dihapus');
+            ->with('success', 'Data santri berhasil dihapus!');
     }
 
     public function getKamarByKompleks($kompleksId)

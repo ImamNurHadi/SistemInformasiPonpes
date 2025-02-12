@@ -21,7 +21,8 @@ class PengajarController extends Controller
      */
     public function create()
     {
-        return view('pengajar.create');
+        $pendidikan = ['SMA/Sederajat', 'S-1/Sederajat', 'S-2/Sederajat', 'S-3/Sederajat'];
+        return view('pengajar.create', compact('pendidikan'));
     }
 
     /**
@@ -29,21 +30,25 @@ class PengajarController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'nuptk' => 'required|string|unique:pengajars',
-            'nik' => 'required|string|unique:pengajars',
+        $request->validate([
+            'nama' => 'required',
+            'nik' => 'required|unique:pengajars',
             'tanggal_lahir' => 'required|date',
-            'telepon' => 'required|string',
-            'alamat' => 'required|string',
-            'bidang_mata_pelajaran' => 'required|string',
-            'status' => 'required|in:Aktif,Tidak Aktif'
+            'telepon' => 'required',
+            'kelurahan_domisili' => 'required',
+            'kecamatan_domisili' => 'required',
+            'kota_domisili' => 'required',
+            'kelurahan_kk' => 'required',
+            'kecamatan_kk' => 'required',
+            'kota_kk' => 'required',
+            'pendidikan_terakhir' => 'required|in:SMA/Sederajat,S-1/Sederajat,S-2/Sederajat,S-3/Sederajat',
+            'asal_kampus' => 'required_unless:pendidikan_terakhir,SMA/Sederajat',
         ]);
 
-        Pengajar::create($validated);
+        Pengajar::create($request->all());
 
         return redirect()->route('pengajar.index')
-            ->with('success', 'Data pengajar berhasil ditambahkan');
+            ->with('success', 'Data pengajar berhasil ditambahkan!');
     }
 
     /**
@@ -59,7 +64,8 @@ class PengajarController extends Controller
      */
     public function edit(Pengajar $pengajar)
     {
-        return view('pengajar.edit', compact('pengajar'));
+        $pendidikan = ['SMA/Sederajat', 'S-1/Sederajat', 'S-2/Sederajat', 'S-3/Sederajat'];
+        return view('pengajar.edit', compact('pengajar', 'pendidikan'));
     }
 
     /**
@@ -67,21 +73,25 @@ class PengajarController extends Controller
      */
     public function update(Request $request, Pengajar $pengajar)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'nuptk' => 'required|string|unique:pengajars,nuptk,'.$pengajar->id,
-            'nik' => 'required|string|unique:pengajars,nik,'.$pengajar->id,
+        $request->validate([
+            'nama' => 'required',
+            'nik' => 'required|unique:pengajars,nik,' . $pengajar->id,
             'tanggal_lahir' => 'required|date',
-            'telepon' => 'required|string',
-            'alamat' => 'required|string',
-            'bidang_mata_pelajaran' => 'required|string',
-            'status' => 'required|in:Aktif,Tidak Aktif'
+            'telepon' => 'required',
+            'kelurahan_domisili' => 'required',
+            'kecamatan_domisili' => 'required',
+            'kota_domisili' => 'required',
+            'kelurahan_kk' => 'required',
+            'kecamatan_kk' => 'required',
+            'kota_kk' => 'required',
+            'pendidikan_terakhir' => 'required|in:SMA/Sederajat,S-1/Sederajat,S-2/Sederajat,S-3/Sederajat',
+            'asal_kampus' => 'required_unless:pendidikan_terakhir,SMA/Sederajat',
         ]);
 
-        $pengajar->update($validated);
+        $pengajar->update($request->all());
 
         return redirect()->route('pengajar.index')
-            ->with('success', 'Data pengajar berhasil diperbarui');
+            ->with('success', 'Data pengajar berhasil diperbarui!');
     }
 
     /**
@@ -92,6 +102,6 @@ class PengajarController extends Controller
         $pengajar->delete();
 
         return redirect()->route('pengajar.index')
-            ->with('success', 'Data pengajar berhasil dihapus');
+            ->with('success', 'Data pengajar berhasil dihapus!');
     }
 }

@@ -48,183 +48,144 @@
         </div>
     @endif
 
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-kompleks-tab" data-bs-toggle="pill" 
-                        data-bs-target="#pills-kompleks" type="button" role="tab">
-                        Data Kompleks
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-kamar-tab" data-bs-toggle="pill" 
-                        data-bs-target="#pills-kamar" type="button" role="tab">
-                        Data Kamar
-                    </button>
-                </li>
-            </ul>
+    <!-- Bagian Kompleks -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Data Kompleks</h6>
         </div>
-    </div>
-
-    <div class="tab-content" id="pills-tabContent">
-        <!-- Tab Kompleks -->
-        <div class="tab-pane fade show active" id="pills-kompleks" role="tabpanel">
-            <div class="row">
+        <div class="card-body">
+            <div class="row mb-4">
                 <!-- Form Tambah Kompleks -->
                 <div class="col-md-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Tambah Kompleks</h6>
+                    <form action="{{ route('kompleks-kamar.store-kompleks') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="nama_kompleks" class="form-label">Nama Kompleks</label>
+                            <input type="text" class="form-control @error('nama_kompleks') is-invalid @enderror" 
+                                id="nama_kompleks" name="nama_kompleks" value="{{ old('nama_kompleks') }}" 
+                                placeholder="Masukkan Nama Kompleks" required>
+                            @error('nama_kompleks')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="card-body">
-                            <form action="{{ route('kompleks-kamar.store-kompleks') }}" method="POST">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="nama_kompleks" class="form-label">Nama Kompleks</label>
-                                    <input type="text" class="form-control @error('nama_kompleks') is-invalid @enderror" 
-                                        id="nama_kompleks" name="nama_kompleks" value="{{ old('nama_kompleks') }}" 
-                                        placeholder="Masukkan Nama Kompleks" required>
-                                    @error('nama_kompleks')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
-                        </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Tambah Kompleks</button>
+                    </form>
                 </div>
 
                 <!-- Tabel Kompleks -->
                 <div class="col-md-8">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Daftar Kompleks</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="kompleksTable">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama Kompleks</th>
-                                            <th>Jumlah Kamar</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($kompleks as $k)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $k->nama_kompleks }}</td>
-                                                <td>{{ $k->kamar->count() }}</td>
-                                                <td>
-                                                    <form action="{{ route('kompleks-kamar.destroy-kompleks', $k->id) }}" 
-                                                        method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" 
-                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="kompleksTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Kompleks</th>
+                                    <th>Jumlah Kamar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($kompleks as $k)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $k->nama_kompleks }}</td>
+                                        <td>{{ $k->kamar->count() }}</td>
+                                        <td>
+                                            <form action="{{ route('kompleks-kamar.destroy-kompleks', $k->id) }}" 
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" 
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Tab Kamar -->
-        <div class="tab-pane fade" id="pills-kamar" role="tabpanel">
-            <div class="row">
+    <!-- Bagian Kamar -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Data Kamar</h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
                 <!-- Form Tambah Kamar -->
                 <div class="col-md-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Tambah Kamar</h6>
+                    <form action="{{ route('kompleks-kamar.store-kamar') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="kompleks_id" class="form-label">Pilih Kompleks</label>
+                            <select class="form-control @error('kompleks_id') is-invalid @enderror" 
+                                id="kompleks_id" name="kompleks_id" required>
+                                <option value="">Pilih Kompleks</option>
+                                @foreach($kompleks as $k)
+                                    <option value="{{ $k->id }}" {{ old('kompleks_id') == $k->id ? 'selected' : '' }}>
+                                        {{ $k->nama_kompleks }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kompleks_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="card-body">
-                            <form action="{{ route('kompleks-kamar.store-kamar') }}" method="POST">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="kompleks_id" class="form-label">Kompleks</label>
-                                    <select class="form-control @error('kompleks_id') is-invalid @enderror" 
-                                        id="kompleks_id" name="kompleks_id" required>
-                                        <option value="">Pilih Kompleks</option>
-                                        @foreach($kompleks as $k)
-                                            <option value="{{ $k->id }}" {{ old('kompleks_id') == $k->id ? 'selected' : '' }}>
-                                                {{ $k->nama_kompleks }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('kompleks_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
 
-                                <div class="mb-3">
-                                    <label for="nama_kamar" class="form-label">Nama Kamar</label>
-                                    <input type="text" class="form-control @error('nama_kamar') is-invalid @enderror" 
-                                        id="nama_kamar" name="nama_kamar" value="{{ old('nama_kamar') }}" 
-                                        placeholder="Masukkan Nama Kamar" required>
-                                    @error('nama_kamar')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
+                        <div class="mb-3">
+                            <label for="nama_kamar" class="form-label">Nama Kamar</label>
+                            <input type="text" class="form-control @error('nama_kamar') is-invalid @enderror" 
+                                id="nama_kamar" name="nama_kamar" value="{{ old('nama_kamar') }}" 
+                                placeholder="Masukkan Nama Kamar" required>
+                            @error('nama_kamar')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Tambah Kamar</button>
+                    </form>
                 </div>
 
                 <!-- Tabel Kamar -->
                 <div class="col-md-8">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Daftar Kamar</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="kamarTable">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama Kompleks</th>
-                                            <th>Nama Kamar</th>
-                                            <th>Jumlah Santri</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($kamar as $index => $k)
-                                            <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $k->kompleks->nama_kompleks }}</td>
-                                                <td>{{ $k->nama_kamar }}</td>
-                                                <td>{{ $k->santri->count() }}</td>
-                                                <td>
-                                                    <form action="{{ route('kompleks-kamar.destroy-kamar', $k->id) }}" 
-                                                        method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" 
-                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="kamarTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Kompleks</th>
+                                    <th>Nama Kamar</th>
+                                    <th>Jumlah Santri</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($kamar as $index => $k)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $k->kompleks->nama_kompleks }}</td>
+                                        <td>{{ $k->nama_kamar }}</td>
+                                        <td>{{ $k->santri->count() }}</td>
+                                        <td>
+                                            <form action="{{ route('kompleks-kamar.destroy-kamar', $k->id) }}" 
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" 
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -257,15 +218,6 @@
             responsive: true,
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
-            },
-            columnDefs: [
-                { targets: [0], orderable: false }, // Kolom nomor tidak bisa diurutkan
-                { targets: [4], orderable: false }  // Kolom aksi tidak bisa diurutkan
-            ],
-            order: [[1, 'asc']], // Default sort by Nama Kompleks ascending
-            rowCallback: function(row, data, index) {
-                // Update nomor urut
-                $('td:eq(0)', row).html(index + 1);
             }
         });
     });

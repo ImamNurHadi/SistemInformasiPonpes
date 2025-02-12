@@ -339,20 +339,23 @@
                                     </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') ? 'active' : '' }}">
+                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">
                                         Pengurus
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') ? 'show' : '' }}" id="pengurusSubmenu">
+                                    <div class="collapse {{ request()->routeIs('pengurus.*') ? 'show' : '' }}" id="pengurusSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
                                                 <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Data Pengurus</a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">Divisi</a>
-                                            </li>
                                         </ul>
                                     </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">
+                                        <i class="bi bi-diagram-3 me-2"></i>
+                                        Divisi
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
@@ -422,7 +425,45 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SweetAlert2 JS -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <!-- Custom Sweet Alert Config -->
         <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+            @if(session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if(session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+
+            @if(session('warning'))
+                Toast.fire({
+                    icon: 'warning',
+                    title: "{{ session('warning') }}"
+                });
+            @endif
+
+            @if(session('info'))
+                Toast.fire({
+                    icon: 'info',
+                    title: "{{ session('info') }}"
+                });
+            @endif
+
             function toggleSidebar() {
                 document.getElementById('sidebar').classList.toggle('show');
             }
@@ -445,18 +486,6 @@
                 });
                 return false;
             }
-            // Tampilkan SweetAlert untuk pesan sukses
-            if (sessionStorage.getItem('success')) {
-                Swal.fire({
-                    icon: 'success', 
-                    title: 'Berhasil!',
-                    text: sessionStorage.getItem('success'),
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                sessionStorage.removeItem('success');
-            }
-
             // Fungsi untuk toggle sidebar
             document.getElementById('sidebarToggle').addEventListener('click', function() {
                 const sidebar = document.getElementById('sidebar');
