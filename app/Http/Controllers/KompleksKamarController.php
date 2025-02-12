@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kamar;
 use App\Models\MasterKompleks;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -11,56 +10,37 @@ class KompleksKamarController extends Controller
 {
     public function index()
     {
-        $kompleks = MasterKompleks::with('kamar')->get();
-        $kamar = Kamar::with('kompleks')->get();
-        return view('kompleks-kamar.index', compact('kompleks', 'kamar'));
-    }
-
-    public function storeKompleks(Request $request)
-    {
-        $request->validate([
-            'nama_kompleks' => 'required|string|max:255|unique:master_kompleks',
-        ]);
-
-        MasterKompleks::create($request->all());
-
-        return redirect()->route('kompleks-kamar.index')
-            ->with('success', 'Data kompleks berhasil ditambahkan');
+        $kompleks = MasterKompleks::orderBy('nama_gedung')->orderBy('nama_kamar')->get();
+        return view('kompleks-kamar.index', compact('kompleks'));
     }
 
     public function storeKamar(Request $request)
     {
         $request->validate([
-            'kompleks_id' => 'required|exists:master_kompleks,id',
+            'nama_gedung' => 'required|string|max:255',
             'nama_kamar' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('kamar')->where(function ($query) use ($request) {
-                    return $query->where('kompleks_id', $request->kompleks_id);
+                Rule::unique('master_kompleks')->where(function ($query) use ($request) {
+                    return $query->where('nama_gedung', strtoupper($request->nama_gedung));
                 }),
             ],
         ]);
 
-        Kamar::create($request->all());
+        MasterKompleks::create([
+            'nama_gedung' => strtoupper($request->nama_gedung),
+            'nama_kamar' => strtoupper($request->nama_kamar),
+        ]);
 
         return redirect()->route('kompleks-kamar.index')
             ->with('success', 'Data kamar berhasil ditambahkan');
     }
 
-    public function destroyKompleks($id)
+    public function destroyKamar($id)
     {
         $kompleks = MasterKompleks::findOrFail($id);
         $kompleks->delete();
-
-        return redirect()->route('kompleks-kamar.index')
-            ->with('success', 'Data kompleks berhasil dihapus');
-    }
-
-    public function destroyKamar($id)
-    {
-        $kamar = Kamar::findOrFail($id);
-        $kamar->delete();
 
         return redirect()->route('kompleks-kamar.index')
             ->with('success', 'Data kamar berhasil dihapus');

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('master_kompleks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama_gedung', 255);
-            $table->string('nama_kamar', 255);
+            $table->string('nama_gedung');
+            $table->string('nama_kamar');
             $table->timestamps();
             
-            // Membuat unique constraint untuk kombinasi nama_gedung dan nama_kamar
+            // Membuat kombinasi unik untuk nama_gedung dan nama_kamar
             $table->unique(['nama_gedung', 'nama_kamar']);
         });
     }

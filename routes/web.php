@@ -41,9 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Route untuk Kompleks & Kamar
     Route::get('kompleks-kamar', [KompleksKamarController::class, 'index'])->name('kompleks-kamar.index');
-    Route::post('kompleks-kamar/store-kompleks', [KompleksKamarController::class, 'storeKompleks'])->name('kompleks-kamar.store-kompleks');
     Route::post('kompleks-kamar/store-kamar', [KompleksKamarController::class, 'storeKamar'])->name('kompleks-kamar.store-kamar');
-    Route::delete('kompleks-kamar/destroy-kompleks/{id}', [KompleksKamarController::class, 'destroyKompleks'])->name('kompleks-kamar.destroy-kompleks');
     Route::delete('kompleks-kamar/destroy-kamar/{id}', [KompleksKamarController::class, 'destroyKamar'])->name('kompleks-kamar.destroy-kamar');
 
     // Route untuk mendapatkan data kamar berdasarkan kompleks

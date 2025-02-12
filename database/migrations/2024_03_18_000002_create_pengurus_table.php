@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_kompleks', function (Blueprint $table) {
+        Schema::create('pengurus', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama_gedung', 255);
-            $table->string('nama_kamar', 255);
+            $table->string('nama');
+            $table->string('jabatan');
+            $table->string('sub_divisi')->nullable();
+            $table->uuid('divisi_id')->nullable();
             $table->timestamps();
-            
-            // Membuat unique constraint untuk kombinasi nama_gedung dan nama_kamar
-            $table->unique(['nama_gedung', 'nama_kamar']);
+
+            $table->foreign('divisi_id')
+                  ->references('id')
+                  ->on('divisis')
+                  ->onDelete('set null');
         });
     }
 
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_kompleks');
+        Schema::dropIfExists('pengurus');
     }
 }; 

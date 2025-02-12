@@ -25,7 +25,7 @@ class SantriController extends Controller
     public function create()
     {
         $tingkatan = MasterTingkatan::all();
-        $kompleks = MasterKompleks::all();
+        $kompleks = MasterKompleks::orderBy('nama_gedung')->orderBy('nama_kamar')->get();
         return view('santri.create', compact('tingkatan', 'kompleks'));
     }
 
@@ -34,9 +34,10 @@ class SantriController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nis' => 'required|unique:santri',
+        $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
+            'nis' => 'required|string|max:20|unique:santri',
+            'nomor_induk_santri' => 'required|string|max:20|unique:santri',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'anak_ke' => 'required|integer|min:1',
@@ -44,14 +45,52 @@ class SantriController extends Controller
             'kelurahan' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:255',
-            'nomor_induk_santri' => 'required|string|max:50|unique:santri',
-            'kompleks_id' => 'required|exists:master_kompleks,id',
-            'kamar_id' => 'required|exists:kamar,id',
-            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
             'tingkatan_id' => 'required|exists:master_tingkatan,id',
+            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
+            'kompleks_id' => 'required|exists:master_kompleks,id',
+            'nama_wali' => 'required|string|max:255',
+            'kelas_wali' => 'nullable|exists:master_tingkatan,id',
+            'asal_kota' => 'required|string|max:255',
+            'nama_ayah' => 'required|string|max:255',
+            'alamat_kk_ayah' => 'required|string',
+            'alamat_domisili_ayah' => 'required|string',
+            'no_identitas_ayah' => 'nullable|string|max:20',
+            'no_hp_ayah' => 'nullable|string|max:15',
+            'pendidikan_ayah' => 'required|string|max:255',
+            'pekerjaan_ayah' => 'required|string|max:255',
+            'nama_ibu' => 'required|string|max:255',
+            'alamat_kk_ibu' => 'required|string',
+            'alamat_domisili_ibu' => 'required|string',
+            'no_identitas_ibu' => 'nullable|string|max:20',
+            'no_hp_ibu' => 'nullable|string|max:15',
+            'pendidikan_ibu' => 'required|string|max:255',
+            'pekerjaan_ibu' => 'required|string|max:255',
         ]);
 
-        Santri::create($request->all());
+        // Buat santri baru
+        $santri = Santri::create($validatedData);
+
+        // Buat data wali santri
+        $waliData = $request->only([
+            'nama_wali',
+            'kelas_wali',
+            'asal_kota',
+            'nama_ayah',
+            'alamat_kk_ayah',
+            'alamat_domisili_ayah',
+            'no_identitas_ayah',
+            'no_hp_ayah',
+            'pendidikan_ayah',
+            'pekerjaan_ayah',
+            'nama_ibu',
+            'alamat_kk_ibu',
+            'alamat_domisili_ibu',
+            'no_identitas_ibu',
+            'no_hp_ibu',
+            'pendidikan_ibu',
+            'pekerjaan_ibu',
+        ]);
+        $santri->waliSantri()->create($waliData);
 
         return redirect()->route('santri.index')
             ->with('success', 'Data santri berhasil ditambahkan');
@@ -79,24 +118,56 @@ class SantriController extends Controller
      */
     public function update(Request $request, Santri $santri)
     {
-        $request->validate([
-            'nis' => 'required|unique:santri,nis,' . $santri->id,
+        $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
+            'nis' => 'required|string|max:20|unique:santri,nis,' . $santri->id,
+            'nomor_induk_santri' => 'required|string|max:20|unique:santri,nomor_induk_santri,' . $santri->id,
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'anak_ke' => 'required|integer|min:1',
             'jumlah_saudara_kandung' => 'required|integer|min:0',
+            'alamat' => 'required|string',
             'kelurahan' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:255',
-            'nomor_induk_santri' => 'required|string|max:50|unique:santri,nomor_induk_santri,' . $santri->id,
-            'asrama' => 'required|string|max:255',
-            'kamar' => 'required|string|max:255',
-            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
             'tingkatan_id' => 'required|exists:master_tingkatan,id',
+            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
+            'nama_gedung' => 'required|string|max:255',
+            'nama_kamar' => 'required|string|max:255',
+            'nama_wali' => 'required|string|max:255',
+            'kelas_wali' => 'nullable|exists:master_tingkatan,id',
+            'asal_kota' => 'required|string|max:255',
+            'nama_ayah' => 'required|string|max:255',
+            'alamat_kk_ayah' => 'required|string',
+            'alamat_domisili_ayah' => 'required|string',
+            'no_identitas_ayah' => 'nullable|string|max:20',
+            'no_hp_ayah' => 'nullable|string|max:15',
+            'pendidikan_ayah' => 'required|string|max:255',
+            'pekerjaan_ayah' => 'required|string|max:255',
+            'nama_ibu' => 'required|string|max:255',
+            'alamat_kk_ibu' => 'required|string',
+            'alamat_domisili_ibu' => 'required|string',
+            'no_identitas_ibu' => 'nullable|string|max:20',
+            'no_hp_ibu' => 'nullable|string|max:15',
+            'pendidikan_ibu' => 'required|string|max:255',
+            'pekerjaan_ibu' => 'required|string|max:255',
         ]);
 
-        $santri->update($request->all());
+        // Cari atau buat kompleks baru
+        $kompleks = MasterKompleks::firstOrCreate([
+            'nama_gedung' => strtoupper($request->nama_gedung),
+            'nama_kamar' => strtoupper($request->nama_kamar),
+        ]);
+
+        // Tambahkan kompleks_id ke data santri
+        $validatedData['kompleks_id'] = $kompleks->id;
+
+        // Hapus field yang tidak ada di tabel santri
+        unset($validatedData['nama_gedung']);
+        unset($validatedData['nama_kamar']);
+
+        // Update data santri
+        $santri->update($validatedData);
 
         return redirect()->route('santri.index')
             ->with('success', 'Data santri berhasil diperbarui');

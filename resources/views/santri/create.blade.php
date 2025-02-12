@@ -191,22 +191,16 @@
         <div class="form-section">
             <h5 class="section-title">Data Penempatan Santri</h5>
             
-            <!-- Langkah 1: Pilih Kompleks -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Langkah 1: Pilih kompleks/gedung terlebih dahulu
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="kompleks_id" class="form-label">Nama Kompleks/Gedung</label>
+            <div class="row">
+                <!-- Dropdown Gedung/Kamar -->
+                <div class="col-md-6 mb-3">
+                    <label for="kompleks_id" class="form-label">Gedung/Kamar</label>
                     <select class="form-control @error('kompleks_id') is-invalid @enderror" 
                         id="kompleks_id" name="kompleks_id" required>
-                        <option value="">Pilih Kompleks/Gedung</option>
+                        <option value="">Pilih Gedung/Kamar</option>
                         @foreach($kompleks as $k)
                             <option value="{{ $k->id }}" {{ old('kompleks_id') == $k->id ? 'selected' : '' }}>
-                                {{ $k->nama_kompleks }}
+                                {{ $k->nama_gedung }} - {{ $k->nama_kamar }}
                             </option>
                         @endforeach
                     </select>
@@ -214,38 +208,16 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
 
-            <!-- Langkah 2: Pilih Kamar -->
-            <div class="row mb-4">
+                <!-- Tingkatan Masuk -->
                 <div class="col-12">
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle me-2"></i>
-                        Langkah 2: Pilih kamar sesuai kompleks yang dipilih
+                        Pilih tingkatan masuk santri
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="kamar_id" class="form-label">Nama Kamar</label>
-                    <select class="form-control @error('kamar_id') is-invalid @enderror" 
-                        id="kamar_id" name="kamar_id" required disabled>
-                        <option value="">Pilih Kompleks Terlebih Dahulu</option>
-                    </select>
-                    <div class="form-text text-muted" id="kamar_info"></div>
-                    @error('kamar_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
 
-            <!-- Tingkatan Masuk -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Langkah 3: Pilih tingkatan masuk santri
-                    </div>
-                </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3">
                     <label for="tingkatan_masuk" class="form-label">Tingkatan Masuk</label>
                     <select class="form-control @error('tingkatan_masuk') is-invalid @enderror" 
                         id="tingkatan_masuk" name="tingkatan_masuk" required>
@@ -464,98 +436,41 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.id.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Setup CSRF token untuk semua request AJAX
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+        // Inisialisasi select2 untuk dropdown tingkatan
+        $('#tingkatan_masuk').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Tingkatan',
+            allowClear: true
         });
 
-        // Event handler untuk perubahan kompleks
-        $('#kompleks_id').on('change', function() {
-            var kompleksId = $(this).val();
-            var kamarSelect = $('#kamar_id');
-            var kamarInfo = $('#kamar_info');
-            
-            // Reset dan nonaktifkan pilihan kamar jika tidak ada kompleks yang dipilih
-            if (!kompleksId) {
-                kamarSelect.prop('disabled', true);
-                kamarSelect.html('<option value="">Pilih Kompleks Terlebih Dahulu</option>');
-                kamarInfo.html('');
-                return;
-            }
-            
-            // Ambil data kamar berdasarkan kompleks yang dipilih
-            $.ajax({
-                url: '/kamar/by-kompleks/' + kompleksId,
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function() {
-                    kamarSelect.prop('disabled', true);
-                    kamarSelect.html('<option value="">Memuat data kamar...</option>');
-                    kamarInfo.html('<small class="text-muted"><i class="bi bi-hourglass-split"></i> Sedang memuat data kamar...</small>');
-                },
-                success: function(response) {
-                    console.log('Response dari server:', response);
-                    
-                    kamarSelect.empty();
-                    kamarSelect.html('<option value="">Pilih Kamar</option>');
-                    
-                    if (response.status === 'success' && Array.isArray(response.data) && response.data.length > 0) {
-                        response.data.forEach(function(kamar) {
-                            kamarSelect.append(
-                                $('<option></option>')
-                                    .attr('value', kamar.id)
-                                    .text(kamar.nama_kamar)
-                            );
-                        });
-                        kamarSelect.prop('disabled', false);
-                        kamarInfo.html('<small class="text-success"><i class="bi bi-check-circle"></i> ' + response.data.length + ' kamar tersedia</small>');
-                    } else {
-                        kamarSelect.html('<option value="">Tidak ada kamar tersedia</option>');
-                        kamarSelect.prop('disabled', true);
-                        kamarInfo.html('<small class="text-warning"><i class="bi bi-exclamation-triangle"></i> Tidak ada kamar tersedia di kompleks ini</small>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                    console.error('Status:', status);
-                    console.error('Response:', xhr.responseText);
-                    
-                    kamarSelect.html('<option value="">Error: Gagal memuat data kamar</option>');
-                    kamarSelect.prop('disabled', true);
-                    kamarInfo.html('<small class="text-danger"><i class="bi bi-x-circle"></i> Gagal memuat data kamar</small>');
-                    
-                    // Tampilkan pesan error ke user
-                    alert('Terjadi kesalahan saat mengambil data kamar. Silakan coba lagi.');
-                }
+        // Inisialisasi select2 untuk dropdown tingkatan saat ini
+        $('#tingkatan_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Tingkatan',
+            allowClear: true
+        });
+
+        // Inisialisasi select2 untuk dropdown kelas wali
+        $('#kelas_wali').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Kelas',
+            allowClear: true
+        });
+
+        // Inisialisasi select2 untuk dropdown kompleks
+        $('#kompleks_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Gedung/Kamar',
+            allowClear: true
+        });
+
+        // Auto-capitalize input gedung dan kamar
+        $('#nama_gedung, #nama_kamar').on('input', function() {
+            $(this).val(function(_, val) {
+                return val.toUpperCase();
             });
-        });
-
-        // Trigger change event jika ada old value untuk kompleks
-        @if(old('kompleks_id'))
-            $('#kompleks_id').trigger('change');
-        @endif
-
-        // Inisialisasi datepicker
-        $('.input-group.date').datepicker({
-            format: "dd-mm-yyyy",
-            todayBtn: "linked",
-            clearBtn: true,
-            language: "id",
-            autoclose: true,
-            todayHighlight: true,
-            endDate: new Date()
-        });
-
-        // Event handler untuk ikon kalender
-        $('#calendar-addon').click(function(){
-            $('#tanggal_lahir').datepicker('show');
         });
     });
 </script>

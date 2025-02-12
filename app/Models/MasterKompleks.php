@@ -13,11 +13,17 @@ class MasterKompleks extends Model
     protected $table = 'master_kompleks';
 
     protected $fillable = [
-        'nama_kompleks',
+        'nama_gedung',
+        'nama_kamar',
     ];
 
     public function kamar()
     {
         return $this->hasMany(Kamar::class, 'kompleks_id');
+    }
+
+    public function santri()
+    {
+        return $this->hasMany(Santri::class, 'kompleks_id');
     }
 } 

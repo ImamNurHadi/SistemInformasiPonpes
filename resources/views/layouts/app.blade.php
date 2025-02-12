@@ -333,7 +333,7 @@
                                                 <a href="{{ route('tingkatan.index') }}" class="nav-link {{ request()->routeIs('tingkatan.*') ? 'active' : '' }}">Tingkatan</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Kompleks & Kamar</a>
+                                                <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Kamar</a>
                                             </li>
                                         </ul>
                                     </div>
