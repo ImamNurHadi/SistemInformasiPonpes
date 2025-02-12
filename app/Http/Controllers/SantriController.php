@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Santri;
+use App\Models\MasterTingkatan;
+use App\Models\MasterKompleks;
+use App\Models\Kamar;
 use Illuminate\Http\Request;
 
 class SantriController extends Controller
@@ -21,7 +24,9 @@ class SantriController extends Controller
      */
     public function create()
     {
-        return view('santri.create');
+        $tingkatan = MasterTingkatan::all();
+        $kompleks = MasterKompleks::all();
+        return view('santri.create', compact('tingkatan', 'kompleks'));
     }
 
     /**
@@ -29,16 +34,24 @@ class SantriController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'id_emoney' => 'required|unique:santri',
+        $request->validate([
             'nis' => 'required|unique:santri',
-            'nama' => 'required',
-            'asrama' => 'required',
-            'kamar' => 'required',
-            'tingkatan_masuk' => 'required'
+            'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'anak_ke' => 'required|integer|min:1',
+            'jumlah_saudara_kandung' => 'required|integer|min:0',
+            'kelurahan' => 'required|string|max:255',
+            'kecamatan' => 'required|string|max:255',
+            'kabupaten_kota' => 'required|string|max:255',
+            'nomor_induk_santri' => 'required|string|max:50|unique:santri',
+            'kompleks_id' => 'required|exists:master_kompleks,id',
+            'kamar_id' => 'required|exists:kamar,id',
+            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
+            'tingkatan_id' => 'required|exists:master_tingkatan,id',
         ]);
 
-        Santri::create($validated);
+        Santri::create($request->all());
 
         return redirect()->route('santri.index')
             ->with('success', 'Data santri berhasil ditambahkan');
@@ -57,7 +70,8 @@ class SantriController extends Controller
      */
     public function edit(Santri $santri)
     {
-        return view('santri.edit', compact('santri'));
+        $tingkatan = MasterTingkatan::all();
+        return view('santri.edit', compact('santri', 'tingkatan'));
     }
 
     /**
@@ -65,19 +79,27 @@ class SantriController extends Controller
      */
     public function update(Request $request, Santri $santri)
     {
-        $validated = $request->validate([
-            'id_emoney' => 'required|unique:santri,id_emoney,' . $santri->id,
+        $request->validate([
             'nis' => 'required|unique:santri,nis,' . $santri->id,
-            'nama' => 'required',
-            'asrama' => 'required',
-            'kamar' => 'required',
-            'tingkatan_masuk' => 'required'
+            'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'anak_ke' => 'required|integer|min:1',
+            'jumlah_saudara_kandung' => 'required|integer|min:0',
+            'kelurahan' => 'required|string|max:255',
+            'kecamatan' => 'required|string|max:255',
+            'kabupaten_kota' => 'required|string|max:255',
+            'nomor_induk_santri' => 'required|string|max:50|unique:santri,nomor_induk_santri,' . $santri->id,
+            'asrama' => 'required|string|max:255',
+            'kamar' => 'required|string|max:255',
+            'tingkatan_masuk' => 'required|exists:master_tingkatan,id',
+            'tingkatan_id' => 'required|exists:master_tingkatan,id',
         ]);
 
-        $santri->update($validated);
+        $santri->update($request->all());
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil diupdate');
+            ->with('success', 'Data santri berhasil diperbarui');
     }
 
     /**
@@ -89,5 +111,32 @@ class SantriController extends Controller
 
         return redirect()->route('santri.index')
             ->with('success', 'Data santri berhasil dihapus');
+    }
+
+    public function getKamarByKompleks($kompleksId)
+    {
+        try {
+            \Log::info('Mengambil data kamar untuk kompleks ID: ' . $kompleksId);
+            
+            $kamar = Kamar::where('kompleks_id', $kompleksId)
+                         ->select('id', 'nama_kamar')
+                         ->orderBy('nama_kamar')
+                         ->get();
+            
+            \Log::info('Jumlah kamar yang ditemukan: ' . $kamar->count());
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $kamar
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error saat mengambil data kamar: ' . $e->getMessage());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengambil data kamar'
+            ], 500);
+        }
     }
 }

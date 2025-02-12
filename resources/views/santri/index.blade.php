@@ -7,65 +7,67 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Data Santri</h1>
         <a href="{{ route('santri.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Tambah Santri
+            <i class="bi bi-plus-circle"></i> Tambah Santri
         </a>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success">
             {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>NIS</th>
-                            <th>ID E-Money</th>
                             <th>Nama</th>
                             <th>Asrama</th>
                             <th>Kamar</th>
                             <th>Tingkatan</th>
-                            <th width="150">Aksi</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($santri as $s)
+                        @foreach($santri as $index => $s)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $s->nis }}</td>
-                                <td>{{ $s->id_emoney }}</td>
                                 <td>{{ $s->nama }}</td>
                                 <td>{{ $s->asrama }}</td>
                                 <td>{{ $s->kamar }}</td>
-                                <td>{{ $s->tingkatan_masuk }}</td>
+                                <td>{{ $s->tingkatan->nama }}</td>
                                 <td>
-                                    <a href="{{ route('santri.edit', $s->id) }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('santri.edit', $s->id) }}" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('santri.destroy', $s->id) }}" method="POST" class="d-inline" id="delete-form-{{ $s->id }}">
+                                    <form action="{{ route('santri.destroy', $s->id) }}" method="POST" class="d-inline" 
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('delete-form-{{ $s->id }}')">
+                                        <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">Tidak ada data</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
+@endpush 

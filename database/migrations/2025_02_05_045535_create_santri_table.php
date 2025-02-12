@@ -12,14 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('santri', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('id_emoney')->unique();
+            $table->uuid('id')->primary();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nis')->unique();
             $table->string('nama');
+            $table->string('tempat_lahir', 255);
+            $table->date('tanggal_lahir');
+            $table->integer('anak_ke');
+            $table->integer('jumlah_saudara_kandung');
+            $table->string('kelurahan', 255);
+            $table->string('kecamatan', 255);
+            $table->string('kabupaten_kota', 255);
+            $table->string('nomor_induk_santri', 50)->unique();
             $table->string('asrama');
             $table->string('kamar');
-            $table->string('tingkatan_masuk');
+            $table->foreignUuid('tingkatan_masuk')->constrained('master_tingkatan');
+            $table->foreignUuid('tingkatan_id')->constrained('master_tingkatan');
             $table->timestamps();
         });
     }

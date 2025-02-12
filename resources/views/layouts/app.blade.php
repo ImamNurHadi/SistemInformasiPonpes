@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title', 'Dashboard') - Ponpes</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -319,17 +320,20 @@
                                     <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Pengajar</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('mahrom.*') ? 'active' : '' }}">
+                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'active' : '' }}">
                                         Santri
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('mahrom.*') ? 'show' : '' }}" id="santriSubmenu">
+                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'show' : '' }}" id="santriSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
                                                 <a href="{{ route('santri.index') }}" class="nav-link {{ request()->routeIs('santri.*') ? 'active' : '' }}">Data Santri</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('mahrom.index') }}" class="nav-link {{ request()->routeIs('mahrom.*') ? 'active' : '' }}">Mahrom</a>
+                                                <a href="{{ route('tingkatan.index') }}" class="nav-link {{ request()->routeIs('tingkatan.*') ? 'active' : '' }}">Tingkatan</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Kompleks & Kamar</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -412,6 +416,9 @@
             </div>
         </main>
 
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Bootstrap Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SweetAlert2 JS -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
