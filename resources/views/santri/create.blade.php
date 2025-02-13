@@ -70,19 +70,10 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="nis" class="form-label">NIS</label>
-                    <input type="text" class="form-control @error('nis') is-invalid @enderror" 
-                        id="nis" name="nis" value="{{ old('nis') }}" 
-                        placeholder="Masukkan NIS" required>
-                    @error('nis')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="nomor_induk_santri" class="form-label">Nomor Induk Santri</label>
+                    <label for="nomor_induk_santri" class="form-label">Nomor Induk Santri (NIS)</label>
                     <input type="text" class="form-control @error('nomor_induk_santri') is-invalid @enderror" 
-                        id="nomor_induk_santri" name="nomor_induk_santri" value="{{ old('nomor_induk_santri') }}" 
+                        id="nomor_induk_santri" name="nomor_induk_santri" 
+                        value="{{ old('nomor_induk_santri') }}" 
                         placeholder="Masukkan Nomor Induk Santri" required>
                     @error('nomor_induk_santri')
                         <div class="invalid-feedback">{{ $message }}</div>

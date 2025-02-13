@@ -6,7 +6,10 @@ use App\Models\Santri;
 use App\Models\MasterTingkatan;
 use App\Models\MasterKompleks;
 use App\Models\Kamar;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class SantriController extends Controller
 {
@@ -36,8 +39,7 @@ class SantriController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'nis' => 'required|string|max:20|unique:santri',
-            'nomor_induk_santri' => 'required|string|max:20|unique:santri',
+            'nomor_induk_santri' => 'required|string|max:20|unique:santri,nis',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'anak_ke' => 'required|integer|min:1',
@@ -65,6 +67,22 @@ class SantriController extends Controller
             'pekerjaan_ibu' => 'required|string|max:255',
         ]);
 
+        // Buat user baru dengan role santri
+        $santriRole = Role::where('name', 'Santri')->first();
+        $timestamp = now()->format('YmdHis');
+        $user = User::create([
+            'name' => $validatedData['nama'],
+            'email' => $validatedData['nomor_induk_santri'] . $timestamp . '@ponpes.com',
+            'password' => Hash::make($validatedData['nomor_induk_santri']), // Password default adalah NIS
+            'role_id' => $santriRole->id
+        ]);
+
+        // Tambahkan user_id ke data santri dan set nis
+        $validatedData['user_id'] = $user->id;
+        $validatedData['nis'] = $validatedData['nomor_induk_santri'];
+        $validatedData['tingkatan_masuk'] = $validatedData['tingkatan_id']; // Set tingkatan_masuk sama dengan tingkatan_id
+        // Tidak perlu menghapus nomor_induk_santri karena dibutuhkan di database
+
         // Buat santri baru
         $santri = Santri::create($validatedData);
 
@@ -90,7 +108,7 @@ class SantriController extends Controller
         $santri->waliSantri()->create($waliData);
 
         return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil ditambahkan');
+            ->with('success', 'Data santri berhasil ditambahkan. Akun dibuat dengan Email: ' . $validatedData['nis'] . '@ponpes.com dan Password: ' . $validatedData['nis']);
     }
 
     /**
@@ -118,8 +136,7 @@ class SantriController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'nis' => 'required|string|max:20|unique:santri,nis,' . $santri->id,
-            'nomor_induk_santri' => 'required|string|max:20|unique:santri,nomor_induk_santri,' . $santri->id,
+            'nomor_induk_santri' => 'required|string|max:20|unique:santri,nis,' . $santri->id,
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'anak_ke' => 'required|integer|min:1',
@@ -146,6 +163,10 @@ class SantriController extends Controller
             'pendidikan_ibu' => 'required|string|max:255',
             'pekerjaan_ibu' => 'required|string|max:255',
         ]);
+
+        // Set nis dari nomor_induk_santri
+        $validatedData['nis'] = $validatedData['nomor_induk_santri'];
+        unset($validatedData['nomor_induk_santri']); // Hapus nomor_induk_santri dari array
 
         // Update data santri
         $santri->update($validatedData);

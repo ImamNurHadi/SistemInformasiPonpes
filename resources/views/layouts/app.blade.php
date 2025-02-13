@@ -351,15 +351,18 @@
 
                     <!-- Pengaturan -->
                     <li class="nav-item">
-                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
+                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('profile.*') ? 'active' : '' }}">
                             <i class="bi bi-gear me-2"></i>
                             Pengaturan
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'show' : '' }}" id="pengaturanSubmenu">
+                        <div class="collapse {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('profile.*') ? 'show' : '' }}" id="pengaturanSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">User</a>
+                                    <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">Manajemen User</a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Manajemen Role</a>

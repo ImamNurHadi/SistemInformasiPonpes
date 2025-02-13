@@ -28,9 +28,9 @@
         <h1 class="h3 mb-0 text-gray-800">Edit Santri</h1>
     </div>
 
-            <form action="{{ route('santri.update', $santri->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+    <form action="{{ route('santri.update', $santri->id) }}" method="POST">
+        @csrf
+        @method('PUT')
         
         <!-- Data Pribadi -->
         <div class="form-section">
@@ -47,20 +47,10 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="nis" class="form-label">NIS</label>
-                    <input type="text" class="form-control @error('nis') is-invalid @enderror" 
-                        id="nis" name="nis" value="{{ old('nis', $santri->nis) }}" 
-                        placeholder="Masukkan NIS" required>
-                    @error('nis')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="nomor_induk_santri" class="form-label">Nomor Induk Santri</label>
+                    <label for="nomor_induk_santri" class="form-label">Nomor Induk Santri (NIS)</label>
                     <input type="text" class="form-control @error('nomor_induk_santri') is-invalid @enderror" 
                         id="nomor_induk_santri" name="nomor_induk_santri" 
-                        value="{{ old('nomor_induk_santri', $santri->nomor_induk_santri) }}" 
+                        value="{{ old('nomor_induk_santri', $santri->nis) }}" 
                         placeholder="Masukkan Nomor Induk Santri" required>
                     @error('nomor_induk_santri')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -374,7 +364,7 @@
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="{{ route('santri.index') }}" class="btn btn-secondary">Kembali</a>
-    </div>
+        </div>
     </form>
 </div>
 @endsection 

@@ -24,6 +24,7 @@ class Santri extends Model
         'kecamatan',
         'kabupaten_kota',
         'nomor_induk_santri',
+        'tingkatan_masuk',
         'tingkatan_id',
         'kompleks_id',
         'kamar_id'
