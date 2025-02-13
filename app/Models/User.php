@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Santri;
 use App\Models\Pengurus;
+use App\Models\Role;
 
 class User extends Authenticatable
 {
@@ -24,7 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role_id'
     ];
 
     /**
@@ -62,16 +63,21 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->role && $this->role->name === 'Super Admin';
     }
 
     public function isSantri()
     {
-        return $this->role === 'santri';
+        return $this->role && $this->role->name === 'Santri';
     }
 
     public function isPengurus()
     {
-        return $this->role === 'pengurus';
+        return $this->role && $this->role->name === 'Pengurus';
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }

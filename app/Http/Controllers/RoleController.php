@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -11,7 +12,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::all();
+        return view('roles.index', compact('roles'));
     }
 
     /**
@@ -19,7 +21,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        return view('roles.create');
     }
 
     /**
@@ -27,7 +29,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles',
+            'description' => 'nullable|string'
+        ]);
+
+        Role::create($request->all());
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role berhasil ditambahkan');
     }
 
     /**
@@ -41,24 +51,40 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        //
+        return view('roles.edit', compact('role'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Role $role)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'description' => 'nullable|string'
+        ]);
+
+        $role->update($request->all());
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        //
+        if ($role->users()->exists()) {
+            return redirect()->route('roles.index')
+                ->with('error', 'Role tidak dapat dihapus karena masih digunakan oleh user');
+        }
+
+        $role->delete();
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role berhasil dihapus');
     }
 }

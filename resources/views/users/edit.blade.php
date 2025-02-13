@@ -4,15 +4,15 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Edit User</h1>
-    </div>
-
     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="m-0 font-weight-bold text-primary">Edit User</h2>
+        </div>
         <div class="card-body">
             <form action="{{ route('users.update', $user->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                
                 <div class="mb-3">
                     <label for="name" class="form-label">Nama</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" 
@@ -32,32 +32,41 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="role_id" class="form-label">Role</label>
+                    <select class="form-control @error('role_id') is-invalid @enderror" id="role_id" name="role_id" required>
+                        <option value="">Pilih Role</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('role_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password Baru (Kosongkan jika tidak ingin mengubah)</label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" 
                         id="password" name="password">
-                    <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password</small>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
-                    <select class="form-select @error('role') is-invalid @enderror" 
-                        id="role" name="role" required>
-                        <option value="">Pilih Role</option>
-                        <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="santri" {{ old('role', $user->role) == 'santri' ? 'selected' : '' }}>Santri</option>
-                        <option value="pengurus" {{ old('role', $user->role) == 'pengurus' ? 'selected' : '' }}>Pengurus</option>
-                    </select>
-                    @error('role')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                 </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <a href="{{ route('users.index') }}" class="btn btn-secondary">Kembali</a>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Simpan Perubahan
+                    </button>
                 </div>
             </form>
         </div>

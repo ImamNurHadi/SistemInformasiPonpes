@@ -362,7 +362,7 @@
                                     <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">User</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Hak User Role</a>
+                                    <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Manajemen Role</a>
                                 </li>
                             </ul>
                         </div>
