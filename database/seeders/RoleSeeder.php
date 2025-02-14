@@ -11,10 +11,6 @@ class RoleSeeder extends Seeder
     {
         $roles = [
             [
-                'name' => 'Super Admin',
-                'description' => 'Memiliki akses penuh ke seluruh fitur sistem'
-            ],
-            [
                 'name' => 'Admin',
                 'description' => 'Memiliki akses ke fitur administratif'
             ],

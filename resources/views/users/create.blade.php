@@ -40,15 +40,17 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
-                    <select class="form-select @error('role') is-invalid @enderror" 
-                        id="role" name="role" required>
+                    <label for="role_id" class="form-label">Role</label>
+                    <select class="form-select @error('role_id') is-invalid @enderror" 
+                        id="role_id" name="role_id" required>
                         <option value="">Pilih Role</option>
-                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="santri" {{ old('role') == 'santri' ? 'selected' : '' }}>Santri</option>
-                        <option value="pengurus" {{ old('role') == 'pengurus' ? 'selected' : '' }}>Pengurus</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
                     </select>
-                    @error('role')
+                    @error('role_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

@@ -15,13 +15,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pastikan role Super Admin sudah ada
-        $superAdminRole = Role::where('name', 'Super Admin')->first();
+        // Pastikan role Admin sudah ada
+        $adminRole = Role::where('name', 'Admin')->first();
 
-        if (!$superAdminRole) {
-            $superAdminRole = Role::create([
-                'name' => 'Super Admin',
-                'description' => 'Memiliki akses penuh ke seluruh fitur sistem'
+        if (!$adminRole) {
+            $adminRole = Role::create([
+                'name' => 'Admin',
+                'description' => 'Memiliki akses ke fitur administratif'
             ]);
         }
 
@@ -30,7 +30,8 @@ class AdminSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@ponpes.com',
             'password' => Hash::make('admin123'),
-            'role_id' => $superAdminRole->id
+            'role_id' => $adminRole->id
         ]);
     }
+    
 }

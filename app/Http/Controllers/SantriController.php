@@ -69,10 +69,10 @@ class SantriController extends Controller
 
         // Buat user baru dengan role santri
         $santriRole = Role::where('name', 'Santri')->first();
-        $timestamp = now()->format('YmdHis');
+        
         $user = User::create([
             'name' => $validatedData['nama'],
-            'email' => $validatedData['nomor_induk_santri'] . $timestamp . '@ponpes.com',
+            'email' => $validatedData['nomor_induk_santri'] . '@santri.ponpes.com',
             'password' => Hash::make($validatedData['nomor_induk_santri']), // Password default adalah NIS
             'role_id' => $santriRole->id
         ]);

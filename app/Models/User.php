@@ -63,17 +63,17 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->role && $this->role->name === 'Super Admin';
+        return $this->role_id === '9e3407bd-3b45-40d4-99f0-7fb46f3a8d63';
     }
 
     public function isSantri()
     {
-        return $this->role && $this->role->name === 'Santri';
+        return $this->role_id === '9e34da35-0cad-473d-ab84-ebaaed8e47c0';
     }
 
     public function isPengurus()
     {
-        return $this->role && $this->role->name === 'Pengurus';
+        return $this->role_id === '9e34da34-c5c0-4962-8e76-c557e9add2c6';
     }
 
     public function role()

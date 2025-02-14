@@ -208,7 +208,7 @@
                             <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                             <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
                                 id="password_confirmation" name="password_confirmation" required>
-        </div>
+                        </div>
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Daftar</button>
