@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\MasterTingkatan;
+use Illuminate\Http\Request;
 
 class MasterTingkatanController extends Controller
 {
@@ -13,7 +13,7 @@ class MasterTingkatanController extends Controller
     public function index()
     {
         $tingkatan = MasterTingkatan::all();
-        return view('master.tingkatan.index', compact('tingkatan'));
+        return view('tingkatan.index', compact('tingkatan'));
     }
 
     /**
@@ -21,7 +21,10 @@ class MasterTingkatanController extends Controller
      */
     public function create()
     {
-        return view('master.tingkatan.create');
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('tingkatan.create');
     }
 
     /**
@@ -29,16 +32,22 @@ class MasterTingkatanController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
-            'nama' => 'required|string|max:255'
+            'nama_tingkatan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string'
         ]);
 
         MasterTingkatan::create([
-            'nama' => $request->nama
+            'nama' => $request->nama_tingkatan,
+            'keterangan' => $request->keterangan
         ]);
 
         return redirect()->route('tingkatan.index')
-            ->with('success', 'Tingkatan berhasil ditambahkan');
+            ->with('success', 'Data tingkatan berhasil ditambahkan');
     }
 
     /**
@@ -54,7 +63,10 @@ class MasterTingkatanController extends Controller
      */
     public function edit(MasterTingkatan $tingkatan)
     {
-        return view('master.tingkatan.edit', compact('tingkatan'));
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('tingkatan.edit', compact('tingkatan'));
     }
 
     /**
@@ -62,16 +74,19 @@ class MasterTingkatanController extends Controller
      */
     public function update(Request $request, MasterTingkatan $tingkatan)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
-            'nama' => 'required|string|max:255'
+            'nama_tingkatan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string'
         ]);
 
-        $tingkatan->update([
-            'nama' => $request->nama
-        ]);
+        $tingkatan->update($request->all());
 
         return redirect()->route('tingkatan.index')
-            ->with('success', 'Tingkatan berhasil diperbarui');
+            ->with('success', 'Data tingkatan berhasil diperbarui');
     }
 
     /**
@@ -79,8 +94,13 @@ class MasterTingkatanController extends Controller
      */
     public function destroy(MasterTingkatan $tingkatan)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $tingkatan->delete();
+
         return redirect()->route('tingkatan.index')
-            ->with('success', 'Tingkatan berhasil dihapus');
+            ->with('success', 'Data tingkatan berhasil dihapus');
     }
 }

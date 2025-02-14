@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('master_tingkatan', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

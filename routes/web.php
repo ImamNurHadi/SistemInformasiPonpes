@@ -32,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pengurus/{pengurus}/divisi', [\App\Http\Controllers\PengurusController::class, 'showDivisiForm'])->name('pengurus.divisi');
     Route::put('pengurus/{pengurus}/divisi', [\App\Http\Controllers\PengurusController::class, 'updateDivisi'])->name('pengurus.update-divisi');
     Route::resource('divisi', \App\Http\Controllers\DivisiController::class);
+    
+    // Route Tingkatan
     Route::resource('tingkatan', MasterTingkatanController::class);
 
     // Koperasi, Saldo, Tabungan

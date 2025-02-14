@@ -11,7 +11,7 @@ class MasterTingkatan extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'master_tingkatan';
-    protected $fillable = ['nama'];
+    protected $fillable = ['nama', 'keterangan'];
 
     public function santri()
     {
