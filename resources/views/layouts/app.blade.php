@@ -10,7 +10,7 @@
         <!-- SweetAlert2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
         <!-- Favicon -->
-        <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('img/logo_qinna.png') }}">
         <style>
             body {
                 min-height: 100vh;
@@ -21,7 +21,7 @@
             .sidebar {
                 width: 280px;
                 height: 100vh;
-                background: #058B42;
+                background: #02361A;
                 box-shadow: 0 0 10px rgba(0, 0, 0, .1);
                 display: flex;
                 flex-direction: column;
@@ -42,7 +42,7 @@
             }
 
             .sidebar-logo img {
-                max-width: 150px;
+                max-width: 100px;
                 height: auto;
                 margin-bottom: 1rem;
             }
@@ -109,7 +109,7 @@
 
             .nav-link.main-menu:hover,
             .nav-link.main-menu.active {
-                background: #02361A;
+                background: #058B42;
                 color: white;
             }
 
@@ -145,12 +145,12 @@
             }
 
             .submenu .nav-link:hover {
-                background: rgba(255, 255, 255, 0.1);
+                background: #058B42;
                 color: white;
             }
 
             .submenu .nav-link.active {
-                background: rgba(255, 255, 255, 0.2);
+                background: #058B42;
                 color: white;
                 font-weight: 600;
             }
@@ -182,7 +182,7 @@
                 top: 0;
                 z-index: 1001;
                 transition: all 0.3s ease;
-                background: #02361A;
+                background: #058B42;
                 color: white;
                 border: none;
                 width: 50px;
@@ -199,7 +199,7 @@
             }
 
             .sidebar-toggle:hover {
-                background: #02361A;
+                background: #058B42;
             }
 
             /* Card Styles */
@@ -321,6 +321,20 @@
                 content: "/";
                 color: #6c757d;
             }
+
+            .sidebar-nav .nav-link:hover,
+            .sidebar-nav .nav-link.active {
+                background: #058B42;
+                color: white;
+            }
+
+            .sidebar-nav .nav-link.active i {
+                color: white;
+            }
+
+            .sidebar-nav .nav-link:hover i {
+                color: white;
+            }
         </style>
         @stack('styles')
     </head>
@@ -333,7 +347,7 @@
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo Ponpes" class="img-fluid">
+                <img src="{{ asset('img/logo_qinna.png') }}" alt="Logo Ponpes" class="img-fluid">
                 <div class="welcome-text">
                     <h6>Assalamualaikum</h6>
                     <p>Selamat Datang</p>

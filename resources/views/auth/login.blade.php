@@ -34,10 +34,19 @@
             flex-direction: column;
             justify-content: center;
         }
+        .brand-section {
+            color: white;
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
         .brand-title {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            color: white;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         .brand-subtitle {
@@ -72,7 +81,7 @@
             color: #4a5568;
             font-weight: 500;
             text-transform: uppercase;
-            font-size: 0.875rem;
+            font-size: 1rem;
             letter-spacing: 0.5px;
         }
         .btn-primary {
@@ -90,7 +99,7 @@
         .auth-links {
             text-align: center;
             margin-top: 1.5rem;
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
         .auth-links a {
             color: #058B42;
@@ -106,7 +115,7 @@
         }
         .form-check-label {
             color: #4a5568;
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
         @media (max-width: 992px) {
             .content-section {
@@ -126,13 +135,13 @@
     <div class="container-fluid">
         <div class="row login-container">
             <div class="col-lg-7 content-section">
-                <h1 class="brand-title">Qinna Manajemen Sistem<br>Pondok Pesantren</h1>
+                <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
                 <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
             </div>
 
             <div class="col-lg-5 login-section">
                 <div class="login-card">
-                    <h3 class="text-center mb-4">LOGIN</h3>
+                    <h3 class="text-center mb-4" style="font-size: 2rem;">LOGIN</h3>
                     
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

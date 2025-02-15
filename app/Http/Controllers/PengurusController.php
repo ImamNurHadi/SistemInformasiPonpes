@@ -6,6 +6,7 @@ use App\Models\Pengurus;
 use App\Models\Divisi;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PengurusController extends Controller
 {
@@ -33,30 +34,60 @@ class PengurusController extends Controller
     public function store(Request $request)
     {
         try {
+            // Log request data
+            \Log::info('Request data:', $request->all());
+
             $validated = $request->validate([
-                'nama' => 'required',
-                'nik' => 'required|unique:pengurus',
-                'tempat_lahir' => 'required',
+                'nama' => 'required|string|max:255',
+                'nik' => 'required|string|max:20|unique:pengurus',
+                'tempat_lahir' => 'required|string|max:255',
                 'tanggal_lahir' => 'required|date',
-                'telepon' => 'required',
-                'kelurahan_domisili' => 'required',
-                'kecamatan_domisili' => 'required',
-                'kota_domisili' => 'required',
-                'kelurahan_kk' => 'required',
-                'kecamatan_kk' => 'required',
-                'kota_kk' => 'required',
-                'divisi_id' => 'nullable|exists:divisis,id',
+                'telepon' => 'required|string|max:15',
+                'kelurahan_domisili' => 'required|string|max:255',
+                'kecamatan_domisili' => 'required|string|max:255',
+                'kota_domisili' => 'required|string|max:255',
+                'kelurahan_kk' => 'required|string|max:255',
+                'kecamatan_kk' => 'required|string|max:255',
+                'kota_kk' => 'required|string|max:255',
+                'divisi_id' => 'nullable|string|exists:divisis,id',
+                'sub_divisi' => 'nullable|string|max:255',
+                'jabatan' => 'required|string|in:Ketua,Wakil Ketua,Sekretaris,Bendahara,Anggota',
             ]);
             
-            Pengurus::create($validated);
+            // Log validated data
+            \Log::info('Data tervalidasi:', $validated);
+            
+            // Coba buat UUID secara manual
+            $validated['id'] = Str::uuid()->toString();
+            \Log::info('UUID yang dibuat:', ['id' => $validated['id']]);
+            
+            try {
+                $pengurus = Pengurus::create($validated);
+                \Log::info('Pengurus berhasil dibuat dengan ID: ' . $pengurus->id);
+            } catch (\Exception $e) {
+                \Log::error('Error saat create Pengurus:', [
+                    'message' => $e->getMessage(),
+                    'sql' => $e->getPrevious() ? $e->getPrevious()->getMessage() : null
+                ]);
+                throw $e;
+            }
             
             return redirect()->route('pengurus.index')
                 ->with('success', 'Data pengurus berhasil disimpan!');
                 
         } catch (\Exception $e) {
+            \Log::error('Error saat menyimpan pengurus: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                return back()
+                    ->withInput()
+                    ->withErrors($e->errors());
+            }
+            
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi administrator.']);
         }
     }
 
@@ -82,26 +113,58 @@ class PengurusController extends Controller
      */
     public function update(Request $request, Pengurus $penguru)
     {
-        $request->validate([
-            'nama' => 'required',
-            'nik' => 'required|unique:pengurus,nik,' . $penguru->id,
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'telepon' => 'required',
-            'kelurahan_domisili' => 'required',
-            'kecamatan_domisili' => 'required',
-            'kota_domisili' => 'required',
-            'kelurahan_kk' => 'required',
-            'kecamatan_kk' => 'required',
-            'kota_kk' => 'required',
-            'divisi_id' => 'required|exists:divisis,id',
-            'sub_divisi' => 'nullable|string',
-        ]);
+        try {
+            // Log request data
+            \Log::info('Request data:', $request->all());
 
-        $penguru->update($request->all());
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255',
+                'nik' => 'required|string|max:20|unique:pengurus,nik,' . $penguru->id,
+                'tempat_lahir' => 'required|string|max:255',
+                'tanggal_lahir' => 'required|date',
+                'telepon' => 'required|string|max:15',
+                'kelurahan_domisili' => 'required|string|max:255',
+                'kecamatan_domisili' => 'required|string|max:255',
+                'kota_domisili' => 'required|string|max:255',
+                'kelurahan_kk' => 'required|string|max:255',
+                'kecamatan_kk' => 'required|string|max:255',
+                'kota_kk' => 'required|string|max:255',
+                'divisi_id' => 'nullable|string|exists:divisis,id',
+                'sub_divisi' => 'nullable|string|max:255',
+                'jabatan' => 'required|string|in:Ketua,Wakil Ketua,Sekretaris,Bendahara,Anggota',
+            ]);
+            
+            // Log validated data
+            \Log::info('Data tervalidasi:', $validated);
+            
+            try {
+                $penguru->update($validated);
+                \Log::info('Pengurus berhasil diperbarui dengan ID: ' . $penguru->id);
+            } catch (\Exception $e) {
+                \Log::error('Error saat update Pengurus:', [
+                    'message' => $e->getMessage(),
+                    'sql' => $e->getPrevious() ? $e->getPrevious()->getMessage() : null
+                ]);
+                throw $e;
+            }
 
-        return redirect()->route('pengurus.index')
-            ->with('success', 'Data pengurus berhasil diperbarui!');
+            return redirect()->route('pengurus.index')
+                ->with('success', 'Data pengurus berhasil diperbarui!');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error saat memperbarui pengurus: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                return back()
+                    ->withInput()
+                    ->withErrors($e->errors());
+            }
+            
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi atau hubungi administrator.']);
+        }
     }
 
     /**

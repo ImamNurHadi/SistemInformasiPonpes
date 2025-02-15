@@ -33,13 +33,39 @@
             color: white;
             padding: 3rem;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+            transform: perspective(1000px) rotateY(5deg);
+            transform-origin: right center;
+            transition: transform 0.5s ease;
+        }
+        .brand-section:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+        .brand-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('{{ asset('img/santri.jpeg') }}') center/cover no-repeat;
+            opacity: 0.3;
+            z-index: 0;
+            filter: blur(5px);
+        }
+        .brand-section > * {
+            position: relative;
+            z-index: 1;
         }
         .brand-title {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            color: white;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         .brand-subtitle {
@@ -59,8 +85,22 @@
             border-radius: 10px;
             padding: 2rem;
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .register-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1d976c;
+            margin-bottom: 0.5rem;
+        }
+        .register-subtitle {
+            color: #666;
+            font-size: 0.95rem;
         }
         .form-control {
             padding: 0.75rem 1rem;
@@ -73,9 +113,6 @@
         .form-label {
             color: #4a5568;
             font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
         }
         .btn-primary {
             background-color: #058B42;
@@ -92,7 +129,6 @@
         .auth-links {
             text-align: center;
             margin-top: 1.5rem;
-            font-size: 0.875rem;
         }
         .auth-links a {
             color: #058B42;
@@ -118,10 +154,13 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row login-container">
-            <div class="col-lg-7 content-section">
-                <h1 class="brand-title">Qinna Manajemen Sistem<br>Pondok Pesantren</h1>
-                <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
+        <div class="row register-container">
+            <!-- Brand Section (Left) -->
+            <div class="col-lg-7 brand-section d-none d-lg-flex">
+                <div>
+                    <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
+                    <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
+                </div>
             </div>
 
             <div class="col-lg-5 login-section">
