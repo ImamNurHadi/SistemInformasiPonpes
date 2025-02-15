@@ -20,8 +20,9 @@
             color: white;
             padding: 3rem;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            text-align: center;
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
@@ -49,9 +50,10 @@
             z-index: 1;
         }
         .brand-title {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            color: white;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         .brand-subtitle {
@@ -87,14 +89,14 @@
             margin-bottom: 2rem;
         }
         .register-title {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1d976c;
             margin-bottom: 0.5rem;
         }
         .register-subtitle {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
         }
         .form-control {
             padding: 0.75rem 1rem;
@@ -110,6 +112,7 @@
         .form-label {
             color: #2c3e50;
             font-weight: 500;
+            font-size: 1rem;
         }
         .btn-primary {
             background-color: #1d976c;
@@ -128,6 +131,7 @@
         .auth-links {
             text-align: center;
             margin-top: 1.5rem;
+            font-size: 1rem;
         }
         .auth-links a {
             color: #1d976c;
@@ -162,8 +166,7 @@
             <!-- Brand Section (Left) -->
             <div class="col-lg-7 brand-section d-none d-lg-flex">
                 <div>
-                    <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
-                    <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
+                    <h1 class="brand-title">Qinna Manajemen Sistem</h1>
                 </div>
             </div>
 
