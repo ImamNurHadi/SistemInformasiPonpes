@@ -42,7 +42,7 @@
             }
 
             .sidebar-logo img {
-                max-width: 100px;
+                max-width: 150px;
                 height: auto;
                 margin-bottom: 1rem;
             }
@@ -448,7 +448,22 @@
                                     <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('saldo.index') }}" class="nav-link {{ request()->routeIs('saldo.*') ? 'active' : '' }}">Saldo</a>
+                                    <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
+                                        Saldo
+                                        <i class="bi bi-chevron-down float-end"></i>
+                                    </a>
+                                    <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'show' : '' }}" id="saldoSubmenu">
+                                        <ul class="nav flex-column submenu">
+                                            @if(auth()->user()->isAdmin())
+                                            <li class="nav-item">
+                                                <a href="{{ route('topup.index') }}" class="nav-link {{ request()->routeIs('topup.*') ? 'active' : '' }}">Top Up Saldo</a>
+                                            </li>
+                                            @endif
+                                            <li class="nav-item">
+                                                <a href="{{ route('ceksaldo.index') }}" class="nav-link {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">Cek Saldo</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('tabungan.index') }}" class="nav-link {{ request()->routeIs('tabungan.*') ? 'active' : '' }}">Tabungan</a>

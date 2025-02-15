@@ -4,37 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Ponpes</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             min-height: 100vh;
-            background: url('{{ asset('img/santri.jpeg') }}') center/cover no-repeat;
-            position: relative;
+            background: linear-gradient(135deg, #1d976c 0%, #93f9b9 100%);
         }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(5, 139, 66, 0.95) 0%, rgba(2, 54, 26, 0.95) 100%);
-            backdrop-filter: blur(0.1px);
-        }
-        .login-container {
+        .register-container {
             min-height: 100vh;
             position: relative;
-            z-index: 1;
-            display: flex;
         }
-        .content-section {
+        .brand-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
             padding: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
@@ -62,7 +50,7 @@
             z-index: 1;
         }
         .brand-title {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             font-weight: 700;
             color: white;
             margin: 0;
@@ -73,82 +61,107 @@
             opacity: 0.9;
             line-height: 1.6;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            max-width: 600px;
         }
-        .login-section {
-            padding: 2rem;
+        .register-section {
             display: flex;
             align-items: center;
-        }
-        .login-card {
-            background: white;
-            border-radius: 10px;
+            justify-content: center;
             padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            transform: perspective(1000px) rotateY(-5deg);
+            transform-origin: left center;
+            transition: transform 0.5s ease;
+        }
+        .register-section:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+        .register-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
             width: 100%;
-            max-width: 420px;
+            max-width: 380px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .register-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         .register-title {
             font-size: 2rem;
             font-weight: 700;
             color: #1d976c;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
         .register-subtitle {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .form-control {
-            padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid rgba(29, 151, 108, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
         }
         .form-control:focus {
-            border-color: #058B42;
-            box-shadow: 0 0 0 0.2rem rgba(5, 139, 66, 0.25);
+            border-color: #1d976c;
+            box-shadow: 0 0 0 0.2rem rgba(29, 151, 108, 0.25);
+            background: white;
         }
         .form-label {
-            color: #4a5568;
+            color: #2c3e50;
             font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
         }
         .btn-primary {
-            background-color: #058B42;
-            border-color: #058B42;
-            padding: 0.75rem 1rem;
+            background-color: #1d976c;
+            border-color: #1d976c;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
         }
         .btn-primary:hover {
-            background-color: #02361A;
-            border-color: #02361A;
+            background-color: #167d58;
+            border-color: #167d58;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 151, 108, 0.2);
         }
         .auth-links {
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
         .auth-links a {
-            color: #058B42;
+            color: #1d976c;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
         .auth-links a:hover {
-            color: #02361A;
-            text-decoration: underline;
+            color: #167d58;
+            text-decoration: none;
         }
         @media (max-width: 992px) {
-            .content-section {
-                padding: 2rem;
-                text-align: center;
+            .brand-section, .register-section {
+                transform: none;
             }
-            .brand-subtitle {
-                margin: 0 auto;
+            .brand-section:hover, .register-section:hover {
+                transform: none;
             }
-            .login-section {
-                justify-content: center;
+        }
+        @media (max-width: 576px) {
+            .register-card {
+                padding: 1.5rem;
             }
+            .register-title {
+                font-size: 1.75rem;
+            }
+        }
+        .mb-3 {
+            margin-bottom: 0.75rem !important;
         }
     </style>
 </head>
@@ -158,19 +171,22 @@
             <!-- Brand Section (Left) -->
             <div class="col-lg-7 brand-section d-none d-lg-flex">
                 <div>
-                    <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
-                    <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
+                    <h1 class="brand-title">Qinna Manajemen Sistem</h1>
                 </div>
             </div>
 
-            <div class="col-lg-5 login-section">
-                <div class="login-card">
-                    <h3 class="text-center mb-4">DAFTAR AKUN</h3>
+            <!-- Register Section (Right) -->
+            <div class="col-lg-5 register-section">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h1 class="register-title">Daftar Akun</h1>
+                        <p class="register-subtitle">Silakan lengkapi data diri Anda</p>
+                    </div>
                     
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label">NAMA LENGKAP</label>
+                            <label for="name" class="form-label">Nama</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" 
                                 id="name" name="name" value="{{ old('name') }}" required autofocus>
                             @error('name')
@@ -179,38 +195,38 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">EMAIL</label>
+                            <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                 id="email" name="email" value="{{ old('email') }}" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+        </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">KATA SANDI</label>
+                            <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                 id="password" name="password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+        </div>
 
                         <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">KONFIRMASI KATA SANDI</label>
+                            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                             <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
                                 id="password_confirmation" name="password_confirmation" required>
                         </div>
 
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary">DAFTAR</button>
-                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Daftar</button>
+        </div>
 
                         <div class="auth-links">
-                            <div class="text-muted">
+                            <span class="d-block">
                                 Sudah punya akun? 
                                 <a href="{{ route('login') }}">Login</a>
-                            </div>
+                            </span>
                         </div>
                     </form>
                 </div>

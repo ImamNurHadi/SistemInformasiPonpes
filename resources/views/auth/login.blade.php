@@ -43,7 +43,7 @@
             text-align: center;
         }
         .brand-title {
-            font-size: 3.5rem;
+            font-size: 5rem;
             font-weight: 700;
             color: white;
             margin: 0;
@@ -135,8 +135,7 @@
     <div class="container-fluid">
         <div class="row login-container">
             <div class="col-lg-7 content-section">
-                <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
-                <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
+                <h1 class="brand-title">Qinna Manajemen Sistem</h1>
             </div>
 
             <div class="col-lg-5 login-section">

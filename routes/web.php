@@ -12,6 +12,8 @@ use App\Http\Controllers\PengajarController;
 use App\Http\Controllers\PengurusController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\TopUpController;
+use App\Http\Controllers\CekSaldoController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -115,6 +117,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('koperasi', \App\Http\Controllers\KoperasiController::class);
     Route::resource('saldo', \App\Http\Controllers\SaldoController::class);
     Route::resource('tabungan', \App\Http\Controllers\TabunganController::class);
+
+    // Topup
+    Route::middleware(RoleMiddleware::class)->group(function () {
+        Route::get('/topup', [TopUpController::class, 'index'])->name('topup.index');
+        Route::post('/topup', [TopUpController::class, 'topup'])->name('topup.store');
+    });
+
+    // Cek Saldo
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/ceksaldo', [CekSaldoController::class, 'index'])->name('ceksaldo.index');
+    });
 });
 
 Route::middleware('auth')->group(function () {
