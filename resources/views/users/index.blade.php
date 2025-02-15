@@ -7,9 +7,11 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h2 class="m-0 font-weight-bold text-primary">Data User</h2>
+            @if(auth()->user()->isAdmin())
             <a href="{{ route('users.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Tambah User
             </a>
+            @endif
         </div>
         <div class="card-body">
             @if(session('success'))
@@ -26,7 +28,9 @@
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th>Aksi</th>
+                            @if(auth()->user()->isAdmin())
+                            <th class="text-center" style="width: 150px">Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -40,6 +44,7 @@
                                         {{ $user->role ? $user->role->name : 'Belum ada role' }}
                                     </span>
                                 </td>
+                                @if(auth()->user()->isAdmin())
                                 <td>
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm me-1">
@@ -55,6 +60,7 @@
                                         </form>
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

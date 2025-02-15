@@ -42,7 +42,7 @@
             }
 
             .sidebar-logo img {
-                max-width: 100px;
+                max-width: 150px;
                 height: auto;
                 margin-bottom: 1rem;
             }

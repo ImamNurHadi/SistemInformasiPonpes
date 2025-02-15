@@ -46,6 +46,7 @@
                                     <th class="text-center" style="width: 80px">No</th>
                                     <th>Nama Gedung</th>
                                     <th>Nama Kamar</th>
+                                    <th class="text-center">Jumlah Santri</th>
                                     @if(auth()->user()->isAdmin())
                                     <th class="text-center" style="width: 150px">Aksi</th>
                                     @endif
@@ -57,6 +58,7 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama_gedung }}</td>
                                     <td>{{ $item->nama_kamar }}</td>
+                                    <td class="text-center">{{ $item->santri_count }} Santri</td>
                                     @if(auth()->user()->isAdmin())
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
@@ -78,7 +80,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="{{ auth()->user()->isAdmin() ? '4' : '3' }}" class="text-center">
+                                    <td colspan="{{ auth()->user()->isAdmin() ? '5' : '4' }}" class="text-center">
                                         Tidak ada data kamar
                                     </td>
                                 </tr>

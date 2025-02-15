@@ -10,7 +10,10 @@ class KompleksKamarController extends Controller
 {
     public function index()
     {
-        $kompleks = MasterKompleks::orderBy('nama_gedung')->orderBy('nama_kamar')->get();
+        $kompleks = MasterKompleks::withCount('santri')
+            ->orderBy('nama_gedung')
+            ->orderBy('nama_kamar')
+            ->get();
         return view('kompleks-kamar.index', compact('kompleks'));
     }
 

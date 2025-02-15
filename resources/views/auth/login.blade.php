@@ -126,7 +126,7 @@
     <div class="container-fluid">
         <div class="row login-container">
             <div class="col-lg-7 content-section">
-                <h1 class="brand-title">Sistem Informasi Enterprise<br>Pondok Pesantren</h1>
+                <h1 class="brand-title">Qinna Manajemen Sistem<br>Pondok Pesantren</h1>
                 <p class="brand-subtitle">Sistem Informasi terintegrasi untuk mengatur proses operasional administrasi & transaksi</p>
             </div>
 
