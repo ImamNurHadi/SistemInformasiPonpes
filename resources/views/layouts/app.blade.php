@@ -85,6 +85,13 @@
                 overflow-x: hidden;
                 overflow-y: auto;
                 padding: 1rem;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* Internet Explorer dan Edge */
+            }
+
+            /* Untuk Webkit (Chrome, Safari, dll) */
+            .sidebar-sticky::-webkit-scrollbar {
+                display: none;
             }
 
             .nav-item {
@@ -375,12 +382,14 @@
                                 <li class="nav-item">
                                     <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">Profile</a>
                                 </li>
+                                @if(auth()->user()->isAdmin())
                                 <li class="nav-item">
                                     <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">Manajemen User</a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Manajemen Role</a>
                                 </li>
+                                @endif
                             </ul>
                         </div>
                     </li>
