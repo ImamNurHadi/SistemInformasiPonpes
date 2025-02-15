@@ -1,32 +1,70 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Data Pengurus & Divisi')
+@section('title', 'Edit Data Pengurus')
+
+@push('styles')
+<style>
+    .loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    .loading-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+</style>
+@endpush
 
 @section('content')
+<div class="loading">
+    <div class="loading-content">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Menyimpan Data...</div>
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Edit Data Pengurus & Divisi</h3>
-    </div>
-        <div class="card-body">
+                    <h2 class="card-title">Edit Data Pengurus</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Alert untuk error -->
+                    <div id="errorAlert" class="alert alert-danger" style="display: none;">
+                    </div>
+
                     <form action="{{ route('pengurus.update', $penguru->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+                        @csrf
+                        @method('PUT')
                         
+                        <!-- Data Pribadi Section -->
+                        <h4 class="mb-3">Data Pribadi</h4>
                         <div class="row">
                             <!-- Kolom Kiri -->
                             <div class="col-md-6">
-                <div class="mb-3">
+                                <div class="mb-3">
                                     <label for="nama" class="form-label">Nama Lengkap</label>
                                     <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama', $penguru->nama) }}" required>
-                    @error('nama')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                                    @error('nama')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                <div class="mb-3">
+                                <div class="mb-3">
                                     <label for="nik" class="form-label">NIK</label>
                                     <input type="text" class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik', $penguru->nik) }}" required>
                                     @error('nik')
@@ -91,7 +129,7 @@
                                     @enderror
                                 </div>
 
-                                <h5 class="mt-3">Alamat KK</h5>
+                                <h5 class="mt-4">Alamat KK</h5>
                                 <div class="mb-3">
                                     <label for="kelurahan_kk" class="form-label">Kelurahan</label>
                                     <input type="text" class="form-control @error('kelurahan_kk') is-invalid @enderror" id="kelurahan_kk" name="kelurahan_kk" value="{{ old('kelurahan_kk', $penguru->kelurahan_kk) }}" required>
@@ -118,46 +156,58 @@
                             </div>
                         </div>
 
-                        <div class="row mt-4">
+                        <!-- Divisi Section -->
+                        <h4 class="mb-3 mt-4">Divisi</h4>
+                        <div class="row">
                             <div class="col-md-6">
-                                <h5>Data Divisi</h5>
                                 <div class="mb-3">
                                     <label for="divisi_id" class="form-label">Divisi</label>
-                                    <select class="form-select @error('divisi_id') is-invalid @enderror" id="divisi_id" name="divisi_id" required>
+                                    <select class="form-select @error('divisi_id') is-invalid @enderror" id="divisi_id" name="divisi_id">
                                         <option value="">Pilih Divisi</option>
                                         @foreach($divisis as $divisi)
-                                            <option value="{{ $divisi->id }}" 
-                                                    data-sub-divisi="{{ $divisi->sub_divisi }}"
-                                                    {{ old('divisi_id', $penguru->divisi_id) == $divisi->id ? 'selected' : '' }}>
+                                            <option value="{{ $divisi->id }}" {{ old('divisi_id', $penguru->divisi_id) == $divisi->id ? 'selected' : '' }}>
                                                 {{ $divisi->nama }}
                                             </option>
                                         @endforeach
                                     </select>
                                     @error('divisi_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                <div class="mb-3">
-                    <label for="sub_divisi" class="form-label">Sub Divisi</label>
-                                    <select class="form-select @error('sub_divisi') is-invalid @enderror" id="sub_divisi" name="sub_divisi">
-                                        <option value="">Pilih Sub Divisi</option>
+                                <div class="mb-3">
+                                    <label for="sub_divisi" class="form-label">Sub Divisi</label>
+                                    <input type="text" class="form-control @error('sub_divisi') is-invalid @enderror" id="sub_divisi" name="sub_divisi" value="{{ old('sub_divisi', $penguru->sub_divisi) }}">
+                                    @error('sub_divisi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="jabatan" class="form-label">Jabatan</label>
+                                    <select class="form-select @error('jabatan') is-invalid @enderror" id="jabatan" name="jabatan" required>
+                                        <option value="">Pilih Jabatan</option>
+                                        <option value="Ketua" {{ old('jabatan', $penguru->jabatan) == 'Ketua' ? 'selected' : '' }}>Ketua</option>
+                                        <option value="Wakil Ketua" {{ old('jabatan', $penguru->jabatan) == 'Wakil Ketua' ? 'selected' : '' }}>Wakil Ketua</option>
+                                        <option value="Sekretaris" {{ old('jabatan', $penguru->jabatan) == 'Sekretaris' ? 'selected' : '' }}>Sekretaris</option>
+                                        <option value="Bendahara" {{ old('jabatan', $penguru->jabatan) == 'Bendahara' ? 'selected' : '' }}>Bendahara</option>
+                                        <option value="Anggota" {{ old('jabatan', $penguru->jabatan) == 'Anggota' ? 'selected' : '' }}>Anggota</option>
                                     </select>
-                    @error('sub_divisi')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                                    @error('jabatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
-                </div>
+                        </div>
 
                         <div class="d-flex justify-content-between mt-3">
+                            <a href="{{ route('pengurus.index') }}" class="btn btn-secondary">Kembali</a>
                             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                    <a href="{{ route('pengurus.index') }}" class="btn btn-secondary">Kembali</a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 
@@ -165,36 +215,19 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const divisiSelect = document.getElementById('divisi_id');
-    const subDivisiSelect = document.getElementById('sub_divisi');
+    const subDivisiInput = document.getElementById('sub_divisi');
     const currentSubDivisi = "{{ old('sub_divisi', $penguru->sub_divisi) }}";
     
     function updateSubDivisi() {
         const selectedOption = divisiSelect.options[divisiSelect.selectedIndex];
-        const subDivisiData = selectedOption.getAttribute('data-sub-divisi');
-        
-        // Reset dan disable sub divisi select
-        subDivisiSelect.innerHTML = '<option value="">Pilih Sub Divisi</option>';
-        subDivisiSelect.disabled = true;
-        
-        if (subDivisiData) {
-            // Populate sub divisi options
-            const subDivisis = subDivisiData.split(',');
-            subDivisis.forEach(subDivisi => {
-                const option = document.createElement('option');
-                option.value = subDivisi.trim();
-                option.textContent = subDivisi.trim();
-                if (currentSubDivisi === subDivisi.trim()) {
-                    option.selected = true;
-                }
-                subDivisiSelect.appendChild(option);
-            });
-            subDivisiSelect.disabled = false;
+        if (selectedOption.value) {
+            subDivisiInput.value = currentSubDivisi;
+        } else {
+            subDivisiInput.value = '';
         }
     }
 
     divisiSelect.addEventListener('change', updateSubDivisi);
-    
-    // Initialize sub divisi select on page load
     updateSubDivisi();
 });
 </script>

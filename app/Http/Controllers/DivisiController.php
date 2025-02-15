@@ -32,12 +32,23 @@ class DivisiController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'sub_divisi' => 'nullable|string|max:255',
+            'deskripsi' => 'nullable|string'
         ]);
 
-        Divisi::create($request->all());
+        try {
+            $divisi = Divisi::create([
+                'nama' => $request->nama,
+                'sub_divisi' => $request->sub_divisi,
+                'deskripsi' => $request->deskripsi
+            ]);
 
-        return redirect()->route('divisi.index')
-            ->with('success', 'Divisi berhasil ditambahkan!');
+            return redirect()->route('divisi.index')
+                ->with('success', 'Divisi berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -14,6 +14,16 @@ return new class extends Migration
         Schema::create('pengurus', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
+            $table->string('nik', 20)->unique();
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->string('telepon', 15);
+            $table->string('kelurahan_domisili');
+            $table->string('kecamatan_domisili');
+            $table->string('kota_domisili');
+            $table->string('kelurahan_kk');
+            $table->string('kecamatan_kk');
+            $table->string('kota_kk');
             $table->string('jabatan');
             $table->string('sub_divisi')->nullable();
             $table->uuid('divisi_id')->nullable();
