@@ -471,6 +471,27 @@
                             </ul>
                         </div>
                     </li>
+
+                    @if(auth()->user()->isKantin())
+                    <!-- Menu Kantin -->
+                    <li class="nav-item">
+                        <a href="#kantinSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('menu.*') || request()->routeIs('stok.*') ? 'active' : '' }}">
+                            <i class="bi bi-shop me-2"></i>
+                            Kantin
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('menu.*') || request()->routeIs('stok.*') ? 'show' : '' }}" id="kantinSubmenu">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('menu.index') }}" class="nav-link {{ request()->routeIs('menu.*') ? 'active' : '' }}">Daftar Menu</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('menu.create') }}" class="nav-link {{ request()->routeIs('menu.create') ? 'active' : '' }}">Tambah Menu</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
                 </ul>
             </div>
 

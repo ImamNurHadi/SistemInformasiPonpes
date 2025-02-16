@@ -14,6 +14,8 @@ use App\Http\Controllers\DivisiController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\TopUpController;
 use App\Http\Controllers\CekSaldoController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\KeranjangController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -128,6 +130,14 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/ceksaldo', [CekSaldoController::class, 'index'])->name('ceksaldo.index');
     });
+
+    // Menu Kantin (Outlet Only)
+    Route::middleware(['auth', \App\Http\Middleware\IsKantin::class])->group(function () {
+        Route::resource('menu', MenuController::class);
+        Route::put('/menu/{menu}/stok', [MenuController::class, 'updateStok'])->name('menu.update-stok');
+    });
+
+
 });
 
 Route::middleware('auth')->group(function () {

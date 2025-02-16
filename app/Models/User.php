@@ -52,4 +52,14 @@ class User extends Authenticatable
     {
         return $this->role && $this->role->name === 'Admin';
     }
+
+    public function isKantin()
+    {
+        return $this->role && $this->role->name === 'Outlet';
+    }
+
+    public function keranjang()
+    {
+        return $this->hasMany(Keranjang::class);
+    }
 }

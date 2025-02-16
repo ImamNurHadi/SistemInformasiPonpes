@@ -22,6 +22,10 @@ class RoleSeeder extends Seeder
                 'name' => 'Santri',
                 'description' => 'Memiliki akses terbatas ke fitur untuk santri'
             ],
+            [
+                'name' => 'Outlet',
+                'description' => 'Memiliki akses ke fitur kantin'
+            ],
         ];
 
         foreach ($roles as $role) {
