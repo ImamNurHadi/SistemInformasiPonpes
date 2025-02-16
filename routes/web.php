@@ -16,6 +16,7 @@ use App\Http\Controllers\TopUpController;
 use App\Http\Controllers\CekSaldoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\HistoriSaldoController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -115,10 +116,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kamar/by-kompleks/{kompleksId}', [SantriController::class, 'getKamarByKompleks'])
         ->name('kamar.by-kompleks');
 
-    // Koperasi, Saldo, Tabungan
-    Route::resource('koperasi', \App\Http\Controllers\KoperasiController::class);
+    // Koperasi - View only untuk semua user
+    Route::get('/koperasi', [\App\Http\Controllers\KoperasiController::class, 'index'])->name('koperasi.index');
+    Route::get('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'show'])->name('koperasi.show');
+    
+    // Koperasi - Modify only untuk admin
+    Route::middleware(RoleMiddleware::class)->group(function () {
+        Route::get('/koperasi/create', [\App\Http\Controllers\KoperasiController::class, 'create'])->name('koperasi.create');
+        Route::post('/koperasi', [\App\Http\Controllers\KoperasiController::class, 'store'])->name('koperasi.store');
+        Route::get('/koperasi/{koperasi}/edit', [\App\Http\Controllers\KoperasiController::class, 'edit'])->name('koperasi.edit');
+        Route::put('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'update'])->name('koperasi.update');
+        Route::delete('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'destroy'])->name('koperasi.destroy');
+    });
+
+    // Saldo, Tabungan
     Route::resource('saldo', \App\Http\Controllers\SaldoController::class);
     Route::resource('tabungan', \App\Http\Controllers\TabunganController::class);
+
+    // Histori Saldo
+    Route::get('/histori-saldo', [\App\Http\Controllers\HistoriSaldoController::class, 'index'])->name('histori-saldo.index');
 
     // Topup
     Route::middleware(RoleMiddleware::class)->group(function () {

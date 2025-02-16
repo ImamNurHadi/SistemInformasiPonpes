@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Santri;
+use App\Models\HistoriSaldo;
 use Illuminate\Http\Request;
 
 class TopUpController extends Controller
@@ -23,6 +24,14 @@ class TopUpController extends Controller
         $santri = Santri::findOrFail($request->santri_id);
         $santri->saldo += $request->jumlah;
         $santri->save();
+
+        // Catat histori top up
+        HistoriSaldo::create([
+            'santri_id' => $santri->id,
+            'jumlah' => $request->jumlah,
+            'keterangan' => 'Top Up Saldo',
+            'tipe' => 'masuk'
+        ]);
 
         return redirect()->route('topup.index')->with('success', 'Saldo berhasil ditambahkan');
     }

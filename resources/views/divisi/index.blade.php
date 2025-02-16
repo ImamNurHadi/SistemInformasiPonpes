@@ -26,7 +26,7 @@
                         <tr>
                             <th class="text-center" style="width: 80px">No</th>
                             <th>Nama Divisi</th>
-                            <th>Deskripsi</th>
+                            <th>Sub Divisi</th>
                             @if(auth()->user()->isAdmin())
                             <th class="text-center" style="width: 150px">Aksi</th>
                             @endif
@@ -37,7 +37,15 @@
                             <tr>
                                 <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>{{ $divisi->nama }}</td>
-                                <td>{{ $divisi->deskripsi }}</td>
+                                <td>
+                                    @if($divisi->sub_divisi)
+                                        @foreach(explode(',', $divisi->sub_divisi) as $subDivisi)
+                                            <span class="badge bg-info me-1">{{ trim($subDivisi) }}</span>
+                                        @endforeach
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 @if(auth()->user()->isAdmin())
                                 <td class="text-center">
                                     <div class="btn-group" role="group">

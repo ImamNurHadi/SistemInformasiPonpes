@@ -448,11 +448,11 @@
                                     <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
+                                    <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
                                         Saldo
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'show' : '' }}" id="saldoSubmenu">
+                                    <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') ? 'show' : '' }}" id="saldoSubmenu">
                                         <ul class="nav flex-column submenu">
                                             @if(auth()->user()->isAdmin())
                                             <li class="nav-item">
@@ -461,6 +461,9 @@
                                             @endif
                                             <li class="nav-item">
                                                 <a href="{{ route('ceksaldo.index') }}" class="nav-link {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">Cek Saldo</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('histori-saldo.index') }}" class="nav-link {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">Histori Saldo</a>
                                             </li>
                                         </ul>
                                     </div>
