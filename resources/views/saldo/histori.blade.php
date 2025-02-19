@@ -11,12 +11,18 @@
                     <h3 class="card-title">Histori Saldo</h3>
                 </div>
                 <div class="card-body">
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    @if(auth()->user()->isAdmin())
+                                    @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
                                     <th>NIS</th>
                                     <th>Nama Santri</th>
                                     @endif
@@ -30,7 +36,7 @@
                                 @forelse($historiSaldo as $index => $histori)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    @if(auth()->user()->isAdmin())
+                                    @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
                                     <td>{{ $histori->santri->nis }}</td>
                                     <td>{{ $histori->santri->nama }}</td>
                                     @endif
@@ -45,8 +51,12 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="{{ auth()->user()->isAdmin() ? '7' : '4' }}" class="text-center">
-                                        Tidak ada data histori saldo
+                                    <td colspan="{{ auth()->user()->isAdmin() || auth()->user()->isOperator() ? '7' : '5' }}" class="text-center">
+                                        @if(!auth()->user()->isAdmin() && !auth()->user()->isOperator() && !auth()->user()->santri)
+                                            Anda tidak memiliki akses ke data histori saldo
+                                        @else
+                                            Tidak ada data histori saldo
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforelse

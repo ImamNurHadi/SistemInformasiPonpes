@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
         $roles = [
             [
                 'name' => 'Admin',
-                'description' => 'Memiliki akses penuh ke sistem'
+                'description' => 'Memiliki akses penuh ke sistem kecuali top up saldo'
             ],
             [
                 'name' => 'Pengurus',
@@ -22,6 +22,10 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Outlet',
                 'description' => 'Memiliki akses ke manajemen kantin'
+            ],
+            [
+                'name' => 'Operator',
+                'description' => 'Memiliki akses khusus untuk top up saldo'
             ]
         ];
 

@@ -342,6 +342,72 @@
             .sidebar-nav .nav-link:hover i {
                 color: white;
             }
+
+            /* Styling untuk menu Saldo */
+            .nav-link.main-menu {
+                padding: 0.8rem 1rem;
+                color: rgba(255, 255, 255, 0.95);
+                transition: all 0.3s ease;
+            }
+            
+            .nav-link.main-menu:hover,
+            .nav-link.main-menu[aria-expanded="true"] {
+                background: #058B42;
+                color: white;
+            }
+
+            .nav-link.main-menu .bi-chevron-down {
+                transition: transform 0.3s ease;
+            }
+
+            .nav-link.main-menu[aria-expanded="true"] .bi-chevron-down {
+                transform: rotate(180deg);
+            }
+
+            /* Styling untuk submenu */
+            .submenu {
+                padding-left: 1rem;
+                background: transparent;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .submenu .nav-link {
+                padding: 0.7rem 1rem;
+                color: rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+                border-radius: 0.375rem;
+                margin: 0.2rem 0;
+            }
+
+            .submenu .nav-link:hover {
+                background: #058B42;
+                color: white;
+                padding-left: 1.25rem;
+            }
+
+            .submenu .nav-link.active {
+                background: #058B42;
+                color: white;
+                font-weight: 500;
+            }
+
+            /* Memastikan lebar submenu sesuai */
+            .submenu .nav-item {
+                min-width: 200px;
+            }
+
+            /* Memastikan ikon selalu putih */
+            .nav-link i,
+            .submenu .nav-link i {
+                color: rgba(255, 255, 255, 0.95);
+            }
+
+            .nav-link:hover i,
+            .submenu .nav-link:hover i,
+            .nav-link.active i,
+            .submenu .nav-link.active i {
+                color: white;
+            }
         </style>
         @stack('styles')
     </head>
@@ -451,22 +517,36 @@
                                     <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
-                                        Saldo
-                                        <i class="bi bi-chevron-down float-end"></i>
+                                    <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#saldoMenu" role="button" 
+                                        aria-expanded="{{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('topup.*') ? 'true' : 'false' }}" 
+                                        aria-controls="saldoMenu">
+                                        <div>
+                                            <i class="bi bi-wallet2 me-2"></i>
+                                            <span>Saldo</span>
+                                        </div>
+                                        <i class="bi bi-chevron-down"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') ? 'show' : '' }}" id="saldoSubmenu">
-                                        <ul class="nav flex-column submenu">
-                                            @if(auth()->user()->isAdmin())
-                                            <li class="nav-item">
-                                                <a href="{{ route('topup.index') }}" class="nav-link {{ request()->routeIs('topup.*') ? 'active' : '' }}">Top Up Saldo</a>
+                                    <div class="collapse {{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('topup.*') ? 'show' : '' }}" id="saldoMenu">
+                                        <ul class="nav submenu">
+                                            <li class="nav-item w-100">
+                                                <a href="{{ route('ceksaldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
+                                                    <i class="bi bi-cash me-2"></i>
+                                                    <span>Cek Saldo</span>
+                                                </a>
+                                            </li>
+                                            @if(auth()->user()->isOperator())
+                                            <li class="nav-item w-100">
+                                                <a href="{{ route('topup.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('topup.*') ? 'active' : '' }}">
+                                                    <i class="bi bi-cash-coin me-2"></i>
+                                                    <span>Top Up Saldo</span>
+                                                </a>
                                             </li>
                                             @endif
-                                            <li class="nav-item">
-                                                <a href="{{ route('ceksaldo.index') }}" class="nav-link {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">Cek Saldo</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="{{ route('histori-saldo.index') }}" class="nav-link {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">Histori Saldo</a>
+                                            <li class="nav-item w-100">
+                                                <a href="{{ route('histori-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
+                                                    <i class="bi bi-clock-history me-2"></i>
+                                                    <span>Histori Saldo</span>
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>

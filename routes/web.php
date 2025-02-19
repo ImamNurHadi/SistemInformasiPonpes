@@ -138,8 +138,8 @@ Route::middleware(['auth'])->group(function () {
     // Histori Saldo
     Route::get('/histori-saldo', [\App\Http\Controllers\HistoriSaldoController::class, 'index'])->name('histori-saldo.index');
 
-    // Topup
-    Route::middleware(RoleMiddleware::class)->group(function () {
+    // Topup - Only for Operator
+    Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::get('/topup', [TopUpController::class, 'index'])->name('topup.index');
         Route::post('/topup', [TopUpController::class, 'topup'])->name('topup.store');
     });

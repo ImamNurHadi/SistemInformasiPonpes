@@ -11,19 +11,22 @@ class HistoriSaldoController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->isAdmin()) {
+        $user = Auth::user();
+        $historiSaldo = [];
+
+        if ($user->isAdmin() || $user->isOperator()) {
+            // Admin dan Operator bisa lihat semua histori
             $historiSaldo = HistoriSaldo::with('santri')
                 ->orderBy('created_at', 'desc')
                 ->get();
         } else {
-            $santri = Santri::where('user_id', Auth::id())->first();
-            if (!$santri) {
-                return redirect()->back()->with('error', 'Data santri tidak ditemukan');
+            // Cek apakah user adalah santri
+            $santri = Santri::where('user_id', $user->id)->first();
+            if ($santri) {
+                $historiSaldo = HistoriSaldo::where('santri_id', $santri->id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
             }
-            
-            $historiSaldo = HistoriSaldo::where('santri_id', $santri->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
         }
 
         return view('saldo.histori', compact('historiSaldo'));
