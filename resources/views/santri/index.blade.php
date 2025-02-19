@@ -28,7 +28,8 @@
                             <th>NIS</th>
                             <th>Nama</th>
                             <th>Tingkatan</th>
-                            <th>Kompleks</th>
+                            <th>Gedung</th>
+                            <th>Kamar</th>
                             @if(auth()->user()->isAdmin())
                             <th class="text-center" style="width: 150px">Aksi</th>
                             @endif
@@ -40,8 +41,9 @@
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $item->nis }}</td>
                             <td>{{ $item->nama }}</td>
-                            <td>{{ optional($item->tingkatanSaatIni)->nama }}</td>
-                            <td>{{ optional($item->kompleks)->nama_gedung }} - {{ optional($item->kompleks)->nama_kamar }}</td>
+                            <td>{{ optional($item->tingkatan)->nama }}</td>
+                            <td>{{ optional($item->gedung)->nama_gedung }}</td>
+                            <td>{{ optional($item->kamar)->nama_kamar }}</td>
                             @if(auth()->user()->isAdmin())
                             <td class="text-center">
                                 <div class="btn-group" role="group">

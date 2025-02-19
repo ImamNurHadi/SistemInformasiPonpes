@@ -153,20 +153,36 @@
             <h5 class="section-title">Data Penempatan Santri</h5>
             
             <div class="row">
-                <!-- Dropdown Gedung/Kamar -->
-                <div class="col-md-6 mb-3">
-                    <label for="kompleks_id" class="form-label">Gedung/Kamar</label>
-                    <select class="form-control @error('kompleks_id') is-invalid @enderror" 
-                        id="kompleks_id" name="kompleks_id" required>
-                        <option value="">Pilih Gedung/Kamar</option>
-                        @foreach($kompleks as $k)
-                            <option value="{{ $k->id }}" 
-                                {{ old('kompleks_id', $santri->kompleks_id) == $k->id ? 'selected' : '' }}>
-                                {{ $k->nama_gedung }} - {{ $k->nama_kamar }}
+                <div class="col-md-4 mb-3">
+                    <label for="gedung_id" class="form-label">Gedung</label>
+                    <select class="form-control @error('gedung_id') is-invalid @enderror" 
+                        id="gedung_id" name="gedung_id" required>
+                        <option value="">Pilih Gedung</option>
+                        @foreach($gedung as $g)
+                            <option value="{{ $g->id }}" 
+                                {{ old('gedung_id', $santri->gedung_id) == $g->id ? 'selected' : '' }}>
+                                {{ $g->nama_gedung }}
                             </option>
                         @endforeach
                     </select>
-                    @error('kompleks_id')
+                    @error('gedung_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="kamar_id" class="form-label">Kamar</label>
+                    <select class="form-control @error('kamar_id') is-invalid @enderror" 
+                        id="kamar_id" name="kamar_id" required>
+                        <option value="">Pilih Kamar</option>
+                        @foreach($kamar as $k)
+                            <option value="{{ $k->id }}" 
+                                {{ old('kamar_id', $santri->kamar_id) == $k->id ? 'selected' : '' }}>
+                                {{ $k->nama_kamar }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kamar_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -372,19 +388,49 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        // Inisialisasi select2 untuk dropdown tingkatan
-        $('#tingkatan_id').select2({
+        // Initialize select2
+        $('#gedung_id').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Pilih Tingkatan',
+            placeholder: 'Pilih Gedung',
             allowClear: true
         });
 
-        // Inisialisasi select2 untuk dropdown kompleks
-        $('#kompleks_id').select2({
+        $('#kamar_id').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Pilih Gedung/Kamar',
+            placeholder: 'Pilih Kamar',
             allowClear: true
         });
+
+        // Handle gedung change
+        $('#gedung_id').on('change', function() {
+            var gedungId = $(this).val();
+            var kamarSelect = $('#kamar_id');
+            
+            // Reset kamar dropdown
+            kamarSelect.empty().append('<option value="">Pilih Kamar</option>');
+            
+            if (gedungId) {
+                // Fetch kamar based on gedung
+                $.ajax({
+                    url: '/api/kamar/' + gedungId,
+                    type: 'GET',
+                    success: function(data) {
+                        data.forEach(function(kamar) {
+                            kamarSelect.append(new Option(kamar.nama_kamar, kamar.id));
+                        });
+                        // If editing, set the previously selected kamar
+                        @if(old('kamar_id', $santri->kamar_id))
+                            kamarSelect.val('{{ old('kamar_id', $santri->kamar_id) }}').trigger('change');
+                        @endif
+                    }
+                });
+            }
+        });
+
+        // Trigger gedung change on page load if gedung is selected
+        if ($('#gedung_id').val()) {
+            $('#gedung_id').trigger('change');
+        }
     });
 </script>
 @endpush 

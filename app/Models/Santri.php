@@ -13,55 +13,55 @@ class Santri extends Model
     protected $table = 'santri';
 
     protected $fillable = [
-        'user_id',
         'nis',
         'nama',
         'tempat_lahir',
         'tanggal_lahir',
-        'anak_ke',
-        'jumlah_saudara_kandung',
+        'jenis_kelamin',
+        'alamat',
         'kelurahan',
         'kecamatan',
         'kabupaten_kota',
-        'nomor_induk_santri',
-        'tingkatan_masuk',
+        'nama_ayah',
+        'nama_ibu',
+        'no_hp',
+        'foto',
         'tingkatan_id',
-        'kompleks_id',
-        'kamar_id'
+        'tingkatan_masuk',
+        'gedung_id',
+        'kamar_id',
+        'anak_ke',
+        'jumlah_saudara_kandung'
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
+        'saldo' => 'decimal:2'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function tingkatan()
     {
-        return $this->belongsTo(MasterTingkatan::class, 'tingkatan_masuk');
+        return $this->belongsTo(MasterTingkatan::class, 'tingkatan_id');
     }
 
-    public function tingkatanSaatIni()
+    public function gedung()
     {
-        return $this->belongsTo(MasterTingkatan::class, 'tingkatan_id');
+        return $this->belongsTo(Gedung::class, 'gedung_id');
+    }
+
+    public function kamar()
+    {
+        return $this->belongsTo(Kamar::class, 'kamar_id');
+    }
+
+    public function historiSaldo()
+    {
+        return $this->hasMany(HistoriSaldo::class);
     }
 
     public function waliSantri()
     {
         return $this->hasOne(WaliSantri::class);
-    }
-
-    public function kamar()
-    {
-        return $this->belongsTo(Kamar::class);
-    }
-
-    public function kompleks()
-    {
-        return $this->belongsTo(MasterKompleks::class, 'kompleks_id');
     }
 
     public function kelasWali()

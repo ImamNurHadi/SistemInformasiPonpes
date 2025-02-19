@@ -37,14 +37,14 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Set role Santri secara default
-        $santriRole = Role::where('name', 'Santri')->first();
+        // Set role Pengurus secara default
+        $pengurusRole = Role::where('name', 'Pengurus')->first();
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $santriRole->id
+            'role_id' => $pengurusRole->id
         ]);
 
         event(new Registered($user));

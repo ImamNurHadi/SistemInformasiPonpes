@@ -420,7 +420,10 @@
                                                 <a href="{{ route('tingkatan.index') }}" class="nav-link {{ request()->routeIs('tingkatan.*') ? 'active' : '' }}">Tingkatan</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Kamar</a>
+                                                <a href="{{ route('kamar.index') }}" class="nav-link {{ request()->routeIs('kamar.*') ? 'active' : '' }}">Kamar</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('gedung.index') }}" class="nav-link {{ request()->routeIs('gedung.*') ? 'active' : '' }}">Gedung</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -711,7 +714,7 @@
 
                     // Definisi struktur menu
                     const menuStructure = {
-                        'santri': ['tingkatan', 'kompleks-kamar'],
+                        'santri': ['tingkatan', 'kamar', 'gedung'],
                         'pengurus': [],
                         'pengajar': [],
                         'divisi': [],
@@ -734,8 +737,8 @@
                         saveMenuState('masterDataSubmenu', true);
                         saveMenuState('santriSubmenu', true);
 
-                        // Khusus untuk tingkatan dan kompleks-kamar
-                        if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                        // Khusus untuk tingkatan dan kamar
+                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
                             // Pastikan parent menu tetap terbuka
                             $('#masterDataSubmenu').addClass('show');
                             $('#santriSubmenu').addClass('show');
@@ -757,7 +760,7 @@
                             $(this).addClass('active');
                             
                             // Jika ini adalah link tingkatan atau kamar, cegah collapse
-                            if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                            if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
                                 $(this).on('click', function(e) {
                                     e.stopPropagation();
                                 });
@@ -777,7 +780,7 @@
                         const routeBase = currentRoute.split('.')[0];
                         
                         // Jika sedang di halaman tingkatan atau kamar, cegah collapse
-                        if (routeBase === 'tingkatan' || routeBase === 'kompleks-kamar') {
+                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
                             e.preventDefault();
                             e.stopPropagation();
                             return false;

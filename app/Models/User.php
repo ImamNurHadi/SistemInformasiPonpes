@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->role && $this->role->name === 'Outlet';
     }
 
+    public function isPengurus()
+    {
+        return $this->role && $this->role->name === 'Pengurus';
+    }
+
     public function keranjang()
     {
         return $this->hasMany(Keranjang::class);

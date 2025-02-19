@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_kompleks', function (Blueprint $table) {
+        Schema::create('kamar', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama_gedung', 255);
-            $table->string('nama_kamar', 255);
+            $table->string('nama_kamar');
+            $table->uuid('gedung_id');
             $table->timestamps();
-            
-            // Membuat unique constraint untuk kombinasi nama_gedung dan nama_kamar
-            $table->unique(['nama_gedung', 'nama_kamar']);
+
+            $table->foreign('gedung_id')
+                  ->references('id')
+                  ->on('gedung')
+                  ->onDelete('cascade');
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_kompleks');
+        Schema::dropIfExists('kamar');
     }
-}; 
+};

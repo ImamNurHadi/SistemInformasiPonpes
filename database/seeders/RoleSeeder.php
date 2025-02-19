@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -12,24 +13,23 @@ class RoleSeeder extends Seeder
         $roles = [
             [
                 'name' => 'Admin',
-                'description' => 'Memiliki akses ke fitur administratif'
+                'description' => 'Memiliki akses penuh ke sistem'
             ],
             [
                 'name' => 'Pengurus',
-                'description' => 'Memiliki akses ke fitur pengelolaan santri dan kamar'
-            ],
-            [
-                'name' => 'Santri',
-                'description' => 'Memiliki akses terbatas ke fitur untuk santri'
+                'description' => 'Memiliki akses view-only ke sistem'
             ],
             [
                 'name' => 'Outlet',
-                'description' => 'Memiliki akses ke fitur kantin'
-            ],
+                'description' => 'Memiliki akses ke manajemen kantin'
+            ]
         ];
 
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                $role
+            );
         }
     }
 } 

@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('santri', function (Blueprint $table) {
-            $table->decimal('saldo', 10, 2)->default(0);
+        Schema::create('gedung', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('nama_gedung');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('santri', function (Blueprint $table) {
-            $table->dropColumn('saldo');
-        });
+        Schema::dropIfExists('gedung');
     }
 };

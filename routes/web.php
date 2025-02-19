@@ -17,6 +17,8 @@ use App\Http\Controllers\CekSaldoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\HistoriSaldoController;
+use App\Http\Controllers\GedungController;
+use App\Http\Controllers\KamarController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -153,6 +155,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/menu/{menu}/stok', [MenuController::class, 'updateStok'])->name('menu.update-stok');
     });
 
+    // Route untuk Kamar dan Gedung
+    Route::resource('kamar', KamarController::class);
+    Route::resource('gedung', GedungController::class);
+    Route::get('/kamar/gedung/{gedung_id}', [KamarController::class, 'getByGedung'])->name('kamar.by-gedung');
 
 });
 

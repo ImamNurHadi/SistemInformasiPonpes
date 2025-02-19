@@ -5,6 +5,8 @@
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
 <style>
     .form-section {
         background: white;
@@ -43,7 +45,14 @@
     .datepicker {
         z-index: 1600 !important; /* Memastikan datepicker muncul di atas elemen lain */
     }
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: 38px;
+    }
 </style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endpush
 
 @section('content')
@@ -52,8 +61,24 @@
         <h1 class="h3 mb-0 text-gray-800">Tambah Santri</h1>
     </div>
 
-    <form action="{{ route('santri.store') }}" method="POST">
+    <form action="{{ route('santri.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         
         <!-- Data Pribadi -->
         <div class="form-section">
@@ -70,12 +95,12 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="nomor_induk_santri" class="form-label">Nomor Induk Santri (NIS)</label>
-                    <input type="text" class="form-control @error('nomor_induk_santri') is-invalid @enderror" 
-                        id="nomor_induk_santri" name="nomor_induk_santri" 
-                        value="{{ old('nomor_induk_santri') }}" 
+                    <label for="nis" class="form-label">Nomor Induk Santri (NIS)</label>
+                    <input type="text" class="form-control @error('nis') is-invalid @enderror" 
+                        id="nis" name="nis" 
+                        value="{{ old('nis') }}" 
                         placeholder="Masukkan Nomor Induk Santri" required>
-                    @error('nomor_induk_santri')
+                    @error('nis')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -93,9 +118,21 @@
                 <div class="col-md-6 mb-3">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
                     <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" 
-                        required>
+                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required>
                     @error('tanggal_lahir')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                    <select class="form-control @error('jenis_kelamin') is-invalid @enderror" 
+                        id="jenis_kelamin" name="jenis_kelamin" required>
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                    @error('jenis_kelamin')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -160,8 +197,8 @@
                     @enderror
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="tingkatan_id" class="form-label">Tingkatan Saat Ini</label>
+                <div class="col-md-4 mb-3">
+                    <label for="tingkatan_id" class="form-label">Tingkatan</label>
                     <select class="form-control @error('tingkatan_id') is-invalid @enderror" 
                         id="tingkatan_id" name="tingkatan_id" required>
                         <option value="">Pilih Tingkatan</option>
@@ -175,6 +212,36 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="no_hp" class="form-label">Nomor HP</label>
+                    <input type="text" class="form-control @error('no_hp') is-invalid @enderror" 
+                        id="no_hp" name="no_hp" value="{{ old('no_hp') }}" 
+                        placeholder="Masukkan Nomor HP" required>
+                    @error('no_hp')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="nama_ayah" class="form-label">Nama Ayah</label>
+                    <input type="text" class="form-control @error('nama_ayah') is-invalid @enderror" 
+                        id="nama_ayah" name="nama_ayah" value="{{ old('nama_ayah') }}" 
+                        placeholder="Masukkan Nama Ayah" required>
+                    @error('nama_ayah')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="nama_ibu" class="form-label">Nama Ibu</label>
+                    <input type="text" class="form-control @error('nama_ibu') is-invalid @enderror" 
+                        id="nama_ibu" name="nama_ibu" value="{{ old('nama_ibu') }}" 
+                        placeholder="Masukkan Nama Ibu" required>
+                    @error('nama_ibu')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
         </div>
 
@@ -183,28 +250,43 @@
             <h5 class="section-title">Data Penempatan Santri</h5>
             
             <div class="row">
-                <!-- Dropdown Gedung/Kamar -->
-                <div class="col-md-6 mb-3">
-                    <label for="kompleks_id" class="form-label">Gedung/Kamar</label>
-                    <select class="form-control @error('kompleks_id') is-invalid @enderror" 
-                        id="kompleks_id" name="kompleks_id" required>
-                        <option value="">Pilih Gedung/Kamar</option>
-                        @foreach($kompleks as $k)
-                            <option value="{{ $k->id }}" {{ old('kompleks_id') == $k->id ? 'selected' : '' }}>
-                                {{ $k->nama_gedung }} - {{ $k->nama_kamar }}
+                <div class="col-md-4 mb-3">
+                    <label for="gedung_id" class="form-label">Gedung</label>
+                    <select class="form-control @error('gedung_id') is-invalid @enderror" 
+                        id="gedung_id" name="gedung_id" required>
+                        <option value="">Pilih Gedung</option>
+                        @foreach($gedung as $g)
+                            <option value="{{ $g->id }}" {{ old('gedung_id') == $g->id ? 'selected' : '' }}>
+                                {{ $g->nama_gedung }}
                             </option>
                         @endforeach
                     </select>
-                    @error('kompleks_id')
+                    @error('gedung_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="kamar_id" class="form-label">Kamar</label>
+                    <select class="form-control @error('kamar_id') is-invalid @enderror" 
+                        id="kamar_id" name="kamar_id" required>
+                        <option value="">Pilih Kamar</option>
+                        @foreach($kamar as $k)
+                            <option value="{{ $k->id }}" {{ old('kamar_id') == $k->id ? 'selected' : '' }}>
+                                {{ $k->nama_kamar }} ({{ $k->gedung->nama_gedung }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kamar_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
         </div>
 
-        <!-- Data Mahram/Wali Santri -->
+        <!-- Data Wali Santri -->
         <div class="form-section">
-            <h5 class="section-title">Data Mahram/Wali Santri</h5>
+            <h5 class="section-title">Data Wali Santri</h5>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="nama_wali" class="form-label">Nama Wali</label>
@@ -231,21 +313,11 @@
                     <h6 class="mt-3 mb-3">Data Ayah</h6>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="nama_ayah" class="form-label">Nama Ayah</label>
-                    <input type="text" class="form-control @error('nama_ayah') is-invalid @enderror" 
-                        id="nama_ayah" name="nama_ayah" value="{{ old('nama_ayah') }}" 
-                        placeholder="Masukkan Nama Ayah" required>
-                    @error('nama_ayah')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
                 <div class="col-md-12 mb-3">
                     <label for="alamat_kk_ayah" class="form-label">Alamat KK Ayah</label>
                     <textarea class="form-control @error('alamat_kk_ayah') is-invalid @enderror" 
-                        id="alamat_kk_ayah" name="alamat_kk_ayah" rows="3" 
-                        placeholder="Masukkan Alamat Sesuai KK" required>{{ old('alamat_kk_ayah') }}</textarea>
+                        id="alamat_kk_ayah" name="alamat_kk_ayah" rows="2" 
+                        placeholder="Masukkan Alamat KK Ayah" required>{{ old('alamat_kk_ayah') }}</textarea>
                     @error('alamat_kk_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -254,28 +326,28 @@
                 <div class="col-md-12 mb-3">
                     <label for="alamat_domisili_ayah" class="form-label">Alamat Domisili Ayah</label>
                     <textarea class="form-control @error('alamat_domisili_ayah') is-invalid @enderror" 
-                        id="alamat_domisili_ayah" name="alamat_domisili_ayah" rows="3" 
-                        placeholder="Masukkan Alamat Domisili" required>{{ old('alamat_domisili_ayah') }}</textarea>
+                        id="alamat_domisili_ayah" name="alamat_domisili_ayah" rows="2" 
+                        placeholder="Masukkan Alamat Domisili Ayah" required>{{ old('alamat_domisili_ayah') }}</textarea>
                     @error('alamat_domisili_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="no_identitas_ayah" class="form-label">No. Identitas Ayah</label>
+                    <label for="no_identitas_ayah" class="form-label">Nomor Identitas Ayah</label>
                     <input type="text" class="form-control @error('no_identitas_ayah') is-invalid @enderror" 
                         id="no_identitas_ayah" name="no_identitas_ayah" value="{{ old('no_identitas_ayah') }}" 
-                        placeholder="Masukkan No. Identitas Ayah">
+                        placeholder="Masukkan Nomor Identitas Ayah">
                     @error('no_identitas_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="no_hp_ayah" class="form-label">No. HP Ayah</label>
+                    <label for="no_hp_ayah" class="form-label">Nomor HP Ayah</label>
                     <input type="text" class="form-control @error('no_hp_ayah') is-invalid @enderror" 
                         id="no_hp_ayah" name="no_hp_ayah" value="{{ old('no_hp_ayah') }}" 
-                        placeholder="Masukkan No. HP Ayah">
+                        placeholder="Masukkan Nomor HP Ayah">
                     @error('no_hp_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -306,21 +378,11 @@
                     <h6 class="mt-3 mb-3">Data Ibu</h6>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="nama_ibu" class="form-label">Nama Ibu</label>
-                    <input type="text" class="form-control @error('nama_ibu') is-invalid @enderror" 
-                        id="nama_ibu" name="nama_ibu" value="{{ old('nama_ibu') }}" 
-                        placeholder="Masukkan Nama Ibu" required>
-                    @error('nama_ibu')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
                 <div class="col-md-12 mb-3">
                     <label for="alamat_kk_ibu" class="form-label">Alamat KK Ibu</label>
                     <textarea class="form-control @error('alamat_kk_ibu') is-invalid @enderror" 
-                        id="alamat_kk_ibu" name="alamat_kk_ibu" rows="3" 
-                        placeholder="Masukkan Alamat Sesuai KK" required>{{ old('alamat_kk_ibu') }}</textarea>
+                        id="alamat_kk_ibu" name="alamat_kk_ibu" rows="2" 
+                        placeholder="Masukkan Alamat KK Ibu" required>{{ old('alamat_kk_ibu') }}</textarea>
                     @error('alamat_kk_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -329,28 +391,28 @@
                 <div class="col-md-12 mb-3">
                     <label for="alamat_domisili_ibu" class="form-label">Alamat Domisili Ibu</label>
                     <textarea class="form-control @error('alamat_domisili_ibu') is-invalid @enderror" 
-                        id="alamat_domisili_ibu" name="alamat_domisili_ibu" rows="3" 
-                        placeholder="Masukkan Alamat Domisili" required>{{ old('alamat_domisili_ibu') }}</textarea>
+                        id="alamat_domisili_ibu" name="alamat_domisili_ibu" rows="2" 
+                        placeholder="Masukkan Alamat Domisili Ibu" required>{{ old('alamat_domisili_ibu') }}</textarea>
                     @error('alamat_domisili_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="no_identitas_ibu" class="form-label">No. Identitas Ibu</label>
+                    <label for="no_identitas_ibu" class="form-label">Nomor Identitas Ibu</label>
                     <input type="text" class="form-control @error('no_identitas_ibu') is-invalid @enderror" 
                         id="no_identitas_ibu" name="no_identitas_ibu" value="{{ old('no_identitas_ibu') }}" 
-                        placeholder="Masukkan No. Identitas Ibu">
+                        placeholder="Masukkan Nomor Identitas Ibu">
                     @error('no_identitas_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="no_hp_ibu" class="form-label">No. HP Ibu</label>
+                    <label for="no_hp_ibu" class="form-label">Nomor HP Ibu</label>
                     <input type="text" class="form-control @error('no_hp_ibu') is-invalid @enderror" 
                         id="no_hp_ibu" name="no_hp_ibu" value="{{ old('no_hp_ibu') }}" 
-                        placeholder="Masukkan No. HP Ibu">
+                        placeholder="Masukkan Nomor HP Ibu">
                     @error('no_hp_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -378,9 +440,11 @@
             </div>
         </div>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <a href="{{ route('santri.index') }}" class="btn btn-secondary">Kembali</a>
+        <div class="row mt-4">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="{{ route('santri.index') }}" class="btn btn-secondary">Kembali</a>
+            </div>
         </div>
     </form>
 </div>
@@ -388,27 +452,16 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-        // Inisialisasi select2 untuk dropdown tingkatan
-        $('#tingkatan_id').select2({
-            theme: 'bootstrap-5',
-            placeholder: 'Pilih Tingkatan',
-            allowClear: true
-        });
-
-        // Inisialisasi select2 untuk dropdown kompleks
-        $('#kompleks_id').select2({
-            theme: 'bootstrap-5',
-            placeholder: 'Pilih Gedung/Kamar',
-            allowClear: true
-        });
-
-        // Auto-capitalize input gedung dan kamar
-        $('#nama_gedung').on('input', function() {
-            $(this).val(function(_, val) {
-                return val.toUpperCase();
-            });
-        });
+$(document).ready(function() {
+    // Inisialisasi Select2 untuk dropdown
+    $('#tingkatan_id').select2({
+        theme: 'bootstrap-5'
     });
-</script>
-@endpush 
+    $('#gedung_id').select2({
+        theme: 'bootstrap-5'
+    });
+    $('#kamar_id').select2({
+        theme: 'bootstrap-5'
+    });
+});
+</script> 
