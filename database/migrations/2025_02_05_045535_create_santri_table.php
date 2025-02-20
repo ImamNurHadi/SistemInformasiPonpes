@@ -13,22 +13,37 @@ return new class extends Migration
     {
         Schema::create('santri', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nis')->unique();
             $table->string('nama');
-            $table->string('tempat_lahir', 255);
+            $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
-            $table->integer('anak_ke');
-            $table->integer('jumlah_saudara_kandung');
-            $table->string('kelurahan', 255);
-            $table->string('kecamatan', 255);
-            $table->string('kabupaten_kota', 255);
-            $table->string('nomor_induk_santri', 50)->unique();
-            $table->string('asrama');
-            $table->string('kamar');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('alamat');
+            $table->string('nama_ayah');
+            $table->string('nama_ibu');
+            $table->string('no_hp');
+            $table->string('foto')->nullable();
             $table->foreignUuid('tingkatan_masuk')->constrained('master_tingkatan');
-            $table->foreignUuid('tingkatan_id')->constrained('master_tingkatan');
+            $table->uuid('tingkatan_id')->nullable();
+            $table->uuid('gedung_id')->nullable();
+            $table->uuid('kamar_id')->nullable();
+            $table->decimal('saldo', 10, 2)->default(0);
             $table->timestamps();
+
+            $table->foreign('tingkatan_id')
+                  ->references('id')
+                  ->on('master_tingkatan')
+                  ->onDelete('set null');
+            
+            $table->foreign('gedung_id')
+                  ->references('id')
+                  ->on('gedung')
+                  ->onDelete('set null');
+
+            $table->foreign('kamar_id')
+                  ->references('id')
+                  ->on('kamar')
+                  ->onDelete('set null');
         });
     }
 

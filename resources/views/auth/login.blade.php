@@ -33,6 +33,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            margin-top: -150px;
         }
         .brand-section {
             color: white;
@@ -135,6 +136,9 @@
     <div class="container-fluid">
         <div class="row login-container">
             <div class="col-lg-7 content-section">
+                <div class="text-center mb-4">
+                    <img src="{{ asset('img/logo_qinna.png') }}" alt="Qinna Logo" style="max-width: 300px; height: auto; margin-bottom: 1rem;">
+                </div>
                 <h1 class="brand-title">Qinna Manajemen Sistem</h1>
             </div>
 

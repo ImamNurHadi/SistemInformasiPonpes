@@ -25,13 +25,14 @@ class AdminSeeder extends Seeder
             ]);
         }
 
-        // Buat user admin
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@ponpes.com',
-            'password' => Hash::make('admin123'),
-            'role_id' => $adminRole->id
-        ]);
+        // Buat atau update user admin
+        User::updateOrCreate(
+            ['email' => 'admin@ponpes.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin123'),
+                'role_id' => $adminRole->id
+            ]
+        );
     }
-    
 }

@@ -13,13 +13,13 @@ class Kamar extends Model
     protected $table = 'kamar';
 
     protected $fillable = [
-        'kompleks_id',
+        'gedung_id',
         'nama_kamar',
     ];
 
-    public function kompleks()
+    public function gedung()
     {
-        return $this->belongsTo(MasterKompleks::class, 'kompleks_id');
+        return $this->belongsTo(Gedung::class, 'gedung_id');
     }
 
     public function santri()

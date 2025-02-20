@@ -102,16 +102,16 @@ class PengurusController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pengurus $penguru)
+    public function edit(Pengurus $pengurus)
     {
         $divisis = Divisi::all();
-        return view('pengurus.edit', compact('penguru', 'divisis'));
+        return view('pengurus.edit', compact('pengurus', 'divisis'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pengurus $penguru)
+    public function update(Request $request, Pengurus $pengurus)
     {
         try {
             // Log request data
@@ -119,7 +119,7 @@ class PengurusController extends Controller
 
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
-                'nik' => 'required|string|max:20|unique:pengurus,nik,' . $penguru->id,
+                'nik' => 'required|string|max:20|unique:pengurus,nik,' . $pengurus->id,
                 'tempat_lahir' => 'required|string|max:255',
                 'tanggal_lahir' => 'required|date',
                 'telepon' => 'required|string|max:15',
@@ -138,8 +138,8 @@ class PengurusController extends Controller
             \Log::info('Data tervalidasi:', $validated);
             
             try {
-                $penguru->update($validated);
-                \Log::info('Pengurus berhasil diperbarui dengan ID: ' . $penguru->id);
+                $pengurus->update($validated);
+                \Log::info('Pengurus berhasil diperbarui dengan ID: ' . $pengurus->id);
             } catch (\Exception $e) {
                 \Log::error('Error saat update Pengurus:', [
                     'message' => $e->getMessage(),
@@ -170,12 +170,12 @@ class PengurusController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pengurus $penguru)
+    public function destroy(Pengurus $pengurus)
     {
-        if ($penguru->user) {
-            $penguru->user->delete();
+        if ($pengurus->user) {
+            $pengurus->user->delete();
         }
-        $penguru->delete();
+        $pengurus->delete();
 
         return redirect()->route('pengurus.index')
             ->with('success', 'Data pengurus berhasil dihapus!');

@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_kompleks', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('nama_gedung');
-            $table->string('nama_kamar');
+        Schema::create('sub_divisis', function (Blueprint $table) {
+            $table->id();
             $table->timestamps();
-            
-            // Membuat kombinasi unik untuk nama_gedung dan nama_kamar
-            $table->unique(['nama_gedung', 'nama_kamar']);
         });
     }
 
@@ -27,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_kompleks');
+        Schema::dropIfExists('sub_divisis');
     }
-}; 
+};

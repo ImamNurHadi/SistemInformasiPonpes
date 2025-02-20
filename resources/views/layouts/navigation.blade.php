@@ -15,6 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(auth()->user()->isOperator())
+                    <x-nav-link :href="route('topup.index')" :active="request()->routeIs('topup.*')">
+                        <i class="bi bi-cash-coin me-2"></i>{{ __('Top Up Saldo') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +76,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(auth()->user()->isOperator())
+            <x-responsive-nav-link :href="route('topup.index')" :active="request()->routeIs('topup.*')">
+                <i class="bi bi-cash-coin me-2"></i>{{ __('Top Up Saldo') }}
+            </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

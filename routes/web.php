@@ -16,6 +16,9 @@ use App\Http\Controllers\TopUpController;
 use App\Http\Controllers\CekSaldoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\HistoriSaldoController;
+use App\Http\Controllers\GedungController;
+use App\Http\Controllers\KamarController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -115,13 +118,28 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kamar/by-kompleks/{kompleksId}', [SantriController::class, 'getKamarByKompleks'])
         ->name('kamar.by-kompleks');
 
-    // Koperasi, Saldo, Tabungan
-    Route::resource('koperasi', \App\Http\Controllers\KoperasiController::class);
+    // Koperasi - View only untuk semua user
+    Route::get('/koperasi', [\App\Http\Controllers\KoperasiController::class, 'index'])->name('koperasi.index');
+    Route::get('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'show'])->name('koperasi.show');
+    
+    // Koperasi - Modify only untuk admin
+    Route::middleware(RoleMiddleware::class)->group(function () {
+        Route::get('/koperasi/create', [\App\Http\Controllers\KoperasiController::class, 'create'])->name('koperasi.create');
+        Route::post('/koperasi', [\App\Http\Controllers\KoperasiController::class, 'store'])->name('koperasi.store');
+        Route::get('/koperasi/{koperasi}/edit', [\App\Http\Controllers\KoperasiController::class, 'edit'])->name('koperasi.edit');
+        Route::put('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'update'])->name('koperasi.update');
+        Route::delete('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'destroy'])->name('koperasi.destroy');
+    });
+
+    // Saldo, Tabungan
     Route::resource('saldo', \App\Http\Controllers\SaldoController::class);
     Route::resource('tabungan', \App\Http\Controllers\TabunganController::class);
 
-    // Topup
-    Route::middleware(RoleMiddleware::class)->group(function () {
+    // Histori Saldo
+    Route::get('/histori-saldo', [\App\Http\Controllers\HistoriSaldoController::class, 'index'])->name('histori-saldo.index');
+
+    // Topup - Only for Operator
+    Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::get('/topup', [TopUpController::class, 'index'])->name('topup.index');
         Route::post('/topup', [TopUpController::class, 'topup'])->name('topup.store');
     });
@@ -137,6 +155,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/menu/{menu}/stok', [MenuController::class, 'updateStok'])->name('menu.update-stok');
     });
 
+    // Route untuk Kamar dan Gedung
+    Route::resource('kamar', KamarController::class);
+    Route::resource('gedung', GedungController::class);
+    Route::get('/kamar/gedung/{gedung_id}', [KamarController::class, 'getByGedung'])->name('kamar.by-gedung');
 
 });
 
