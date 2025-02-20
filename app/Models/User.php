@@ -58,7 +58,7 @@ class User extends Authenticatable
         return $this->role && $this->role->name === 'Santri';
     }
 
-    public function isKantin()
+    public function isOutlet()
     {
         return $this->role && $this->role->name === 'Outlet';
     }

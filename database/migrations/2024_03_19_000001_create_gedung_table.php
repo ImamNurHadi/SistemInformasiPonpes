@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('gedung', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama_gedung');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

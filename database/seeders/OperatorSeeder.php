@@ -25,7 +25,7 @@ class OperatorSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'operator@ponpes.com'],
             [
-                'name' => 'Operator',
+                'name' => 'Operator Saldo',
                 'password' => Hash::make('operator123'),
                 'role_id' => $operatorRole->id
             ]

@@ -53,10 +53,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($kompleks as $item)
+                                @forelse($kamar as $item)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ $item->nama_gedung }}</td>
+                                    <td>{{ $item->gedung->nama_gedung }}</td>
                                     <td>{{ $item->nama_kamar }}</td>
                                     <td class="text-center">{{ $item->santri_count }} Santri</td>
                                     @if(auth()->user()->isAdmin())
@@ -132,6 +132,7 @@
     </div>
 </div>
 @endif
+
 @endsection
 
 @push('scripts')
@@ -158,5 +159,13 @@
             });
         });
     });
+
+    // Fungsi konfirmasi hapus
+    function confirmDelete(formId) {
+        if (confirm('Apakah Anda yakin ingin menghapus kamar ini?')) {
+            document.getElementById(formId).submit();
+        }
+        return false;
+    }
 </script>
 @endpush 

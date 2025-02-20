@@ -15,12 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nama_kamar');
             $table->uuid('gedung_id');
+            $table->foreign('gedung_id')->references('id')->on('gedung')->onDelete('cascade');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
-
-            $table->foreign('gedung_id')
-                  ->references('id')
-                  ->on('gedung')
-                  ->onDelete('cascade');
         });
     }
 
