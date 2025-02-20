@@ -10,7 +10,7 @@ class MenuController extends Controller
 {
     public function index()
     {
-        $menus = Menu::latest()->paginate(10);
+        $menus = Menu::where('outlet_id', auth()->id())->get();
         return view('menu.index', compact('menus'));
     }
 
@@ -26,16 +26,20 @@ class MenuController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'deskripsi' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        if ($request->hasFile('gambar')) {
-            $gambar = $request->file('gambar');
-            $path = $gambar->store('menu-images', 'public');
-            $validated['gambar'] = $path;
-        }
+        $foto = $request->file('foto');
+        $fotoPath = $foto->store('menu', 'public');
 
-        Menu::create($validated);
+        Menu::create([
+            'outlet_id' => auth()->id(),
+            'nama' => $request->nama,
+            'harga' => $request->harga,
+            'foto' => $fotoPath,
+            'stok' => $request->stok,
+            'deskripsi' => $request->deskripsi
+        ]);
 
         return redirect()->route('menu.index')
             ->with('success', 'Menu berhasil ditambahkan');
@@ -43,31 +47,39 @@ class MenuController extends Controller
 
     public function edit(Menu $menu)
     {
+        if ($menu->outlet_id !== auth()->id()) {
+            abort(403);
+        }
         return view('menu.edit', compact('menu'));
     }
 
     public function update(Request $request, Menu $menu)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
-
-        if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
-            if ($menu->gambar) {
-                Storage::disk('public')->delete($menu->gambar);
-            }
-            
-            $gambar = $request->file('gambar');
-            $path = $gambar->store('menu-images', 'public');
-            $validated['gambar'] = $path;
+        if ($menu->outlet_id !== auth()->id()) {
+            abort(403);
         }
 
-        $menu->update($validated);
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'stok' => 'required|integer|min:0',
+            'deskripsi' => 'nullable|string'
+        ]);
+
+        $data = $request->except('foto');
+
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama
+            if ($menu->foto) {
+                Storage::disk('public')->delete($menu->foto);
+            }
+            // Upload foto baru
+            $foto = $request->file('foto');
+            $data['foto'] = $foto->store('menu', 'public');
+        }
+
+        $menu->update($data);
 
         return redirect()->route('menu.index')
             ->with('success', 'Menu berhasil diperbarui');
@@ -75,8 +87,12 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
-        if ($menu->gambar) {
-            Storage::disk('public')->delete($menu->gambar);
+        if ($menu->outlet_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($menu->foto) {
+            Storage::disk('public')->delete($menu->foto);
         }
         
         $menu->delete();
@@ -87,13 +103,19 @@ class MenuController extends Controller
 
     public function updateStok(Request $request, Menu $menu)
     {
-        $validated = $request->validate([
+        if ($menu->outlet_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
             'stok' => 'required|integer|min:0'
         ]);
 
-        $menu->update($validated);
+        $menu->update([
+            'stok' => $request->stok
+        ]);
 
         return redirect()->route('menu.index')
-            ->with('success', 'Stok menu berhasil diperbarui');
+            ->with('success', 'Stok berhasil diperbarui');
     }
 } 

@@ -363,6 +363,24 @@
 
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
+                    @if(auth()->user()->isKantin())
+                    <!-- Menu untuk Outlet/Kantin -->
+                    <li class="nav-item">
+                        <a href="{{ route('menu.index') }}" class="nav-link main-menu {{ request()->routeIs('menu.*') ? 'active' : '' }}">
+                            <i class="bi bi-shop me-2"></i>
+                            Kantin
+                        </a>
+                    </li>
+
+                    <!-- Menu Koperasi -->
+                    <li class="nav-item">
+                        <a href="{{ route('koperasi.index') }}" class="nav-link main-menu {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">
+                            <i class="bi bi-calculator me-2"></i>
+                            Koperasi
+                        </a>
+                    </li>
+                    @else
+                    <!-- Nav Item - Dashboard -->
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" class="nav-link main-menu {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="bi bi-speedometer2 me-2"></i>
@@ -370,123 +388,106 @@
                         </a>
                     </li>
 
-                    <!-- Pengaturan -->
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+
+                    <!-- Nav Item - Pages Collapse Menu -->
+                    @if(auth()->user()->isAdmin())
                     <li class="nav-item">
-                        <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('profile.*') ? 'active' : '' }}">
-                            <i class="bi bi-gear me-2"></i>
-                            Pengaturan
+                        <a href="#userSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
+                            <i class="bi bi-people me-2"></i>
+                            Manajemen User
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('profile.*') ? 'show' : '' }}" id="pengaturanSubmenu">
+                        <div class="collapse {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'show' : '' }}" id="userSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">Profile</a>
+                                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">Data User</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Data Role</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
+
+                    <li class="nav-item">
+                        <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') || request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">
+                            <i class="bi bi-mortarboard me-2"></i>
+                            Data Santri
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') || request()->routeIs('kompleks-kamar.*') ? 'show' : '' }}" id="santriSubmenu">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('santri.index') }}" class="nav-link {{ request()->routeIs('santri.*') ? 'active' : '' }}">Data Santri</a>
                                 </li>
                                 @if(auth()->user()->isAdmin())
                                 <li class="nav-item">
-                                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">Manajemen User</a>
+                                    <a href="{{ route('tingkatan.index') }}" class="nav-link {{ request()->routeIs('tingkatan.*') ? 'active' : '' }}">Data Tingkatan</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">Manajemen Role</a>
+                                    <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Data Kamar</a>
                                 </li>
                                 @endif
                             </ul>
                         </div>
                     </li>
 
-                    <!-- Master Data -->
                     <li class="nav-item">
-                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'active' : '' }}">
-                            <i class="bi bi-database me-2"></i>
-                            Master Data
+                        <a href="#pengajarSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">
+                            <i class="bi bi-person-workspace me-2"></i>
+                            Data Pengajar
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'show' : '' }}" id="masterDataSubmenu">
+                        <div class="collapse {{ request()->routeIs('pengajar.*') ? 'show' : '' }}" id="pengajarSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Pengajar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'active' : '' }}">
-                                        Santri
-                                        <i class="bi bi-chevron-down float-end"></i>
-                                    </a>
-                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'show' : '' }}" id="santriSubmenu">
-                                        <ul class="nav flex-column submenu">
-                                            <li class="nav-item">
-                                                <a href="{{ route('santri.index') }}" class="nav-link {{ request()->routeIs('santri.*') ? 'active' : '' }}">Data Santri</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="{{ route('tingkatan.index') }}" class="nav-link {{ request()->routeIs('tingkatan.*') ? 'active' : '' }}">Tingkatan</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="{{ route('kompleks-kamar.index') }}" class="nav-link {{ request()->routeIs('kompleks-kamar.*') ? 'active' : '' }}">Kamar</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">
-                                        Pengurus
-                                        <i class="bi bi-chevron-down float-end"></i>
-                                    </a>
-                                    <div class="collapse {{ request()->routeIs('pengurus.*') ? 'show' : '' }}" id="pengurusSubmenu">
-                                        <ul class="nav flex-column submenu">
-                                            <li class="nav-item">
-                                                <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Data Pengurus</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">
-                                        <i class="bi bi-diagram-3 me-2"></i>
-                                        Divisi
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
-                                        Saldo
-                                        <i class="bi bi-chevron-down float-end"></i>
-                                    </a>
-                                    <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'show' : '' }}" id="saldoSubmenu">
-                                        <ul class="nav flex-column submenu">
-                                            @if(auth()->user()->isAdmin())
-                                            <li class="nav-item">
-                                                <a href="{{ route('topup.index') }}" class="nav-link {{ request()->routeIs('topup.*') ? 'active' : '' }}">Top Up Saldo</a>
-                                            </li>
-                                            @endif
-                                            <li class="nav-item">
-                                                <a href="{{ route('ceksaldo.index') }}" class="nav-link {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">Cek Saldo</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('tabungan.index') }}" class="nav-link {{ request()->routeIs('tabungan.*') ? 'active' : '' }}">Tabungan</a>
+                                    <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Data Pengajar</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
 
-                    @if(auth()->user()->isKantin())
-                    <!-- Menu Kantin -->
                     <li class="nav-item">
-                        <a href="#kantinSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('menu.*') || request()->routeIs('stok.*') ? 'active' : '' }}">
-                            <i class="bi bi-shop me-2"></i>
-                            Kantin
+                        <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">
+                            <i class="bi bi-person-badge me-2"></i>
+                            Data Pengurus
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse {{ request()->routeIs('menu.*') || request()->routeIs('stok.*') ? 'show' : '' }}" id="kantinSubmenu">
+                        <div class="collapse {{ request()->routeIs('pengurus.*') ? 'show' : '' }}" id="pengurusSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
-                                    <a href="{{ route('menu.index') }}" class="nav-link {{ request()->routeIs('menu.*') ? 'active' : '' }}">Daftar Menu</a>
+                                    <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Data Pengurus</a>
                                 </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('divisi.index') }}" class="nav-link main-menu {{ request()->routeIs('divisi.*') ? 'active' : '' }}">
+                            <i class="bi bi-diagram-3 me-2"></i>
+                            Divisi
+                        </a>
+                    </li>
+
+                    <!-- Menu Saldo -->
+                    <li class="nav-item">
+                        <a href="#saldoSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
+                            <i class="bi bi-wallet2 me-2"></i>
+                            Saldo
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('saldo.*') || request()->routeIs('topup.*') || request()->routeIs('ceksaldo.*') ? 'show' : '' }}" id="saldoSubmenu">
+                            <ul class="nav flex-column submenu">
+                                @if(auth()->user()->isAdmin())
                                 <li class="nav-item">
-                                    <a href="{{ route('menu.create') }}" class="nav-link {{ request()->routeIs('menu.create') ? 'active' : '' }}">Tambah Menu</a>
+                                    <a href="{{ route('topup.index') }}" class="nav-link {{ request()->routeIs('topup.*') ? 'active' : '' }}">Top Up Saldo</a>
+                                </li>
+                                @endif
+                                <li class="nav-item">
+                                    <a href="{{ route('ceksaldo.index') }}" class="nav-link {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">Cek Saldo</a>
                                 </li>
                             </ul>
                         </div>
@@ -540,6 +541,7 @@
             <div class="container-fluid py-4">
                 <!-- Page Header with Breadcrumb -->
                 <div class="page-header">
+                @if(auth()->user()->isAdmin() || auth()->user()->isSantri())
                     <div class="d-flex align-items-center">
                         <a href="javascript:history.back()" class="back-button">
                             <i class="bi bi-arrow-left"></i>
@@ -603,6 +605,7 @@
                             </ol>
                         </nav>
                     </div>
+                    @endif
                 </div>
                 @yield('content')
             </div>

@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->role && $this->role->name === 'Admin';
     }
 
+    public function isSantri()
+    {
+        return $this->role && $this->role->name === 'Santri';
+    }
+
     public function isKantin()
     {
         return $this->role && $this->role->name === 'Outlet';

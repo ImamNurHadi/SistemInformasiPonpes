@@ -10,12 +10,15 @@ class Menu extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'menus';
+
     protected $fillable = [
+        'outlet_id',
         'nama',
         'harga',
+        'foto',
         'stok',
-        'deskripsi',
-        'gambar'
+        'deskripsi'
     ];
 
     public function outlet()
