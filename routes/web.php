@@ -19,6 +19,10 @@ use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\HistoriSaldoController;
 use App\Http\Controllers\GedungController;
 use App\Http\Controllers\KamarController;
+use App\Http\Controllers\HistoriBelanjaController;
+use App\Http\Controllers\AkunBelanjaController;
+use App\Http\Controllers\AkunUtamaController;
+use App\Http\Controllers\AkunTabunganController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -160,6 +164,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('kamar', KamarController::class);
     Route::resource('gedung', GedungController::class);
     Route::get('/kamar/gedung/{gedung_id}', [KamarController::class, 'getByGedung'])->name('kamar.by-gedung');
+
+    // Histori Belanja
+    Route::get('/histori-belanja', [HistoriBelanjaController::class, 'index'])->name('histori-belanja.index');
+
+    // Akun Routes
+    Route::prefix('akun')->group(function () {
+        Route::get('/belanja', [AkunBelanjaController::class, 'index'])->name('akun-belanja.index');
+        Route::get('/utama', [AkunUtamaController::class, 'index'])->name('akun-utama.index');
+        Route::get('/tabungan', [AkunTabunganController::class, 'index'])->name('akun-tabungan.index');
+    });
 
 });
 

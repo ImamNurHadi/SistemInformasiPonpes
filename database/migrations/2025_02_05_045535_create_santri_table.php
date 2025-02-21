@@ -27,7 +27,9 @@ return new class extends Migration
             $table->uuid('tingkatan_id')->nullable();
             $table->uuid('gedung_id')->nullable();
             $table->uuid('kamar_id')->nullable();
-            $table->decimal('saldo', 10, 2)->default(0);
+            $table->decimal('saldo_utama', 10, 2)->default(0);
+            $table->decimal('saldo_belanja', 10, 2)->default(0);
+            $table->decimal('saldo_tabungan', 10, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('tingkatan_id')

@@ -13,30 +13,40 @@ class Santri extends Model
     protected $table = 'santri';
 
     protected $fillable = [
-        'nis',
+        'id',
+        'user_id',
+        'tingkatan_id',
+        'gedung_id',
+        'kamar_id',
         'nama',
+        'nis',
         'tempat_lahir',
         'tanggal_lahir',
         'jenis_kelamin',
         'alamat',
+        'no_hp',
+        'nama_wali',
+        'no_hp_wali',
+        'saldo_utama',
+        'saldo_belanja',
+        'saldo_tabungan',
         'kelurahan',
         'kecamatan',
         'kabupaten_kota',
         'nama_ayah',
         'nama_ibu',
-        'no_hp',
         'foto',
-        'tingkatan_id',
         'tingkatan_masuk',
-        'gedung_id',
-        'kamar_id',
         'anak_ke',
         'jumlah_saudara_kandung'
     ];
 
     protected $casts = [
+        'id' => 'string',
         'tanggal_lahir' => 'date',
-        'saldo' => 'decimal:2'
+        'saldo_utama' => 'decimal:2',
+        'saldo_belanja' => 'decimal:2',
+        'saldo_tabungan' => 'decimal:2'
     ];
 
     public function tingkatan()

@@ -536,15 +536,15 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#saldoMenu" role="button" 
-                                        aria-expanded="{{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('topup.*') ? 'true' : 'false' }}" 
+                                        aria-expanded="{{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'true' : 'false' }}" 
                                         aria-controls="saldoMenu">
                                         <div>
                                             <i class="bi bi-wallet2 me-2"></i>
-                                            <span>Saldo</span>
+                                            <span>Transaksi</span>
                                         </div>
                                         <i class="bi bi-chevron-down"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('topup.*') ? 'show' : '' }}" id="saldoMenu">
+                                    <div class="collapse {{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'show' : '' }}" id="saldoMenu">
                                         <ul class="nav submenu">
                                             <li class="nav-item w-100">
                                                 <a href="{{ route('ceksaldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
@@ -552,30 +552,60 @@
                                                     <span>Cek Saldo</span>
                                                 </a>
                                             </li>
-                                            @if(auth()->user()->isOperator())
-                                            <li class="nav-item w-100">
-                                                <a href="{{ route('topup.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('topup.*') ? 'active' : '' }}">
-                                                    <i class="bi bi-cash-coin me-2"></i>
-                                                    <span>Top Up Saldo</span>
-                                                </a>
-                                            </li>
-                                            @endif
                                             <li class="nav-item w-100">
                                                 <a href="{{ route('histori-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
                                                     <i class="bi bi-clock-history me-2"></i>
                                                     <span>Histori Saldo</span>
                                                 </a>
                                             </li>
+                                            <li class="nav-item w-100">
+                                                <a href="{{ route('histori-belanja.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-belanja.*') ? 'active' : '' }}">
+                                                    <i class="bi bi-cart-check me-2"></i>
+                                                    <span>Histori Belanja</span>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('tabungan.index') }}" class="nav-link {{ request()->routeIs('tabungan.*') ? 'active' : '' }}">Tabungan</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
                     @endif
+
+                    <!-- Akun Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#akunMenu" role="button" 
+                            aria-expanded="{{ request()->routeIs('akun-belanja.*') || request()->routeIs('akun-utama.*') || request()->routeIs('akun-tabungan.*') ? 'true' : 'false' }}" 
+                            aria-controls="akunMenu">
+                            <div>
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span>Akun</span>
+                            </div>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('akun-belanja.*') || request()->routeIs('akun-utama.*') || request()->routeIs('akun-tabungan.*') ? 'show' : '' }}" id="akunMenu">
+                            <ul class="nav submenu">
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('akun-belanja.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('akun-belanja.*') ? 'active' : '' }}">
+                                        <i class="bi bi-cart me-2"></i>
+                                        <span>Akun Belanja</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('akun-utama.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('akun-utama.*') ? 'active' : '' }}">
+                                        <i class="bi bi-person me-2"></i>
+                                        <span>Akun Utama</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('akun-tabungan.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('akun-tabungan.*') ? 'active' : '' }}">
+                                        <i class="bi bi-piggy-bank me-2"></i>
+                                        <span>Akun Tabungan</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
             </div>
 

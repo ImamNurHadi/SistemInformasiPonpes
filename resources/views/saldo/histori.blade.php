@@ -7,8 +7,13 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Histori Saldo</h3>
+                    @if(auth()->user()->isOperator())
+                    <a href="{{ route('topup.index') }}" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-1"></i>Top Up Baru
+                    </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     @if(session('error'))
@@ -17,8 +22,14 @@
                         </div>
                     @endif
 
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered table-striped" id="historiTable">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -68,4 +79,17 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#historiTable').DataTable({
+            order: [[3, 'desc']], // Sort by tanggal column descending
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
+            }
+        });
+    });
+</script>
+@endpush
 @endsection 

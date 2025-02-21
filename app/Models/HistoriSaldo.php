@@ -15,7 +15,12 @@ class HistoriSaldo extends Model
         'santri_id',
         'jumlah',
         'keterangan',
-        'tipe'
+        'tipe',
+        'jenis_saldo', // utama, belanja, atau tabungan
+    ];
+
+    protected $casts = [
+        'jumlah' => 'decimal:2',
     ];
 
     public function santri()
