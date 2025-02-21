@@ -11,6 +11,12 @@
                     <h3 class="card-title">Top Up Saldo Santri</h3>
                 </div>
                 <div class="card-body">
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <form action="{{ route('topup.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
@@ -18,24 +24,29 @@
                             <select name="santri_id" id="santri_id" class="form-select @error('santri_id') is-invalid @enderror" required>
                                 <option value="">Pilih Santri</option>
                                 @foreach($santri as $s)
-                                    <option value="{{ $s->id }}">{{ $s->nis }} - {{ $s->nama }}</option>
+                                    <option value="{{ $s->id }}" {{ old('santri_id') == $s->id ? 'selected' : '' }}>
+                                        {{ $s->nis }} - {{ $s->nama }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('santri_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="mb-3">
                             <label for="jumlah" class="form-label">Jumlah Top Up</label>
                             <div class="input-group">
                                 <span class="input-group-text">Rp</span>
                                 <input type="number" class="form-control @error('jumlah') is-invalid @enderror" 
-                                       name="jumlah" id="jumlah" required min="0" step="1000">
+                                       name="jumlah" id="jumlah" required min="0" step="1000"
+                                       value="{{ old('jumlah') }}">
                             </div>
                             @error('jumlah')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <button type="submit" class="btn btn-primary">Top Up Saldo</button>
                     </form>
                 </div>
@@ -43,4 +54,17 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Initialize select2 for better dropdown experience
+        $('#santri_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Santri',
+            allowClear: true
+        });
+    });
+</script>
+@endpush
 @endsection 

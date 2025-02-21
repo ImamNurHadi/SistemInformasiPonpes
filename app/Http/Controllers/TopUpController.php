@@ -19,35 +19,28 @@ class TopUpController extends Controller
         $request->validate([
             'santri_id' => 'required|exists:santri,id',
             'jumlah' => 'required|numeric|min:0',
-            'jenis_saldo' => 'required|in:utama,belanja,tabungan',
         ]);
 
-        $santri = Santri::findOrFail($request->santri_id);
-        
-        // Update saldo sesuai jenisnya
-        switch($request->jenis_saldo) {
-            case 'utama':
-                $santri->saldo_utama += $request->jumlah;
-                break;
-            case 'belanja':
-                $santri->saldo_belanja += $request->jumlah;
-                break;
-            case 'tabungan':
-                $santri->saldo_tabungan += $request->jumlah;
-                break;
+        try {
+            $santri = Santri::findOrFail($request->santri_id);
+            
+            // Update saldo utama
+            $santri->saldo_utama = $santri->saldo_utama + $request->jumlah;
+            $santri->save();
+
+            // Catat histori top up
+            HistoriSaldo::create([
+                'santri_id' => $santri->id,
+                'jumlah' => $request->jumlah,
+                'keterangan' => 'Top Up Saldo Utama',
+                'tipe' => 'masuk',
+                'jenis_saldo' => 'utama'
+            ]);
+
+            return redirect()->route('histori-saldo.index')
+                ->with('success', 'Saldo utama berhasil ditambahkan');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan saat melakukan top up: ' . $e->getMessage());
         }
-        
-        $santri->save();
-
-        // Catat histori top up
-        HistoriSaldo::create([
-            'santri_id' => $santri->id,
-            'jumlah' => $request->jumlah,
-            'keterangan' => 'Top Up Saldo ' . ucfirst($request->jenis_saldo),
-            'tipe' => 'masuk',
-            'jenis_saldo' => $request->jenis_saldo
-        ]);
-
-        return redirect()->route('histori-saldo.index')->with('success', 'Saldo ' . ucfirst($request->jenis_saldo) . ' berhasil ditambahkan');
     }
 }

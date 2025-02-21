@@ -18,7 +18,10 @@
                                     <th>No</th>
                                     <th>NIS</th>
                                     <th>Nama Santri</th>
-                                    <th>Saldo</th>
+                                    <th>Saldo Utama</th>
+                                    <th>Saldo Belanja</th>
+                                    <th>Saldo Tabungan</th>
+                                    <th>Total Saldo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -27,7 +30,10 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $s->nis }}</td>
                                     <td>{{ $s->nama }}</td>
-                                    <td>Rp {{ number_format($s->saldo, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($s->saldo_utama, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($s->saldo_belanja, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($s->saldo_tabungan, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($s->saldo_utama + $s->saldo_belanja, 0, ',', '.') }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -42,7 +48,11 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        $('#dataTable').DataTable();
+        $('#dataTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
+            }
+        });
     });
 </script>
 @endpush
