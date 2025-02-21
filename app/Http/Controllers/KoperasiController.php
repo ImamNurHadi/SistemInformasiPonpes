@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Koperasi;
+use App\Models\Santri;
+use App\Models\HistoriSaldo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KoperasiController extends Controller
 {
@@ -13,7 +16,8 @@ class KoperasiController extends Controller
     public function index()
     {
         $koperasi = Koperasi::all();
-        return view('koperasi.index', compact('koperasi'));
+        $santri = Santri::all();
+        return view('koperasi.index', compact('koperasi', 'santri'));
     }
 
     /**
@@ -83,5 +87,55 @@ class KoperasiController extends Controller
 
         return redirect()->route('koperasi.index')
             ->with('success', 'Data koperasi berhasil dihapus');
+    }
+
+    /**
+     * Process payment from santri's balance
+     */
+    public function bayar(Request $request)
+    {
+        $validated = $request->validate([
+            'santri_id' => 'required|exists:santri,id',
+            'total' => 'required|numeric|min:0',
+            'items' => 'required|array'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $santri = Santri::findOrFail($validated['santri_id']);
+
+            // Cek saldo mencukupi
+            if ($santri->saldo < $validated['total']) {
+                throw new \Exception('Saldo tidak mencukupi');
+            }
+
+            // Kurangi saldo santri
+            $santri->saldo -= $validated['total'];
+            $santri->save();
+
+            // Catat histori pembayaran
+            HistoriSaldo::create([
+                'santri_id' => $santri->id,
+                'jumlah' => $validated['total'],
+                'keterangan' => 'Pembayaran di Koperasi',
+                'tipe' => 'keluar'
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran berhasil'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 }

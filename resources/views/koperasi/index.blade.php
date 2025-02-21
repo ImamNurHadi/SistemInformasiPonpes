@@ -7,6 +7,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Add Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<!-- Add Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
 .numpad-button {
@@ -64,6 +66,29 @@
 <div class="container-fluid">
     <!-- Tabel Transaksi (Panel Kiri) -->
     <div class="table-container">
+        <!-- Form Pemilihan Santri -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="pembayaranForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="santri_id" class="form-label">Pilih Santri</label>
+                            <select class="form-select select2" id="santri_id" name="santri_id" required>
+                                <option value="">Pilih Santri</option>
+                                @foreach($santri as $s)
+                                    <option value="{{ $s->id }}" data-saldo="{{ $s->saldo }}">{{ $s->nis }} - {{ $s->nama }} (Saldo: Rp {{ number_format($s->saldo, 0, ',', '.') }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Saldo Tersedia</label>
+                            <div class="form-control" id="saldoDisplay">Rp 0</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="card bg-success text-white">
             <div class="card-body">
                 <div class="table-responsive">
@@ -84,6 +109,9 @@
                         <h5 class="mb-0">Grand Total</h5>
                         <h5 class="mb-0" id="grandTotal">Rp 0</h5>
                     </div>
+                    <button type="button" class="btn btn-light mt-3 w-100" id="bayarBtn" disabled>
+                        <i class="bi bi-cash-coin me-2"></i>Bayar
+                    </button>
                 </div>
             </div>
         </div>
@@ -147,8 +175,12 @@
     </div>
 </div>
 
+<!-- Add jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Add Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Add Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -158,13 +190,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculatorForm = document.getElementById('calculatorForm');
     const transaksiTableBody = document.getElementById('transaksiTableBody');
     const grandTotalElement = document.getElementById('grandTotal');
+    const santriSelect = document.getElementById('santri_id');
+    const saldoDisplay = document.getElementById('saldoDisplay');
+    const bayarBtn = document.getElementById('bayarBtn');
     let transaksiData = [];
-    let counter = 1;
-
-    // Set initial focus
+    
     hargaSatuanInput.focus();
-
-    // Format number to Rupiah
+    
     function formatRupiah(number) {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -173,22 +205,22 @@ document.addEventListener('DOMContentLoaded', function() {
             maximumFractionDigits: 0
         }).format(number);
     }
-
-    // Update grand total
+    
     function updateGrandTotal() {
         const grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
         grandTotalElement.textContent = formatRupiah(grandTotal);
+        bayarBtn.disabled = grandTotal === 0;
     }
-
-    // Handle input field focus
-    hargaSatuanInput.addEventListener('click', () => {
-        activeInput = hargaSatuanInput;
+    
+    santriSelect.addEventListener('change', function() {
+        let selectedOption = this.options[this.selectedIndex];
+        let saldo = selectedOption.getAttribute('data-saldo');
+        saldoDisplay.textContent = saldo ? formatRupiah(parseInt(saldo)) : 'Rp 0';
     });
-    jumlahInput.addEventListener('click', () => {
-        activeInput = jumlahInput;
-    });
-
-    // Handle numpad buttons
+    
+    hargaSatuanInput.addEventListener('click', () => activeInput = hargaSatuanInput);
+    jumlahInput.addEventListener('click', () => activeInput = jumlahInput);
+    
     document.querySelectorAll('.numpad-button').forEach(button => {
         button.addEventListener('click', function() {
             const value = this.dataset.value;
@@ -197,43 +229,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Handle clear button
+    
     document.getElementById('clearBtn').addEventListener('click', function() {
-        if (activeInput) {
-            activeInput.value = '';
-        }
+        if (activeInput) activeInput.value = '';
     });
-
-    // Handle backspace button
+    
     document.getElementById('backspaceBtn').addEventListener('click', function() {
-        if (activeInput) {
-            activeInput.value = activeInput.value.slice(0, -1);
-        }
+        if (activeInput) activeInput.value = activeInput.value.slice(0, -1);
     });
-
-    // Toggle between inputs
+    
     hargaSatuanInput.addEventListener('input', function() {
         if (this.value.length > 0) {
             jumlahInput.focus();
             activeInput = jumlahInput;
         }
     });
-
-    // Handle form submission
+    
     calculatorForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
+        
         const hargaSatuan = parseInt(hargaSatuanInput.value.replace(/\D/g, ''));
         const jumlah = parseInt(jumlahInput.value);
-
+        
         if (isNaN(hargaSatuan) || isNaN(jumlah) || hargaSatuan <= 0 || jumlah <= 0) {
             alert('Harap masukkan harga satuan dan jumlah yang valid');
             return;
         }
-
+        
         const subTotal = hargaSatuan * jumlah;
-
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${formatRupiah(hargaSatuan)}</td>
@@ -245,25 +269,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </td>
         `;
-
+        
         transaksiTableBody.appendChild(tr);
-
-        transaksiData.push({
-            hargaSatuan: hargaSatuan,
-            jumlah: jumlah,
-            subTotal: subTotal
-        });
-
+        transaksiData.push({ hargaSatuan, jumlah, subTotal });
+        
         updateGrandTotal();
-
-        // Reset form
+        
         hargaSatuanInput.value = '';
         jumlahInput.value = '1';
         hargaSatuanInput.focus();
         activeInput = hargaSatuanInput;
     });
-
-    // Handle delete button
+    
     transaksiTableBody.addEventListener('click', function(e) {
         if (e.target.closest('.delete-btn')) {
             const row = e.target.closest('tr');
@@ -274,6 +291,28 @@ document.addEventListener('DOMContentLoaded', function() {
             updateGrandTotal();
         }
     });
+    
+    bayarBtn.addEventListener('click', function() {
+        let selectedOption = santriSelect.options[santriSelect.selectedIndex];
+        let saldo = parseInt(selectedOption.getAttribute('data-saldo'));
+        let grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
+        
+        if (saldo >= grandTotal) {
+            let newSaldo = saldo - grandTotal;
+            selectedOption.setAttribute('data-saldo', newSaldo);
+            saldoDisplay.textContent = formatRupiah(newSaldo);
+            
+            transaksiData = [];
+            transaksiTableBody.innerHTML = '';
+            grandTotalElement.textContent = 'Rp 0';
+            bayarBtn.disabled = true;
+            
+            alert('Pembayaran berhasil! Saldo baru: ' + formatRupiah(newSaldo));
+        } else {
+            alert('Saldo tidak mencukupi!');
+        }
+    });
 });
+
 </script>
 @endsection

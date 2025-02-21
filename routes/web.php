@@ -121,6 +121,7 @@ Route::middleware(['auth'])->group(function () {
     // Koperasi - View only untuk semua user
     Route::get('/koperasi', [\App\Http\Controllers\KoperasiController::class, 'index'])->name('koperasi.index');
     Route::get('/koperasi/{koperasi}', [\App\Http\Controllers\KoperasiController::class, 'show'])->name('koperasi.show');
+    Route::post('/koperasi/bayar', [\App\Http\Controllers\KoperasiController::class, 'bayar'])->name('koperasi.bayar');
     
     // Koperasi - Modify only untuk admin
     Route::middleware(RoleMiddleware::class)->group(function () {
