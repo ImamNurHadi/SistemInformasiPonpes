@@ -126,7 +126,8 @@ class KoperasiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pembayaran berhasil'
+                'message' => 'Pembayaran berhasil',
+                'new_saldo' => $santri->saldo
             ]);
 
         } catch (\Exception $e) {

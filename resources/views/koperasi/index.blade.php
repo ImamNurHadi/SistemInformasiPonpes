@@ -294,23 +294,61 @@ document.addEventListener('DOMContentLoaded', function() {
     
     bayarBtn.addEventListener('click', function() {
         let selectedOption = santriSelect.options[santriSelect.selectedIndex];
+        let santriId = selectedOption.value;
         let saldo = parseInt(selectedOption.getAttribute('data-saldo'));
         let grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
         
-        if (saldo >= grandTotal) {
-            let newSaldo = saldo - grandTotal;
-            selectedOption.setAttribute('data-saldo', newSaldo);
-            saldoDisplay.textContent = formatRupiah(newSaldo);
-            
-            transaksiData = [];
-            transaksiTableBody.innerHTML = '';
-            grandTotalElement.textContent = 'Rp 0';
-            bayarBtn.disabled = true;
-            
-            alert('Pembayaran berhasil! Saldo baru: ' + formatRupiah(newSaldo));
-        } else {
-            alert('Saldo tidak mencukupi!');
+        if (!santriId) {
+            alert('Pilih santri terlebih dahulu');
+            return;
         }
+
+        if (grandTotal <= 0) {
+            alert('Tidak ada transaksi untuk dibayar');
+            return;
+        }
+
+        if (saldo < grandTotal) {
+            alert('Saldo tidak mencukupi!');
+            return;
+        }
+
+        // Kirim data pembayaran ke server
+        fetch('/koperasi/bayar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                santri_id: santriId,
+                total: grandTotal,
+                items: transaksiData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update saldo di tampilan
+                let newSaldo = saldo - grandTotal;
+                selectedOption.setAttribute('data-saldo', newSaldo);
+                saldoDisplay.textContent = formatRupiah(newSaldo);
+                
+                // Reset form dan tabel
+                transaksiData = [];
+                transaksiTableBody.innerHTML = '';
+                grandTotalElement.textContent = 'Rp 0';
+                bayarBtn.disabled = true;
+                
+                alert('Pembayaran berhasil! Saldo baru: ' + formatRupiah(newSaldo));
+            } else {
+                alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat memproses pembayaran');
+        });
     });
 });
 
