@@ -438,7 +438,7 @@
                     </li>
                 @endif
 
-                @if(auth()->user()->isAdmin() && auth()->user()->isSantri())
+                @if(auth()->user()->isAdmin() || auth()->user()->isSantri())
                     <!-- Pengaturan -->
                     <li class="nav-item">
                         <a href="#pengaturanSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('profile.*') ? 'active' : '' }}">
