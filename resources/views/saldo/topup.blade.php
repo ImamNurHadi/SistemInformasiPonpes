@@ -35,6 +35,18 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="jenis_saldo" class="form-label">Jenis Saldo</label>
+                            <select name="jenis_saldo" id="jenis_saldo" class="form-select @error('jenis_saldo') is-invalid @enderror" required>
+                                <option value="">Pilih Jenis Saldo</option>
+                                <option value="utama" {{ old('jenis_saldo') == 'utama' ? 'selected' : '' }}>Saldo Utama</option>
+                                <option value="belanja" {{ old('jenis_saldo') == 'belanja' ? 'selected' : '' }}>Saldo Belanja</option>
+                            </select>
+                            @error('jenis_saldo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="jumlah" class="form-label">Jumlah Top Up</label>
                             <div class="input-group">
                                 <span class="input-group-text">Rp</span>
@@ -62,6 +74,12 @@
         $('#santri_id').select2({
             theme: 'bootstrap-5',
             placeholder: 'Pilih Santri',
+            allowClear: true
+        });
+
+        $('#jenis_saldo').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Jenis Saldo',
             allowClear: true
         });
     });

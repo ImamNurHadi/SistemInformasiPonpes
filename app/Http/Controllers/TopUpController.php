@@ -18,27 +18,32 @@ class TopUpController extends Controller
     {
         $request->validate([
             'santri_id' => 'required|exists:santri,id',
+            'jenis_saldo' => 'required|in:utama,belanja',
             'jumlah' => 'required|numeric|min:0',
         ]);
 
         try {
             $santri = Santri::findOrFail($request->santri_id);
             
-            // Update saldo utama
-            $santri->saldo_utama = $santri->saldo_utama + $request->jumlah;
+            // Update saldo berdasarkan jenis yang dipilih
+            if ($request->jenis_saldo === 'utama') {
+                $santri->saldo_utama = $santri->saldo_utama + $request->jumlah;
+            } else {
+                $santri->saldo_belanja = $santri->saldo_belanja + $request->jumlah;
+            }
             $santri->save();
 
             // Catat histori top up
             HistoriSaldo::create([
                 'santri_id' => $santri->id,
                 'jumlah' => $request->jumlah,
-                'keterangan' => 'Top Up Saldo Utama',
+                'keterangan' => 'Top Up Saldo ' . ucfirst($request->jenis_saldo),
                 'tipe' => 'masuk',
-                'jenis_saldo' => 'utama'
+                'jenis_saldo' => $request->jenis_saldo
             ]);
 
             return redirect()->route('histori-saldo.index')
-                ->with('success', 'Saldo utama berhasil ditambahkan');
+                ->with('success', 'Saldo ' . ucfirst($request->jenis_saldo) . ' berhasil ditambahkan');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat melakukan top up: ' . $e->getMessage());
         }

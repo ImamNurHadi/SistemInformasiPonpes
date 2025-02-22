@@ -555,7 +555,7 @@
                                             <li class="nav-item w-100">
                                                 <a href="{{ route('histori-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
                                                     <i class="bi bi-clock-history me-2"></i>
-                                                    <span>Histori Saldo</span>
+                                                    <span>Top Up Saldo</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item w-100">
