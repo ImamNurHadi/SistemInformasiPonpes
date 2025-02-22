@@ -23,6 +23,7 @@ use App\Http\Controllers\HistoriBelanjaController;
 use App\Http\Controllers\AkunBelanjaController;
 use App\Http\Controllers\AkunUtamaController;
 use App\Http\Controllers\AkunTabunganController;
+use App\Http\Controllers\TarikTunaiController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -174,6 +175,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/utama', [AkunUtamaController::class, 'index'])->name('akun-utama.index');
         Route::get('/tabungan', [AkunTabunganController::class, 'index'])->name('akun-tabungan.index');
     });
+
+    // Tarik Tunai routes
+    Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai.index');
+    Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
 
 });
 

@@ -6,15 +6,15 @@ use App\Models\Santri;
 use App\Models\HistoriSaldo;
 use Illuminate\Http\Request;
 
-class TopUpController extends Controller
+class TarikTunaiController extends Controller
 {
     public function index()
     {
         $santri = Santri::all();
-        return view('saldo.topup', compact('santri'));
+        return view('saldo.tarik-tunai', compact('santri'));
     }
 
-    public function topup(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'santri_id' => 'required|exists:santri,id',
@@ -33,23 +33,28 @@ class TopUpController extends Controller
         try {
             $santri = Santri::findOrFail($request->santri_id);
             
-            // Update saldo utama
-            $santri->saldo_utama = $santri->saldo_utama + $request->jumlah;
+            // Cek apakah saldo mencukupi
+            if ($santri->saldo_utama < $request->jumlah) {
+                return back()->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
+            }
+
+            // Kurangi saldo utama
+            $santri->saldo_utama = $santri->saldo_utama - $request->jumlah;
             $santri->save();
 
-            // Catat histori top up
+            // Catat histori penarikan
             HistoriSaldo::create([
                 'santri_id' => $santri->id,
                 'jumlah' => $request->jumlah,
-                'keterangan' => 'Top Up Saldo Utama',
-                'tipe' => 'masuk',
+                'keterangan' => 'Tarik Tunai',
+                'tipe' => 'keluar',
                 'jenis_saldo' => 'utama'
             ]);
 
             return redirect()->route('histori-saldo.index')
-                ->with('success', 'Saldo berhasil ditambahkan');
+                ->with('success', 'Penarikan tunai berhasil dilakukan');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat melakukan top up: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat melakukan penarikan: ' . $e->getMessage());
         }
     }
-}
+} 

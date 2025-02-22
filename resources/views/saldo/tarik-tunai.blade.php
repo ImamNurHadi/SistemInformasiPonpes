@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Top Up Saldo')
+@section('title', 'Tarik Tunai')
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Top Up Saldo Santri</h3>
+                    <h3 class="card-title">Tarik Tunai</h3>
                 </div>
                 <div class="card-body">
                     @if(session('error'))
@@ -17,7 +17,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('topup.store') }}" method="POST" id="formTopUp">
+                    <form action="{{ route('tarik-tunai.store') }}" method="POST" id="formTarikTunai">
                         @csrf
                         <div class="mb-3">
                             <label for="santri_id" class="form-label">Pilih Santri</label>
@@ -35,19 +35,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="jenis_saldo" class="form-label">Jenis Saldo</label>
-                            <select name="jenis_saldo" id="jenis_saldo" class="form-select @error('jenis_saldo') is-invalid @enderror" required>
-                                <option value="">Pilih Jenis Saldo</option>
-                                <option value="utama" {{ old('jenis_saldo') == 'utama' ? 'selected' : '' }}>Saldo Utama</option>
-                                <option value="belanja" {{ old('jenis_saldo') == 'belanja' ? 'selected' : '' }}>Saldo Belanja</option>
-                            </select>
-                            @error('jenis_saldo')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="jumlah" class="form-label">Jumlah Top Up</label>
+                            <label for="jumlah" class="form-label">Jumlah Penarikan</label>
                             <div class="input-group">
                                 <span class="input-group-text">Rp</span>
                                 <input type="text" class="form-control @error('jumlah') is-invalid @enderror" 
@@ -61,7 +49,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Top Up Saldo</button>
+                        <button type="submit" class="btn btn-primary">Tarik Tunai</button>
                     </form>
                 </div>
             </div>
@@ -76,12 +64,6 @@
         $('#santri_id').select2({
             theme: 'bootstrap-5',
             placeholder: 'Pilih Santri',
-            allowClear: true
-        });
-
-        $('#jenis_saldo').select2({
-            theme: 'bootstrap-5',
-            placeholder: 'Pilih Jenis Saldo',
             allowClear: true
         });
 
@@ -109,7 +91,7 @@
         });
 
         // Validate before form submission
-        $('#formTopUp').on('submit', function(e) {
+        $('#formTarikTunai').on('submit', function(e) {
             const value = parseInt(jumlahInput.value.replace(/\D/g, ''));
             
             if (value < 1000) {
