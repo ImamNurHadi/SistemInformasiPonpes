@@ -536,7 +536,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#saldoMenu" role="button" 
-                                        aria-expanded="{{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'true' : 'false' }}" 
+                                        aria-expanded="{{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'true' : 'false' }}" 
                                         aria-controls="saldoMenu">
                                         <div>
                                             <i class="bi bi-wallet2 me-2"></i>
@@ -544,10 +544,10 @@
                                         </div>
                                         <i class="bi bi-chevron-down"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('ceksaldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'show' : '' }}" id="saldoMenu">
+                                    <div class="collapse {{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'show' : '' }}" id="saldoMenu">
                                         <ul class="nav submenu">
                                             <li class="nav-item w-100">
-                                                <a href="{{ route('ceksaldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('ceksaldo.*') ? 'active' : '' }}">
+                                                <a href="{{ route('cek-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('cek-saldo.*') ? 'active' : '' }}">
                                                     <i class="bi bi-cash me-2"></i>
                                                     <span>Cek Saldo</span>
                                                 </a>

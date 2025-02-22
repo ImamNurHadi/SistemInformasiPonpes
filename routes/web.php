@@ -152,7 +152,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Cek Saldo
     Route::middleware(['auth'])->group(function () {
-        Route::get('/ceksaldo', [CekSaldoController::class, 'index'])->name('ceksaldo.index');
+        Route::get('/cek-saldo', [CekSaldoController::class, 'index'])->name('cek-saldo.index');
     });
 
     // Menu Kantin (Outlet Only)
