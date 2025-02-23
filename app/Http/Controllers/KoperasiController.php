@@ -96,23 +96,21 @@ class KoperasiController extends Controller
     {
         $validated = $request->validate([
             'santri_id' => 'required|exists:santri,id',
-            'total' => 'required|numeric|min:0',
-            'items' => 'required|array'
+            'total' => 'required|numeric|min:1',
+            'items' => 'required|array|min:1'
         ]);
 
         try {
             DB::beginTransaction();
 
-            $santri = Santri::findOrFail($validated['santri_id']);
+            $santri = Santri::lockForUpdate()->findOrFail($validated['santri_id']);
 
-            // Cek saldo mencukupi
-            if ($santri->saldo < $validated['total']) {
-                throw new \Exception('Saldo tidak mencukupi');
+            if ($santri->saldo_belanja < $validated['total']) {
+                throw new \InvalidArgumentException('Saldo belanja tidak mencukupi');
             }
 
-            // Kurangi saldo santri
-            $santri->saldo -= $validated['total'];
-            $santri->save();
+            // Kurangi saldo belanja menggunakan decrement
+            Santri::where('id', $santri->id)->decrement('saldo_belanja', $validated['total']);
 
             // Catat histori pembayaran
             HistoriSaldo::create([
@@ -127,16 +125,16 @@ class KoperasiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Pembayaran berhasil',
-                'new_saldo' => $santri->saldo
+                'new_saldo_belanja' => $santri->fresh()->saldo_belanja
             ]);
 
+        } catch (\InvalidArgumentException $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         } catch (\Exception $e) {
             DB::rollback();
-            
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 400);
+            \Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan, silakan coba lagi'], 500);
         }
     }
 }

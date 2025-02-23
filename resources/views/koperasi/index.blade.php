@@ -76,12 +76,12 @@
                             <select class="form-select select2" id="santri_id" name="santri_id" required>
                                 <option value="">Pilih Santri</option>
                                 @foreach($santri as $s)
-                                    <option value="{{ $s->id }}" data-saldo="{{ $s->saldo }}">{{ $s->nis }} - {{ $s->nama }} (Saldo: Rp {{ number_format($s->saldo, 0, ',', '.') }})</option>
+                                    <option value="{{ $s->id }}" data-saldo-belanja="{{ $s->saldo_belanja }}">{{ $s->nis }} - {{ $s->nama }} (Saldo Belanja: Rp {{ number_format($s->saldo_belanja, 0, ',', '.') }})</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Saldo Tersedia</label>
+                            <label class="form-label">Saldo Belanja Tersedia</label>
                             <div class="form-control" id="saldoDisplay">Rp 0</div>
                         </div>
                     </div>
@@ -214,8 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     santriSelect.addEventListener('change', function() {
         let selectedOption = this.options[this.selectedIndex];
-        let saldo = selectedOption.getAttribute('data-saldo');
-        saldoDisplay.textContent = saldo ? formatRupiah(parseInt(saldo)) : 'Rp 0';
+        let saldoBelanja = selectedOption.getAttribute('data-saldo-belanja');
+        saldoDisplay.textContent = saldoBelanja ? formatRupiah(parseInt(saldoBelanja)) : 'Rp 0';
     });
     
     hargaSatuanInput.addEventListener('click', () => activeInput = hargaSatuanInput);
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
     bayarBtn.addEventListener('click', function() {
         let selectedOption = santriSelect.options[santriSelect.selectedIndex];
         let santriId = selectedOption.value;
-        let saldo = parseInt(selectedOption.getAttribute('data-saldo'));
+        let saldoBelanja = parseInt(selectedOption.getAttribute('data-saldo-belanja'));
         let grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
         
         if (!santriId) {
@@ -308,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (saldo < grandTotal) {
-            alert('Saldo tidak mencukupi!');
+        if (saldoBelanja < grandTotal) {
+            alert('Saldo belanja tidak mencukupi!');
             return;
         }
 
@@ -330,9 +330,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 // Update saldo di tampilan
-                let newSaldo = saldo - grandTotal;
-                selectedOption.setAttribute('data-saldo', newSaldo);
-                saldoDisplay.textContent = formatRupiah(newSaldo);
+                let newSaldoBelanja = saldoBelanja - grandTotal;
+                selectedOption.setAttribute('data-saldo-belanja', newSaldoBelanja);
+                saldoDisplay.textContent = formatRupiah(newSaldoBelanja);
                 
                 // Reset form dan tabel
                 transaksiData = [];
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 grandTotalElement.textContent = 'Rp 0';
                 bayarBtn.disabled = true;
                 
-                alert('Pembayaran berhasil! Saldo baru: ' + formatRupiah(newSaldo));
+                alert('Pembayaran berhasil! Saldo belanja baru: ' + formatRupiah(newSaldoBelanja));
             } else {
                 alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
             }
