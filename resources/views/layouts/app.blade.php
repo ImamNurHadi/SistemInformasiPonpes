@@ -576,8 +576,8 @@
                             </ul>
                         </div>
                     </li>
-                    @endif
-
+                   
+                    
                     <!-- Akun Menu -->
                     <li class="nav-item">
                         <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#akunMenu" role="button" 
@@ -612,6 +612,7 @@
                             </ul>
                         </div>
                     </li>
+                    @endif
                 </ul>
             </div>
 
