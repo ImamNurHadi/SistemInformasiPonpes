@@ -51,6 +51,7 @@
     display: flex;
     align-items: flex-start;
     padding-top: 0;
+    width: 100%;
 }
 
 .form-card {
@@ -61,17 +62,20 @@
 
 /* Override margin dari container fluid di app.blade.php */
 .container-fluid.py-4 {
-    padding-top: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100%;
 }
 
 /* Override margin dari page-header di app.blade.php */
 .page-header {
-    margin-bottom: 0 !important;
-    padding: 0.5rem 0 !important;
+    margin: 0 !important;
+    padding: 0.5rem 1rem !important;
 }
 
 #reader {
     width: 100%;
+    max-width: 100%;
 }
 
 .scanner-container {
@@ -89,6 +93,7 @@
 .scanner-content {
     background: white;
     max-width: 500px;
+    width: 90%;
     margin: 20px auto;
     padding: 20px;
     border-radius: 8px;
@@ -104,6 +109,59 @@
     font-size: 1.5rem;
     cursor: pointer;
     color: #666;
+}
+
+/* Responsif styles */
+@media (max-width: 576px) {
+    .container {
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+    }
+    
+    .form-card {
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .card {
+        border-radius: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .content-wrapper {
+        padding: 0;
+    }
+    
+    .scanner-content {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    
+    #reader {
+        width: 100% !important;
+        height: auto !important;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Dark mode support untuk sidebar */
+@media (max-width: 767.98px) {
+    .sidebar {
+        background: #02361A !important;
+    }
+    
+    .sidebar.show {
+        left: 0 !important;
+    }
+    
+    .content {
+        margin-left: 0 !important;
+    }
 }
 </style>
 

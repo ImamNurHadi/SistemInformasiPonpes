@@ -78,9 +78,25 @@ class SantriController extends Controller
                 'pekerjaan_ibu' => 'required|string|max:255',
             ]);
 
-            \Log::info('Validasi berhasil, mencoba membuat data santri');
+            \Log::info('Validasi berhasil, mencoba membuat user dan data santri');
+
+            // Buat user baru untuk santri
+            $roleSantri = Role::where('name', 'Santri')->first();
+            if (!$roleSantri) {
+                throw new \Exception('Role Santri tidak ditemukan');
+            }
+
+            $user = User::create([
+                'name' => $request->nama,
+                'email' => $request->nis . '@santri.ponpes.id',
+                'password' => Hash::make($request->nis), // Password default adalah NIS
+                'role_id' => $roleSantri->id
+            ]);
+
+            \Log::info('User berhasil dibuat dengan ID: ' . $user->id);
 
             $santri = Santri::create([
+                'user_id' => $user->id,
                 'nama' => $request->nama,
                 'nis' => $request->nis,
                 'tempat_lahir' => $request->tempat_lahir,
@@ -99,9 +115,15 @@ class SantriController extends Controller
                 'tingkatan_masuk' => $request->tingkatan_id,
                 'gedung_id' => $request->gedung_id,
                 'kamar_id' => $request->kamar_id,
+                'saldo_utama' => 0,
+                'saldo_belanja' => 0,
+                'saldo_tabungan' => 0
             ]);
 
             \Log::info('Data santri berhasil dibuat dengan ID: ' . $santri->id);
+
+            // Generate QR Code untuk santri
+            $santri->generateQrCode();
 
             // Buat data wali santri
             if ($santri) {
@@ -130,7 +152,7 @@ class SantriController extends Controller
             }
 
             return redirect()->route('santri.index')
-                ->with('success', 'Data santri berhasil ditambahkan!');
+                ->with('success', 'Data santri berhasil ditambahkan! Email: ' . $user->email . ' dan Password: ' . $request->nis);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation error: ' . json_encode($e->errors()));
