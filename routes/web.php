@@ -148,6 +148,7 @@ Route::middleware(['auth'])->group(function () {
     // Topup - Only for Operator
     Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::get('/topup', [TopUpController::class, 'index'])->name('topup.index');
+        Route::get('/topup/form/{santri}', [TopUpController::class, 'showForm'])->name('topup.form');
         Route::post('/topup', [TopUpController::class, 'topup'])->name('topup.store');
     });
 
@@ -177,9 +178,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tabungan', [AkunTabunganController::class, 'index'])->name('akun-tabungan.index');
     });
 
-    // Tarik Tunai routes
-    Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai.index');
-    Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
+    // Tarik Tunai routes - Only for Operator
+    Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
+        Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai.index');
+        Route::get('/tarik-tunai/form/{santri}', [TarikTunaiController::class, 'showForm'])->name('tarik-tunai.form');
+        Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
+    });
 
 });
 

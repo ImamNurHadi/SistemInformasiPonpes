@@ -31,7 +31,7 @@
                     @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <form action="{{ route('histori-saldo.index') }}" method="GET" id="filterForm">
+                            <form action="{{ route('histori-saldo.index') }}" method="GET" id="searchForm">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -58,6 +58,20 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                                            <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" 
+                                                value="{{ request('tanggal_mulai') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                                            <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir" 
+                                                value="{{ request('tanggal_akhir') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-3 d-flex align-items-end">
@@ -145,6 +159,21 @@
             theme: 'bootstrap-5',
             placeholder: 'Pilih Kelas',
             allowClear: true
+        });
+
+        // Set max date for date inputs to today
+        const today = new Date().toISOString().split('T')[0];
+        $('#tanggal_mulai').attr('max', today);
+        $('#tanggal_akhir').attr('max', today);
+
+        // Update min date of end date when start date changes
+        $('#tanggal_mulai').change(function() {
+            $('#tanggal_akhir').attr('min', $(this).val());
+        });
+
+        // Update max date of start date when end date changes
+        $('#tanggal_akhir').change(function() {
+            $('#tanggal_mulai').attr('max', $(this).val());
         });
     });
 </script>

@@ -558,12 +558,14 @@
                                                     <span>Top Up Saldo</span>
                                                 </a>
                                             </li>
+                                            @if(auth()->user()->isOperator())
                                             <li class="nav-item w-100">
                                                 <a href="{{ route('tarik-tunai.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('tarik-tunai.*') ? 'active' : '' }}">
                                                     <i class="bi bi-cash-stack me-2"></i>
                                                     <span>Tarik Tunai</span>
                                                 </a>
                                             </li>
+                                            @endif
                                             <li class="nav-item w-100">
                                                 <a href="{{ route('histori-belanja.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-belanja.*') ? 'active' : '' }}">
                                                     <i class="bi bi-cart-check me-2"></i>
