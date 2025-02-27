@@ -150,7 +150,8 @@ class SantriController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $santri = Santri::with(['tingkatan', 'gedung', 'kamar', 'waliSantri'])->findOrFail($id);
+        return view('santri.show', compact('santri'));
     }
 
     /**
@@ -271,5 +272,13 @@ class SantriController extends Controller
                 'message' => 'Terjadi kesalahan saat mengambil data kamar'
             ], 500);
         }
+    }
+
+    public function getSaldo(Santri $santri)
+    {
+        return response()->json([
+            'saldo_belanja' => $santri->saldo_belanja,
+            'saldo_utama' => $santri->saldo_utama
+        ]);
     }
 }

@@ -31,6 +31,7 @@
         font-weight: 600;
         color: #666;
         margin-bottom: 5px;
+        display: block;
     }
     .profile-info p {
         color: #333;
@@ -40,131 +41,171 @@
         padding: 20px;
         border-top: 1px solid #eee;
     }
+    .btn-action {
+        margin-bottom: 10px;
+    }
+    .qr-code-container {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .qr-code-container p {
+        margin-top: 10px;
+        color: #666;
+        font-size: 0.9em;
+    }
+    .saldo-info {
+        background: #e9ecef;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .saldo-info .label {
+        font-size: 0.9em;
+        color: #666;
+    }
+    .saldo-info .value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #058B42;
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="container-fluid">
-    <div class="row">
+    <div class="row justify-content-center">
         <!-- Kartu Identitas -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="profile-card">
                 <div class="profile-header">
-                    <h4>Identitas</h4>
+                    <h4>Identitas {{ Auth::user()->role->name }}</h4>
                 </div>
                 <div class="profile-body">
-                    <div class="profile-info">
-                        <label>Nama</label>
-                        <p>{{ Auth::user()->name }}</p>
+                    @php
+                        $santri = Auth::user()->santri;
+                    @endphp
+
+                    @if($santri)
+                    <div class="qr-code-container">
+                        {!! $santri->generateQrCode() !!}
+                        <p class="text-muted">Gunakan QR Code ini untuk transaksi di kantin dan koperasi</p>
                     </div>
-                    <div class="profile-info">
-                        <label>Email</label>
-                        <p>{{ Auth::user()->email }}</p>
-                    </div>
-                    <div class="profile-info">
-                        <label>Role</label>
-                        <p>{{ Auth::user()->role ? Auth::user()->role->name : 'Tidak ada role' }}</p>
-                    </div>
-                    @if(Auth::user()->santri)
-                    <div class="profile-info">
-                        <label>NIS</label>
-                        <p>{{ Auth::user()->santri->nis }}</p>
-                    </div>
-                    <div class="profile-info">
-                        <label>Tingkatan</label>
-                        <p>{{ Auth::user()->santri->tingkatanSaatIni ? Auth::user()->santri->tingkatanSaatIni->nama : '-' }}</p>
-                    </div>
-                    <div class="profile-info">
-                        <label>Kamar</label>
-                        <p>{{ Auth::user()->santri->kompleks ? Auth::user()->santri->kompleks->nama_gedung . ' / ' . Auth::user()->santri->kompleks->nama_kamar : '-' }}</p>
+
+                    <div class="saldo-info">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="label">Saldo Utama</div>
+                                <div class="value">Rp {{ number_format($santri->saldo_utama, 0, ',', '.') }}</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="label">Saldo Belanja</div>
+                                <div class="value">Rp {{ number_format($santri->saldo_belanja, 0, ',', '.') }}</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="label">Saldo Tabungan</div>
+                                <div class="value">Rp {{ number_format($santri->saldo_tabungan, 0, ',', '.') }}</div>
+                            </div>
+                        </div>
                     </div>
                     @endif
-                </div>
-            </div>
-        </div>
 
-        <!-- Form Update -->
-        <div class="col-md-8">
-            <!-- Update Profile -->
-            <div class="profile-card">
-                <div class="profile-header">
-                    <h4>Update Profile</h4>
-                </div>
-                <div class="profile-body">
-                    <form action="{{ route('profile.update') }}" method="POST">
-                        @csrf
-                        @method('patch')
-                        
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nama</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                id="name" name="name" value="{{ old('name', Auth::user()->name) }}" required>
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Nama</label>
+                                <p>{{ Auth::user()->name }}</p>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Email</label>
+                                <p>{{ Auth::user()->email }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="profile-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Simpan Perubahan
-                            </button>
+                    @if($santri)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>NIS</label>
+                                <p>{{ $santri->nis }}</p>
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </div>
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Tingkatan</label>
+                                <p>{{ $santri->tingkatan ? $santri->tingkatan->nama : '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Update Email & Password -->
-            <div class="profile-card">
-                <div class="profile-header">
-                    <h4>Update Email & Password</h4>
-                </div>
-                <div class="profile-body">
-                    <form action="{{ route('profile.update-email') }}" method="POST">
-                        @csrf
-                        @method('patch')
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Baru</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                id="email" name="email" value="{{ old('email', Auth::user()->email) }}" required>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Gedung</label>
+                                <p>{{ $santri->gedung ? $santri->gedung->nama_gedung : '-' }}</p>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Kamar</label>
+                                <p>{{ $santri->kamar ? $santri->kamar->nama_kamar : '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="current_password" class="form-label">Password Saat Ini</label>
-                            <input type="password" class="form-control @error('current_password') is-invalid @enderror" 
-                                id="current_password" name="current_password" required>
-                            @error('current_password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Tempat, Tanggal Lahir</label>
+                                <p>{{ $santri->tempat_lahir }}, {{ $santri->tanggal_lahir->format('d F Y') }}</p>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>No. HP</label>
+                                <p>{{ $santri->no_hp }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password Baru</label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                id="password" name="password">
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <div class="profile-info">
+                        <label>Alamat</label>
+                        <p>{{ $santri->alamat }}, {{ $santri->kelurahan }}, {{ $santri->kecamatan }}, {{ $santri->kabupaten_kota }}</p>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
-                            <input type="password" class="form-control" 
-                                id="password_confirmation" name="password_confirmation">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Nama Ayah</label>
+                                <p>{{ $santri->nama_ayah }}</p>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="profile-info">
+                                <label>Nama Ibu</label>
+                                <p>{{ $santri->nama_ibu }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
-                        <div class="profile-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Update Email & Password
-                            </button>
-                        </div>
-                    </form>
+                    <div class="profile-actions">
+                        <a href="{{ route('profile.edit-info') }}" class="btn btn-primary w-100 btn-action">
+                            <i class="bi bi-person-gear"></i> Update Profile
+                        </a>
+                        <a href="{{ route('profile.edit-security') }}" class="btn btn-warning w-100 btn-action">
+                            <i class="bi bi-shield-lock"></i> Update Email & Password
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+

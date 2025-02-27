@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Santri extends Model
 {
@@ -77,5 +78,27 @@ class Santri extends Model
     public function kelasWali()
     {
         return $this->belongsTo(MasterTingkatan::class, 'kelas_wali');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function generateQrCode()
+    {
+        $data = [
+            'id' => $this->id,
+            'nama' => $this->nama,
+            'nis' => $this->nis,
+            'tingkatan' => $this->tingkatan ? $this->tingkatan->nama : null,
+            'type' => 'santri_qr'
+        ];
+        
+        return QrCode::size(200)
+            ->backgroundColor(255, 255, 255)
+            ->color(5, 139, 66)
+            ->margin(1)
+            ->generate(json_encode($data));
     }
 } 

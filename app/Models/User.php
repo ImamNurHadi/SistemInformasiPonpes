@@ -33,7 +33,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsTo(Role::class);
     }
 
     // Metode fleksibel untuk memeriksa peran pengguna
@@ -76,5 +76,10 @@ class User extends Authenticatable
     public function keranjang()
     {
         return $this->hasMany(Keranjang::class);
+    }
+
+    public function santri()
+    {
+        return $this->hasOne(Santri::class);
     }
 }

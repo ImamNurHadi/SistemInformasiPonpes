@@ -24,6 +24,7 @@ use App\Http\Controllers\AkunBelanjaController;
 use App\Http\Controllers\AkunUtamaController;
 use App\Http\Controllers\AkunTabunganController;
 use App\Http\Controllers\TarikTunaiController;
+use App\Http\Controllers\KantinController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -156,9 +157,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Menu Kantin (Outlet Only)
-    Route::middleware(['auth', \App\Http\Middleware\IsKantin::class])->group(function () {
-        Route::resource('menu', MenuController::class);
-        Route::put('/menu/{menu}/stok', [MenuController::class, 'updateStok'])->name('menu.update-stok');
+    Route::middleware(['auth', \App\Http\Middleware\IsOutlet::class])->group(function () {
+        Route::get('/kantin', [\App\Http\Controllers\KantinController::class, 'index'])->name('kantin.index');
+        Route::post('/kantin/bayar', [\App\Http\Controllers\KantinController::class, 'bayar'])->name('kantin.bayar');
     });
 
     // Route untuk Kamar dan Gedung
@@ -184,6 +185,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/info', [ProfileController::class, 'editInfo'])->name('profile.edit-info');
+    Route::get('/profile/security', [ProfileController::class, 'editSecurity'])->name('profile.edit-security');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.update-email');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

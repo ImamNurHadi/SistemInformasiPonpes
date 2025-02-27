@@ -15,82 +15,48 @@ class SantriSeeder extends Seeder
 {
     public function run(): void
     {
-        // Pastikan role Santri sudah ada
-        $santriRole = Role::firstOrCreate(
-            ['name' => 'Santri'],
-            ['description' => 'Role untuk santri']
-        );
+        // Ambil role santri yang sudah ada
+        $roleSantri = Role::where('name', 'Santri')->first();
 
-        // Buat tingkatan jika belum ada
-        $tingkatan = MasterTingkatan::firstOrCreate(
-            ['nama' => 'Kelas 7'],
-            ['keterangan' => 'Tingkat SMP Kelas 7']
-        );
-
-        // Buat gedung jika belum ada
-        $gedung = Gedung::firstOrCreate(
-            ['nama_gedung' => 'Gedung A'],
-            ['keterangan' => 'Gedung Putra']
-        );
-
-        // Buat kamar jika belum ada
-        $kamar = Kamar::firstOrCreate(
-            [
-                'nama_kamar' => 'Kamar A1',
-                'gedung_id' => $gedung->id
-            ],
-            ['keterangan' => 'Kamar Lantai 1']
-        );
+        if (!$roleSantri) {
+            throw new \Exception('Role Santri tidak ditemukan. Pastikan RoleSeeder sudah dijalankan.');
+        }
 
         // Buat user untuk santri
         $user = User::create([
-            'name' => 'Mikael',
-            'email' => 'mikael@santri.com',
-            'password' => Hash::make('santri123'),
-            'role_id' => $santriRole->id
+            'name' => 'Santri Demo',
+            'email' => 'santri@demo.com',
+            'password' => bcrypt('password'),
+            'role_id' => $roleSantri->id
         ]);
+
+        // Ambil tingkatan pertama
+        $tingkatan = MasterTingkatan::first();
 
         // Buat data santri
-        $santri = Santri::create([
-            'nama' => 'Mikael',
+        Santri::create([
+            'user_id' => $user->id,
+            'nama' => $user->name,
             'nis' => '2024001',
-            'tempat_lahir' => 'Jakarta',
-            'tanggal_lahir' => '2010-05-15',
-            'jenis_kelamin' => 'L',
-            'alamat' => 'Jl. Raya Bogor No. 123',
-            'no_hp' => '081234567890',
-            'nama_ayah' => 'John Doe',
-            'nama_ibu' => 'Jane Doe',
-            'anak_ke' => 1,
-            'jumlah_saudara_kandung' => 2,
-            'kelurahan' => 'Pasar Minggu',
-            'kecamatan' => 'Pasar Minggu',
-            'kabupaten_kota' => 'Jakarta Selatan',
             'tingkatan_id' => $tingkatan->id,
+            'gedung_id' => null,
+            'kamar_id' => null,
+            'tempat_lahir' => 'Jakarta',
+            'tanggal_lahir' => '2000-01-01',
+            'jenis_kelamin' => 'L',
+            'alamat' => 'Jl. Demo No. 123',
+            'no_hp' => '08123456789',
+            'saldo_utama' => 1000000,
+            'saldo_belanja' => 500000,
+            'saldo_tabungan' => 250000,
+            'kelurahan' => 'Demo',
+            'kecamatan' => 'Demo',
+            'kabupaten_kota' => 'Demo',
+            'nama_ayah' => 'Ayah Demo',
+            'nama_ibu' => 'Ibu Demo',
             'tingkatan_masuk' => $tingkatan->id,
-            'gedung_id' => $gedung->id,
-            'kamar_id' => $kamar->id,
-            'user_id' => $user->id
-        ]);
-
-        // Buat data wali santri
-        $santri->waliSantri()->create([
-            'nama_wali' => 'John Doe',
-            'asal_kota' => 'Jakarta',
-            'nama_ayah' => 'John Doe',
-            'alamat_kk_ayah' => 'Jl. Raya Bogor No. 123',
-            'alamat_domisili_ayah' => 'Jl. Raya Bogor No. 123',
-            'no_identitas_ayah' => '3171234567890001',
-            'no_hp_ayah' => '081234567890',
-            'pendidikan_ayah' => 'S1',
-            'pekerjaan_ayah' => 'Wiraswasta',
-            'nama_ibu' => 'Jane Doe',
-            'alamat_kk_ibu' => 'Jl. Raya Bogor No. 123',
-            'alamat_domisili_ibu' => 'Jl. Raya Bogor No. 123',
-            'no_identitas_ibu' => '3171234567890002',
-            'no_hp_ibu' => '081234567891',
-            'pendidikan_ibu' => 'S1',
-            'pekerjaan_ibu' => 'Ibu Rumah Tangga'
+            'anak_ke' => 1,
+            'jumlah_saudara_kandung' => 2
         ]);
     }
 } 

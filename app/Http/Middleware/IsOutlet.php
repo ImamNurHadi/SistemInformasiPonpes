@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsKantin
+class IsOutlet
 {
     /**
      * Handle an incoming request.
@@ -15,8 +15,8 @@ class IsKantin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isKantin()) {
-            abort(403, 'Akses ditolak. Hanya Kantin yang dapat mengakses halaman ini.');
+        if (!$request->user() || !$request->user()->role || $request->user()->role->name !== 'Outlet') {
+            abort(403, 'Unauthorized action.');
         }
 
         return $next($request);

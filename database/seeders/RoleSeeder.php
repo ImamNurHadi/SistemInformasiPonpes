@@ -26,6 +26,10 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Operator',
                 'description' => 'Memiliki akses khusus untuk top up saldo'
+            ],
+            [
+                'name' => 'Santri',
+                'description' => 'Memiliki akses ke fitur santri'
             ]
         ];
 

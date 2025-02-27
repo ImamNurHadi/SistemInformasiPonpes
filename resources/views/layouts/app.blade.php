@@ -473,7 +473,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('koperasi.index') }}" class="nav-link main-menu {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">
+                            <a href="{{ route('kantin.index') }}" class="nav-link main-menu {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">
                                 <i class="bi bi-shop me-2"></i>
                                 Kantin
                             </a>
@@ -662,9 +662,14 @@
                 <!-- Page Header with Breadcrumb -->
                 <div class="page-header">
                     <div class="d-flex align-items-center">
+                        @php
+                            $hideBackButton = in_array(request()->route()->getName(), ['kantin.index', 'koperasi.index']);
+                        @endphp
+                        @unless($hideBackButton)
                         <a href="javascript:history.back()" class="back-button">
                             <i class="bi bi-arrow-left"></i>
                         </a>
+                        @endunless
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
                                 @php
@@ -729,10 +734,10 @@
             </div>
         </main>
 
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- Bootstrap Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SweetAlert2 JS -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         

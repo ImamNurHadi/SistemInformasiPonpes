@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             OutletSeeder::class,
             OperatorSeeder::class,
+            MasterTingkatanSeeder::class,
             SantriSeeder::class,
         ]);
     }
