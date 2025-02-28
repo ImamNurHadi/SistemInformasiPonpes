@@ -2,6 +2,22 @@
 
 @section('title', 'Top Up Saldo')
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<style>
+    .btn-search-green {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: white !important;
+    }
+    .btn-search-green:hover {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container-fluid">
     <div class="card shadow mb-4">
@@ -49,7 +65,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" style="margin-top: 2rem;">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-search-green me-2">
                                         <i class="bi bi-search me-1"></i>Cari
                                     </button>
                                     <a href="{{ route('topup.index') }}" class="btn btn-secondary">
@@ -103,11 +119,6 @@
         </div>
     </div>
 </div>
-
-@push('styles')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-@endpush
 
 @push('scripts')
 <script>

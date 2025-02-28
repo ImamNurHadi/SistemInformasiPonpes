@@ -2,6 +2,22 @@
 
 @section('title', 'Histori Saldo')
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<style>
+    .btn-search-green {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: white !important;
+    }
+    .btn-search-green:hover {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -9,11 +25,24 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Histori Saldo</h3>
-                    @if(auth()->user()->isOperator())
-                    <a href="{{ route('topup.index') }}" class="btn btn-success">
-                        <i class="bi bi-plus-circle me-1"></i>Top Up Baru
-                    </a>
-                    @endif
+                    <div>
+                        <form action="{{ route('histori-saldo.print') }}" method="GET" class="d-inline me-2">
+                            <input type="hidden" name="nis" value="{{ request('nis') }}">
+                            <input type="hidden" name="nama" value="{{ request('nama') }}">
+                            <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
+                            <input type="hidden" name="tipe" value="{{ request('tipe') }}">
+                            <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
+                            <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-printer me-1"></i>Print PDF
+                            </button>
+                        </form>
+                        @if(auth()->user()->isOperator())
+                        <a href="{{ route('topup.index') }}" class="btn btn-success d-inline">
+                            <i class="bi bi-plus-circle me-1"></i>Top Up Baru
+                        </a>
+                        @endif
+                    </div>
                 </div>
                 <div class="card-body">
                     @if(session('error'))
@@ -88,7 +117,7 @@
                                     </div>
                                     <div class="col-md-6 d-flex align-items-end">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary me-2">
+                                            <button type="submit" class="btn btn-search-green me-2">
                                                 <i class="bi bi-search me-1"></i>Cari
                                             </button>
                                             <a href="{{ route('histori-saldo.index') }}" class="btn btn-secondary">

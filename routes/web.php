@@ -144,6 +144,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Histori Saldo
     Route::get('/histori-saldo', [\App\Http\Controllers\HistoriSaldoController::class, 'index'])->name('histori-saldo.index');
+    Route::get('/histori-saldo/print', [\App\Http\Controllers\HistoriSaldoController::class, 'printPDF'])->name('histori-saldo.print');
 
     // Topup - Only for Operator
     Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
@@ -155,6 +156,7 @@ Route::middleware(['auth'])->group(function () {
     // Cek Saldo
     Route::middleware(['auth'])->group(function () {
         Route::get('/cek-saldo', [CekSaldoController::class, 'index'])->name('cek-saldo.index');
+        Route::get('/cek-saldo/print', [CekSaldoController::class, 'printPDF'])->name('cek-saldo.print');
     });
 
     // Menu Kantin (Outlet Only)

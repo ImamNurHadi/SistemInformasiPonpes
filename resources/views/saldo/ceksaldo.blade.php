@@ -7,8 +7,16 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Daftar Saldo Santri</h3>
+                    <form action="{{ route('cek-saldo.print') }}" method="GET" class="d-inline">
+                        <input type="hidden" name="nis" value="{{ request('nis') }}">
+                        <input type="hidden" name="nama" value="{{ request('nama') }}">
+                        <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-printer me-1"></i>Print PDF
+                        </button>
+                    </form>
                 </div>
                 <div class="card-body">
                     <div class="row mb-4">
@@ -44,11 +52,11 @@
                                     </div>
                                     <div class="col-md-3 d-flex align-items-end">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary me-2">
-                                                <i class="bi bi-search"></i> Cari
+                                            <button type="submit" class="btn btn-success me-2">
+                                                <i class="bi bi-search me-1"></i>Cari
                                             </button>
                                             <a href="{{ route('cek-saldo.index') }}" class="btn btn-secondary">
-                                                <i class="bi bi-x-circle"></i> Reset
+                                                <i class="bi bi-arrow-clockwise me-1"></i>Reset
                                             </a>
                                         </div>
                                     </div>

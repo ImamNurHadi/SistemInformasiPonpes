@@ -235,13 +235,13 @@
             }
 
             .btn-primary {
-                background-color: #058B42;
-                border-color: #058B42;
+                background-color: #0d6efd;
+                border-color: #0d6efd;
             }
 
             .btn-primary:hover {
-                background-color: #02361A;
-                border-color: #02361A;
+                background-color: #0b5ed7;
+                border-color: #0a58ca;
             }
 
             .sidebar-footer {
