@@ -40,14 +40,40 @@ class HistoriSaldoController extends Controller
                 });
             }
 
+            // Filter berdasarkan Tipe Transaksi
+            if ($request->filled('tipe')) {
+                $query->where('tipe', $request->tipe);
+            }
+
+            // Filter berdasarkan Tanggal
+            if ($request->filled('tanggal_mulai')) {
+                $query->whereDate('created_at', '>=', $request->tanggal_mulai);
+            }
+            if ($request->filled('tanggal_akhir')) {
+                $query->whereDate('created_at', '<=', $request->tanggal_akhir);
+            }
+
             $historiSaldo = $query->orderBy('created_at', 'desc')->get();
         } else {
             // Cek apakah user adalah santri
             $santri = Santri::where('user_id', $user->id)->first();
             if ($santri) {
-                $historiSaldo = $query->where('santri_id', $santri->id)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $query->where('santri_id', $santri->id);
+
+                // Filter berdasarkan Tipe Transaksi untuk santri
+                if ($request->filled('tipe')) {
+                    $query->where('tipe', $request->tipe);
+                }
+
+                // Filter berdasarkan Tanggal untuk santri
+                if ($request->filled('tanggal_mulai')) {
+                    $query->whereDate('created_at', '>=', $request->tanggal_mulai);
+                }
+                if ($request->filled('tanggal_akhir')) {
+                    $query->whereDate('created_at', '<=', $request->tanggal_akhir);
+                }
+
+                $historiSaldo = $query->orderBy('created_at', 'desc')->get();
             }
         }
 

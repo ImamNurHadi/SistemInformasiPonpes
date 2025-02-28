@@ -31,7 +31,7 @@
                     @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <form action="{{ route('histori-saldo.index') }}" method="GET" id="searchForm">
+                            <form action="{{ route('histori-saldo.index') }}" method="GET" id="filterForm">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -62,6 +62,18 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
+                                            <label for="tipe" class="form-label">Tipe Transaksi</label>
+                                            <select class="form-select" id="tipe" name="tipe">
+                                                <option value="">Semua Tipe</option>
+                                                <option value="masuk" {{ request('tipe') == 'masuk' ? 'selected' : '' }}>Masuk</option>
+                                                <option value="keluar" {{ request('tipe') == 'keluar' ? 'selected' : '' }}>Keluar</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
                                             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
                                             <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" 
                                                 value="{{ request('tanggal_mulai') }}">
@@ -74,13 +86,13 @@
                                                 value="{{ request('tanggal_akhir') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3 d-flex align-items-end">
+                                    <div class="col-md-6 d-flex align-items-end">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary me-2">
-                                                <i class="bi bi-search"></i> Cari
+                                                <i class="bi bi-search me-1"></i>Cari
                                             </button>
                                             <a href="{{ route('histori-saldo.index') }}" class="btn btn-secondary">
-                                                <i class="bi bi-x-circle"></i> Reset
+                                                <i class="bi bi-arrow-clockwise me-1"></i>Reset
                                             </a>
                                         </div>
                                     </div>
@@ -154,26 +166,24 @@
             }
         });
 
-        // Initialize select2 for tingkatan dropdown
-        $('#tingkatan_id').select2({
+        // Initialize select2 for tingkatan and tipe dropdowns
+        $('#tingkatan_id, #tipe').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Pilih Kelas',
+            placeholder: 'Pilih...',
             allowClear: true
         });
 
-        // Set max date for date inputs to today
-        const today = new Date().toISOString().split('T')[0];
-        $('#tanggal_mulai').attr('max', today);
-        $('#tanggal_akhir').attr('max', today);
+        // Date range validation
+        $('#tanggal_mulai, #tanggal_akhir').change(function() {
+            var tanggalMulai = $('#tanggal_mulai').val();
+            var tanggalAkhir = $('#tanggal_akhir').val();
 
-        // Update min date of end date when start date changes
-        $('#tanggal_mulai').change(function() {
-            $('#tanggal_akhir').attr('min', $(this).val());
-        });
-
-        // Update max date of start date when end date changes
-        $('#tanggal_akhir').change(function() {
-            $('#tanggal_mulai').attr('max', $(this).val());
+            if (tanggalMulai && tanggalAkhir) {
+                if (tanggalMulai > tanggalAkhir) {
+                    alert('Tanggal akhir harus lebih besar dari tanggal mulai');
+                    $('#tanggal_akhir').val('');
+                }
+            }
         });
     });
 </script>
