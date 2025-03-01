@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateGrandTotal() {
-        const grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
+        const grandTotal = transaksiData.reduce((total, item) => total + item.total, 0);
         grandTotalElement.textContent = formatRupiah(grandTotal);
         bayarBtn.disabled = grandTotal === 0;
     }
@@ -271,7 +271,12 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         transaksiTableBody.appendChild(tr);
-        transaksiData.push({ hargaSatuan, jumlah, subTotal });
+        transaksiData.push({ 
+            nama: 'Item ' + (transaksiData.length + 1),
+            harga: hargaSatuan,
+            kuantitas: jumlah,
+            total: subTotal
+        });
         
         updateGrandTotal();
         
@@ -296,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedOption = santriSelect.options[santriSelect.selectedIndex];
         let santriId = selectedOption.value;
         let saldoBelanja = parseInt(selectedOption.getAttribute('data-saldo-belanja'));
-        let grandTotal = transaksiData.reduce((total, item) => total + item.subTotal, 0);
+        let grandTotal = transaksiData.reduce((total, item) => total + item.total, 0);
         
         if (!santriId) {
             alert('Pilih santri terlebih dahulu');

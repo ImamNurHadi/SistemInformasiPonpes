@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Koperasi;
 use App\Models\Santri;
 use App\Models\HistoriSaldo;
+use App\Models\TransaksiKoperasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -94,6 +95,8 @@ class KoperasiController extends Controller
      */
     public function bayar(Request $request)
     {
+        \Log::info('Request data:', $request->all());
+
         $validated = $request->validate([
             'santri_id' => 'required|exists:santri,id',
             'total' => 'required|numeric|min:1',
@@ -103,7 +106,10 @@ class KoperasiController extends Controller
         try {
             DB::beginTransaction();
 
+            \Log::info('Validated data:', $validated);
+
             $santri = Santri::lockForUpdate()->findOrFail($validated['santri_id']);
+            \Log::info('Santri found:', ['id' => $santri->id, 'saldo_belanja' => $santri->saldo_belanja]);
 
             if ($santri->saldo_belanja < $validated['total']) {
                 throw new \InvalidArgumentException('Saldo belanja tidak mencukupi');
@@ -113,14 +119,38 @@ class KoperasiController extends Controller
             Santri::where('id', $santri->id)->decrement('saldo_belanja', $validated['total']);
 
             // Catat histori pembayaran
-            HistoriSaldo::create([
+            $histori = HistoriSaldo::create([
                 'santri_id' => $santri->id,
                 'jumlah' => $validated['total'],
                 'keterangan' => 'Pembayaran di Koperasi',
-                'tipe' => 'keluar'
+                'tipe' => 'keluar',
+                'jenis_saldo' => 'belanja'
             ]);
+            \Log::info('Histori saldo created:', $histori->toArray());
+
+            // Catat setiap item transaksi
+            foreach ($validated['items'] as $item) {
+                \Log::info('Processing item:', $item);
+                try {
+                    $transaksi = TransaksiKoperasi::create([
+                        'santri_id' => $santri->id,
+                        'nama_barang' => $item['nama'],
+                        'harga_satuan' => $item['harga'],
+                        'kuantitas' => $item['kuantitas'],
+                        'total' => $item['harga'] * $item['kuantitas']
+                    ]);
+                    \Log::info('Transaksi created:', $transaksi->toArray());
+                } catch (\Exception $e) {
+                    \Log::error('Error creating transaksi:', [
+                        'message' => $e->getMessage(),
+                        'item' => $item
+                    ]);
+                    throw $e;
+                }
+            }
 
             DB::commit();
+            \Log::info('Transaction committed successfully');
 
             return response()->json([
                 'success' => true,
@@ -130,10 +160,14 @@ class KoperasiController extends Controller
 
         } catch (\InvalidArgumentException $e) {
             DB::rollback();
+            \Log::warning('Invalid argument:', ['message' => $e->getMessage()]);
             return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         } catch (\Exception $e) {
             DB::rollback();
-            \Log::error($e->getMessage());
+            \Log::error('Error in transaction:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan, silakan coba lagi'], 500);
         }
     }

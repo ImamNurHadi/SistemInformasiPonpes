@@ -2,6 +2,20 @@
 
 @section('title', 'Akun Tabungan')
 
+@push('styles')
+<style>
+    .btn-search-green {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: white !important;
+    }
+    .btn-search-green:hover {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -45,8 +59,8 @@
                                         </div>
                                         <div class="col-md-3 d-flex align-items-end">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary me-2">
-                                                    <i class="bi bi-search"></i> Cari
+                                                <button type="submit" class="btn btn-search-green me-2">
+                                                    <i class="bi bi-search me-1"></i>Cari
                                                 </button>
                                                 <a href="{{ route('akun-tabungan.index') }}" class="btn btn-secondary">
                                                     <i class="bi bi-x-circle"></i> Reset

@@ -25,6 +25,7 @@ use App\Http\Controllers\AkunUtamaController;
 use App\Http\Controllers\AkunTabunganController;
 use App\Http\Controllers\TarikTunaiController;
 use App\Http\Controllers\KantinController;
+use App\Http\Controllers\HiddenSaldoBelanjaController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -172,6 +173,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Histori Belanja
     Route::get('/histori-belanja', [HistoriBelanjaController::class, 'index'])->name('histori-belanja.index');
+    Route::get('/histori-belanja/print', [HistoriBelanjaController::class, 'printPDF'])->name('histori-belanja.print');
 
     // Akun Routes
     Route::prefix('akun')->group(function () {
@@ -185,6 +187,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai.index');
         Route::get('/tarik-tunai/form/{santri}', [TarikTunaiController::class, 'showForm'])->name('tarik-tunai.form');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
+    });
+
+    // Hidden Saldo Belanja - Accessible by all authenticated users
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/hidden-saldo-belanja', [HiddenSaldoBelanjaController::class, 'index'])->name('hidden-saldo-belanja.index');
+        Route::get('/hidden-saldo-belanja/{santri}', [HiddenSaldoBelanjaController::class, 'showForm'])->name('hidden-saldo-belanja.form');
+        Route::post('/hidden-saldo-belanja', [HiddenSaldoBelanjaController::class, 'store'])->name('hidden-saldo-belanja.store');
     });
 
 });

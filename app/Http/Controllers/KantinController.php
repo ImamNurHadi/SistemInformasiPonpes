@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Santri;
 use App\Models\HistoriSaldo;
+use App\Models\TransaksiKoperasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -40,8 +41,20 @@ class KantinController extends Controller
                 'santri_id' => $santri->id,
                 'jumlah' => $validated['total'],
                 'keterangan' => 'Pembayaran di Kantin',
-                'tipe' => 'keluar'
+                'tipe' => 'keluar',
+                'jenis_saldo' => 'belanja'
             ]);
+
+            // Catat setiap item transaksi
+            foreach ($validated['items'] as $item) {
+                TransaksiKoperasi::create([
+                    'santri_id' => $santri->id,
+                    'nama_barang' => $item['nama'],
+                    'harga_satuan' => $item['harga'],
+                    'kuantitas' => $item['kuantitas'],
+                    'total' => $item['harga'] * $item['kuantitas']
+                ]);
+            }
 
             DB::commit();
 

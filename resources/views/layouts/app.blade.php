@@ -581,7 +581,7 @@
                    
                     
                     <!-- Akun Menu -->
-                    <li class="nav-item">
+                                <li class="nav-item">
                         <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#akunMenu" role="button" 
                             aria-expanded="{{ request()->routeIs('akun-belanja.*') || request()->routeIs('akun-utama.*') || request()->routeIs('akun-tabungan.*') ? 'true' : 'false' }}" 
                             aria-controls="akunMenu">
