@@ -8,7 +8,7 @@
     "require": {
         "php": "^8.2",
         "bacon/bacon-qr-code": "*",
-        "barryvdh/laravel-dompdf": "*",
+        "barryvdh/laravel-dompdf": "^3.1",
         "doctrine/dbal": "*",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",

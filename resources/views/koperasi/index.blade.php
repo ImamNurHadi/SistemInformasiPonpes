@@ -3,12 +3,16 @@
 @section('title', 'Koperasi - Kalkulator')
 
 @section('content')
+<!-- Add CSRF Token -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <!-- Add Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Add Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-<!-- Add Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Add HTML5 QR Code Scanner -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Add SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 .numpad-button {
@@ -50,6 +54,63 @@
     margin-right: 380px;
 }
 
+.santri-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+.santri-info h5 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.santri-info p {
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.scanner-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    padding: 20px;
+}
+
+.scanner-content {
+    background: white;
+    max-width: 500px;
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close-scanner {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+#reader {
+    width: 100%;
+    max-width: 100%;
+}
+
 @media (max-width: 992px) {
     .calculator-container {
         position: static;
@@ -61,34 +122,25 @@
         margin-right: 0;
     }
 }
+
+/* Responsif styles */
+@media (max-width: 576px) {
+    .scanner-content {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    
+    #reader {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
 </style>
 
 <div class="container-fluid">
     <!-- Tabel Transaksi (Panel Kiri) -->
     <div class="table-container">
-        <!-- Form Pemilihan Santri -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form id="pembayaranForm">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="santri_id" class="form-label">Pilih Santri</label>
-                            <select class="form-select select2" id="santri_id" name="santri_id" required>
-                                <option value="">Pilih Santri</option>
-                                @foreach($santri as $s)
-                                    <option value="{{ $s->id }}" data-saldo-belanja="{{ $s->saldo_belanja }}">{{ $s->nis }} - {{ $s->nama }} (Saldo Belanja: Rp {{ number_format($s->saldo_belanja, 0, ',', '.') }})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Saldo Belanja Tersedia</label>
-                            <div class="form-control" id="saldoDisplay">Rp 0</div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="card bg-success text-white">
             <div class="card-body">
                 <div class="table-responsive">
@@ -109,11 +161,22 @@
                         <h5 class="mb-0">Grand Total</h5>
                         <h5 class="mb-0" id="grandTotal">Rp 0</h5>
                     </div>
-                    <button type="button" class="btn btn-light mt-3 w-100" id="bayarBtn" disabled>
-                        <i class="bi bi-cash-coin me-2"></i>Bayar
+                    <button type="button" class="btn btn-warning mt-3 w-100" id="scanBtn">
+                        <i class="bi bi-upc-scan me-2"></i>Scan Kartu
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Informasi Santri dari QR Code -->
+        <div id="santriInfo" class="santri-info mt-3">
+            <h5>Informasi Santri</h5>
+            <p>Nama Santri: <span id="namaSantri">-</span></p>
+            <p>Kelas: <span id="kelasSantri">-</span></p>
+            <p>Saldo Belanja: <span id="saldoBelanja">Rp 0</span></p>
+            <button type="button" class="btn btn-success w-100 mt-3" id="bayarBtn" disabled>
+                <i class="bi bi-cash-coin me-2"></i>Bayar
+            </button>
         </div>
     </div>
 
@@ -175,12 +238,19 @@
     </div>
 </div>
 
+<!-- Scanner Container -->
+<div class="scanner-container" id="scannerContainer">
+    <div class="scanner-content">
+        <button type="button" class="close-scanner" id="closeScanner">&times;</button>
+        <h5 class="mb-3">Scan QR Code Santri</h5>
+        <div id="reader"></div>
+    </div>
+</div>
+
 <!-- Add jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Add Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Add Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -190,10 +260,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculatorForm = document.getElementById('calculatorForm');
     const transaksiTableBody = document.getElementById('transaksiTableBody');
     const grandTotalElement = document.getElementById('grandTotal');
-    const santriSelect = document.getElementById('santri_id');
-    const saldoDisplay = document.getElementById('saldoDisplay');
+    const saldoDisplay = document.getElementById('saldoBelanja');
     const bayarBtn = document.getElementById('bayarBtn');
+    const scanBtn = document.getElementById('scanBtn');
+    const scannerContainer = document.getElementById('scannerContainer');
+    const closeScanner = document.getElementById('closeScanner');
+    const santriInfo = document.getElementById('santriInfo');
+    const namaSantri = document.getElementById('namaSantri');
+    const kelasSantri = document.getElementById('kelasSantri');
+    
     let transaksiData = [];
+    let selectedSantriId = null;
+    let currentSaldoBelanja = 0;
+    let html5QrcodeScanner = null;
     
     hargaSatuanInput.focus();
     
@@ -209,13 +288,134 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGrandTotal() {
         const grandTotal = transaksiData.reduce((total, item) => total + item.total, 0);
         grandTotalElement.textContent = formatRupiah(grandTotal);
-        bayarBtn.disabled = grandTotal === 0;
+        bayarBtn.disabled = grandTotal === 0 || !selectedSantriId;
     }
     
-    santriSelect.addEventListener('change', function() {
-        let selectedOption = this.options[this.selectedIndex];
-        let saldoBelanja = selectedOption.getAttribute('data-saldo-belanja');
-        saldoDisplay.textContent = saldoBelanja ? formatRupiah(parseInt(saldoBelanja)) : 'Rp 0';
+    // Fungsi untuk memperbarui informasi santri dari QR Code
+    function updateSantriInfo(data) {
+        console.log("Data santri:", data);
+        
+        try {
+            // Periksa apakah data adalah objek santri langsung atau ada dalam properti santri
+            let santriData = data;
+            if (data.santri) {
+                santriData = data.santri;
+            }
+            
+            // Simpan ID santri untuk digunakan dalam pembayaran
+            selectedSantriId = santriData.id;
+            
+            console.log("ID Santri yang digunakan:", selectedSantriId);
+            
+            if (!selectedSantriId) {
+                throw new Error('ID Santri tidak valid');
+            }
+            
+            // Tampilkan informasi santri
+            santriInfo.style.display = 'block';
+            namaSantri.textContent = santriData.nama || 'Tidak diketahui';
+            kelasSantri.textContent = santriData.kelas ? santriData.kelas.nama : (santriData.tingkatan || 'Tidak ada kelas');
+            
+            // Ambil saldo terbaru
+            fetch(`/api/santri/${selectedSantriId}/saldo`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal mendapatkan saldo');
+                }
+                return response.json();
+            })
+            .then(response => {
+                console.log("Respons saldo:", response);
+                // Perubahan di sini: tidak perlu memeriksa response.success
+                // Langsung gunakan saldo_belanja dan saldo_utama dari respons
+                currentSaldoBelanja = response.saldo_belanja;
+                saldoDisplay.textContent = formatRupiah(response.saldo_belanja);
+                updateGrandTotal();
+                console.log("Saldo berhasil diperbarui:", currentSaldoBelanja);
+            })
+            .catch(error => {
+                console.error('Error fetching saldo:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Mendapatkan Saldo',
+                    text: error.message || 'Terjadi kesalahan saat mengambil data saldo'
+                });
+            });
+        } catch (error) {
+            console.error('Error updating santri info:', error);
+            santriInfo.style.display = 'none';
+            namaSantri.textContent = '-';
+            kelasSantri.textContent = '-';
+            saldoDisplay.textContent = 'Rp 0';
+            selectedSantriId = null;
+            updateGrandTotal();
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Tidak Valid',
+                text: error.message || 'Terjadi kesalahan saat memproses data santri'
+            });
+        }
+    }
+    
+    // Fungsi untuk inisialisasi scanner
+    function initializeScanner() {
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 }
+        );
+        
+        html5QrcodeScanner.render((decodedText, decodedResult) => {
+            try {
+                console.log("Decoded QR:", decodedText); // Debug: Log raw QR data
+                const data = JSON.parse(decodedText);
+                console.log("Parsed QR data:", data); // Debug: Log parsed data
+                
+                // Periksa tipe data QR
+                if (data.type === 'santri_qr' || data.type === 'santri') {
+                    updateSantriInfo(data);
+                    html5QrcodeScanner.clear();
+                    scannerContainer.style.display = 'none';
+                } else if (data.id && (data.nama || data.name)) {
+                    // Jika tidak ada type tapi memiliki id dan nama, anggap sebagai data santri
+                    updateSantriInfo(data);
+                    html5QrcodeScanner.clear();
+                    scannerContainer.style.display = 'none';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'QR Code Tidak Valid',
+                        text: 'QR Code bukan milik santri'
+                    });
+                }
+            } catch (error) {
+                console.error('Error parsing QR code:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'QR Code Tidak Valid',
+                    text: 'Format QR Code tidak sesuai: ' + error.message
+                });
+            }
+        });
+    }
+    
+    // Event listener untuk tombol scan
+    scanBtn.addEventListener('click', function() {
+        scannerContainer.style.display = 'block';
+        initializeScanner();
+    });
+    
+    // Event listener untuk tombol close scanner
+    closeScanner.addEventListener('click', function() {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear();
+        }
+        scannerContainer.style.display = 'none';
     });
     
     hargaSatuanInput.addEventListener('click', () => activeInput = hargaSatuanInput);
@@ -298,64 +498,125 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     bayarBtn.addEventListener('click', function() {
-        let selectedOption = santriSelect.options[santriSelect.selectedIndex];
-        let santriId = selectedOption.value;
-        let saldoBelanja = parseInt(selectedOption.getAttribute('data-saldo-belanja'));
+        if (!selectedSantriId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Scan kartu santri terlebih dahulu'
+            });
+            return;
+        }
+
         let grandTotal = transaksiData.reduce((total, item) => total + item.total, 0);
         
-        if (!santriId) {
-            alert('Pilih santri terlebih dahulu');
-            return;
-        }
-
         if (grandTotal <= 0) {
-            alert('Tidak ada transaksi untuk dibayar');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Tidak ada transaksi untuk dibayar'
+            });
             return;
         }
 
-        if (saldoBelanja < grandTotal) {
-            alert('Saldo belanja tidak mencukupi!');
+        if (currentSaldoBelanja < grandTotal) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Saldo Tidak Mencukupi',
+                text: `Saldo belanja (${formatRupiah(currentSaldoBelanja)}) tidak mencukupi untuk pembayaran sebesar ${formatRupiah(grandTotal)}`
+            });
             return;
         }
+
+        // Tampilkan loading
+        bayarBtn.disabled = true;
+        bayarBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Memproses...';
+
+        // Siapkan data untuk dikirim ke server
+        const items = transaksiData.map(item => ({
+            nama: item.nama,
+            harga: item.harga,
+            kuantitas: item.kuantitas,
+            total: item.total
+        }));
+
+        // Log data yang akan dikirim untuk debugging
+        console.log('ID Santri (raw):', selectedSantriId);
+        console.log('Tipe data ID Santri:', typeof selectedSantriId);
+        
+        const paymentData = {
+            santri_id: selectedSantriId,
+            total: grandTotal,
+            items: items
+        };
+
+        console.log('Data pembayaran yang akan dikirim:', paymentData);
+        console.log('Data pembayaran (JSON):', JSON.stringify(paymentData));
 
         // Kirim data pembayaran ke server
         fetch('/koperasi/bayar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({
-                santri_id: santriId,
-                total: grandTotal,
-                items: transaksiData
-            })
+            body: JSON.stringify(paymentData)
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Status response:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            
+            return response.json().then(data => {
+                console.log('Response body:', data);
+                if (!response.ok) {
+                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                }
+                return data;
+            }).catch(err => {
+                console.error('Error parsing JSON:', err);
+                if (!response.ok) {
+                    throw new Error('Terjadi kesalahan pada server. Status: ' + response.status);
+                }
+                throw err;
+            });
+        })
         .then(data => {
+            console.log('Response data:', data);
             if (data.success) {
                 // Update saldo di tampilan
-                let newSaldoBelanja = saldoBelanja - grandTotal;
-                selectedOption.setAttribute('data-saldo-belanja', newSaldoBelanja);
-                saldoDisplay.textContent = formatRupiah(newSaldoBelanja);
+                currentSaldoBelanja = data.new_saldo_belanja;
+                
+                // Update tampilan saldo
+                saldoDisplay.textContent = formatRupiah(currentSaldoBelanja);
                 
                 // Reset form dan tabel
                 transaksiData = [];
                 transaksiTableBody.innerHTML = '';
                 grandTotalElement.textContent = 'Rp 0';
-                bayarBtn.disabled = true;
                 
-                alert('Pembayaran berhasil! Saldo belanja baru: ' + formatRupiah(newSaldoBelanja));
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pembayaran Berhasil',
+                    text: 'Saldo belanja baru: ' + formatRupiah(currentSaldoBelanja)
+                });
             } else {
-                alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat memproses pembayaran');
+            Swal.fire({
+                icon: 'error',
+                title: 'Pembayaran Gagal',
+                text: error.message || 'Terjadi kesalahan saat memproses pembayaran'
+            });
+        })
+        .finally(() => {
+            // Kembalikan tombol ke keadaan semula
+            bayarBtn.disabled = (transaksiData.length === 0);
+            bayarBtn.innerHTML = '<i class="bi bi-cash-coin me-2"></i>Bayar';
         });
     });
 });
-
 </script>
 @endsection

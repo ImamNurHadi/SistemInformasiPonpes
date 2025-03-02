@@ -298,9 +298,29 @@ class SantriController extends Controller
 
     public function getSaldo(Santri $santri)
     {
-        return response()->json([
-            'saldo_belanja' => $santri->saldo_belanja,
-            'saldo_utama' => $santri->saldo_utama
-        ]);
+        try {
+            \Log::info('Mengambil data saldo santri:', [
+                'santri_id' => $santri->id,
+                'nama' => $santri->nama,
+                'saldo_belanja' => $santri->saldo_belanja,
+                'saldo_utama' => $santri->saldo_utama
+            ]);
+            
+            return response()->json([
+                'saldo_belanja' => $santri->saldo_belanja,
+                'saldo_utama' => $santri->saldo_utama
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saat mengambil data saldo:', [
+                'santri_id' => $santri->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => true,
+                'message' => 'Gagal mengambil data saldo: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

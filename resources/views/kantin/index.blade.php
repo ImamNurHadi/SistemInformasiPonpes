@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <!-- Add HTML5 QR Code Scanner -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Add SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 .input-disabled {
@@ -198,6 +200,7 @@
                         <p>Nama Santri: <span id="namaSantri">-</span></p>
                         <p>Kelas: <span id="kelasSantri">-</span></p>
                         <p>Saldo Belanja: <span id="saldoBelanja">Rp 0</span></p>
+                        <input type="hidden" id="santriIdDisplay">
                     </div>
 
                     <button type="button" class="btn btn-success w-100 mt-3" id="bayarBtn" disabled>
@@ -233,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const santriInfo = document.getElementById('santriInfo');
     const scannerContainer = document.getElementById('scannerContainer');
     const closeScanner = document.getElementById('closeScanner');
+    const santriIdDisplay = document.getElementById('santriIdDisplay');
     let selectedSantriId = null;
     let html5QrcodeScanner = null;
     
@@ -254,69 +258,186 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateSantriInfo(data) {
-        selectedSantriId = data.id;
+        console.log("Data santri:", data);
+        
+        try {
+            // Simpan ID asli untuk ditampilkan
+            santriIdDisplay.value = data.id;
+            
+            // Untuk pengiriman data, kita akan menggunakan ID asli
+            selectedSantriId = data.id;
+            
+            console.log("ID Santri yang digunakan:", selectedSantriId);
+            
+            if (!selectedSantriId) {
+                throw new Error('ID Santri tidak valid');
+            }
+        } catch (error) {
+            console.error('Error memproses ID Santri:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'ID Santri tidak valid: ' + error.message
+            });
+            return;
+        }
+        
         document.getElementById('namaSantri').textContent = data.nama;
         document.getElementById('kelasSantri').textContent = data.tingkatan;
         santriInfo.style.display = 'block';
         
         // Ambil data saldo terbaru
-        fetch(`/api/santri/${data.id}/saldo`)
-            .then(response => response.json())
+        fetch(`/api/santri/${selectedSantriId}/saldo`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data saldo');
+                }
+                return response.json();
+            })
             .then(data => {
-                const saldoBelanja = parseFloat(data.saldo_belanja);
+                console.log("Data saldo:", data);
+                const saldoBelanja = parseFloat(data.saldo_belanja) || 0;
                 document.getElementById('saldoBelanja').textContent = formatRupiah(saldoBelanja);
                 hitungTotal(); // Update status tombol bayar
-
-                // Cek apakah total sudah diisi
-                const total = parseFloat(totalInput.value.replace(/[^\d]/g, ''));
-                if (total > 0) {
-                    // Cek apakah saldo mencukupi
-                    if (saldoBelanja >= total) {
-                        // Lakukan pembayaran otomatis
-                        prosesPembayaran(total);
-                    } else {
-                        alert('Saldo belanja tidak mencukupi untuk melakukan pembayaran');
-                    }
-                }
+            })
+            .catch(error => {
+                console.error('Error fetching saldo:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal mengambil data saldo: ' + error.message
+                });
             });
     }
 
-    function prosesPembayaran(total) {
-        // Kirim data pembayaran
+    function prosesPembayaran() {
+        // Validasi ID Santri
+        if (!selectedSantriId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Silakan scan kartu santri terlebih dahulu'
+            });
+            return;
+        }
+
+        const hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
+        const jumlah = parseFloat(jumlahInput.value) || 0;
+        
+        // Validasi input
+        if (!hargaSatuan || hargaSatuan <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Masukkan harga satuan yang valid'
+            });
+            return;
+        }
+        
+        if (!jumlah || jumlah <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Masukkan jumlah yang valid'
+            });
+            return;
+        }
+        
+        const calculatedTotal = hargaSatuan * jumlah;
+        
+        if (calculatedTotal <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Total pembayaran harus lebih dari 0'
+            });
+            return;
+        }
+
+        // Tampilkan loading pada tombol bayar
+        bayarBtn.disabled = true;
+        bayarBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+        
+        // Log data yang akan dikirim untuk debugging
+        console.log('ID Santri (raw):', selectedSantriId);
+        console.log('Tipe data ID Santri:', typeof selectedSantriId);
+        
+        const paymentData = {
+            santri_id: selectedSantriId,
+            total: calculatedTotal,
+            items: [{
+                nama: 'Item Kantin',
+                harga: hargaSatuan,
+                kuantitas: jumlah,
+                total: calculatedTotal
+            }]
+        };
+
+        console.log('Data pembayaran yang akan dikirim:', paymentData);
+        console.log('Data pembayaran (JSON):', JSON.stringify(paymentData));
+
+        // Kirim request pembayaran
         fetch('/kantin/bayar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             },
-            body: JSON.stringify({
-                santri_id: selectedSantriId,
-                total: total,
-                items: [{
-                    harga_satuan: parseFloat(hargaSatuanInput.value),
-                    jumlah: parseFloat(jumlahInput.value),
-                    sub_total: total
-                }]
-            })
+            body: JSON.stringify(paymentData)
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Status response:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            
+            return response.json().then(data => {
+                console.log('Response body:', data);
+                if (!response.ok) {
+                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                }
+                return data;
+            }).catch(err => {
+                console.error('Error parsing JSON:', err);
+                if (!response.ok) {
+                    throw new Error('Terjadi kesalahan pada server. Status: ' + response.status);
+                }
+                throw err;
+            });
+        })
         .then(data => {
+            console.log('Response data:', data);
             if (data.success) {
-                alert('Pembayaran berhasil!');
-                // Update saldo yang ditampilkan
+                // Update saldo di tampilan
                 document.getElementById('saldoBelanja').textContent = formatRupiah(data.new_saldo_belanja);
+                
                 // Reset form
                 hargaSatuanInput.value = '';
                 jumlahInput.value = '1';
                 totalInput.value = '';
                 hitungTotal();
+                
+                // Tampilkan pesan sukses
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pembayaran Berhasil',
+                    text: 'Saldo belanja baru: ' + formatRupiah(data.new_saldo_belanja)
+                });
             } else {
-                alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat memproses pembayaran');
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: error.message
+            });
+        })
+        .finally(() => {
+            // Kembalikan tombol ke keadaan semula
+            bayarBtn.disabled = false;
+            bayarBtn.innerHTML = '<i class="bi bi-cash-coin"></i> Bayar';
         });
     }
     
@@ -335,6 +456,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } catch (e) {
                 console.error('Invalid QR Code format');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Format QR Code tidak valid'
+                });
             }
         });
     }
@@ -355,17 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     bayarBtn.addEventListener('click', function() {
-        const total = parseFloat(totalInput.value.replace(/[^\d]/g, ''));
-        if (!total || total <= 0) {
-            alert('Masukkan jumlah pembayaran yang valid');
-            return;
-        }
-        if (!selectedSantriId) {
-            alert('Silakan scan kartu santri terlebih dahulu');
-            return;
-        }
-        
-        prosesPembayaran(total);
+        prosesPembayaran();
     });
 });
 </script>
