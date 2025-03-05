@@ -14,18 +14,18 @@
                 @method('PUT')
                 
                 <div class="mb-3">
-                    <label for="gedung_id" class="form-label">Gedung</label>
-                    <select class="form-control @error('gedung_id') is-invalid @enderror" 
-                        id="gedung_id" name="gedung_id" required>
-                        <option value="">Pilih Gedung</option>
-                        @foreach($gedung as $g)
+                    <label for="komplek_id" class="form-label">Komplek</label>
+                    <select class="form-control @error('komplek_id') is-invalid @enderror"
+                        id="komplek_id" name="komplek_id" required>
+                        <option value="">Pilih Komplek</option>
+                        @foreach($komplek as $g)
                             <option value="{{ $g->id }}" 
-                                {{ old('gedung_id', $kamar->gedung_id) == $g->id ? 'selected' : '' }}>
-                                {{ $g->nama_gedung }}
+                                {{ old('komplek_id', $kamar->komplek_id) == $g->id ? 'selected' : '' }}>
+                                {{ $g->nama_komplek }}
                             </option>
                         @endforeach
                     </select>
-                    @error('gedung_id')
+                    @error('komplek_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

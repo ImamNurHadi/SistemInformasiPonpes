@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\MasterTingkatan;
 
 class Santri extends Model
 {
@@ -17,7 +18,7 @@ class Santri extends Model
         'id',
         'user_id',
         'tingkatan_id',
-        'gedung_id',
+        'komplek_id',
         'kamar_id',
         'nama',
         'nis',
@@ -39,7 +40,17 @@ class Santri extends Model
         'foto',
         'tingkatan_masuk',
         'anak_ke',
-        'jumlah_saudara_kandung'
+        'jumlah_saudara_kandung',
+        'asal_kota',
+        'alamat_kk_ayah',
+        'alamat_domisili_ayah',
+        'pendidikan_ayah',
+        'pekerjaan_ayah',
+        'alamat_kk_ibu',
+        'alamat_domisili_ibu',
+        'pendidikan_ibu',
+        'pekerjaan_ibu',
+        'kelas_id',
     ];
 
     protected $casts = [
@@ -55,14 +66,9 @@ class Santri extends Model
         return $this->belongsTo(MasterTingkatan::class, 'tingkatan_id');
     }
 
-    public function gedung()
-    {
-        return $this->belongsTo(Gedung::class, 'gedung_id');
-    }
-
     public function kamar()
     {
-        return $this->belongsTo(Kamar::class, 'kamar_id');
+        return $this->belongsTo(Kamar::class);
     }
 
     public function historiSaldo()
@@ -85,20 +91,29 @@ class Santri extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function komplek()
+    {
+        return $this->belongsTo(Komplek::class, 'komplek_id');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class);
+    }
+
     public function generateQrCode()
     {
-        $data = [
-            'id' => $this->id,
-            'nama' => $this->nama,
-            'nis' => $this->nis,
-            'tingkatan' => $this->tingkatan ? $this->tingkatan->nama : null,
-            'type' => 'santri_qr'
-        ];
-        
-        return QrCode::size(200)
-            ->backgroundColor(255, 255, 255)
-            ->color(5, 139, 66)
-            ->margin(1)
-            ->generate(json_encode($data));
+        $qrCode = QrCode::size(100)->generate($this->id);
+        return $qrCode;
+    }
+
+    public function saldo()
+    {
+        return $this->hasOne(Saldo::class);
+    }
+
+    public function transaksiKoperasi()
+    {
+        return $this->hasMany(TransaksiKoperasi::class);
     }
 } 

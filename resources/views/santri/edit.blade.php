@@ -154,18 +154,18 @@
             
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="gedung_id" class="form-label">Gedung</label>
-                    <select class="form-control @error('gedung_id') is-invalid @enderror" 
-                        id="gedung_id" name="gedung_id" required>
-                        <option value="">Pilih Gedung</option>
-                        @foreach($gedung as $g)
+                    <label for="komplek_id" class="form-label">Komplek</label>
+                    <select class="form-control @error('komplek_id') is-invalid @enderror" 
+                        id="komplek_id" name="komplek_id" required>
+                        <option value="">Pilih Komplek</option>
+                        @foreach($komplek as $g)
                             <option value="{{ $g->id }}" 
-                                {{ old('gedung_id', $santri->gedung_id) == $g->id ? 'selected' : '' }}>
-                                {{ $g->nama_gedung }}
+                                {{ old('komplek_id', $santri->komplek_id) == $g->id ? 'selected' : '' }}>
+                                {{ $g->nama_komplek }}
                             </option>
                         @endforeach
                     </select>
-                    @error('gedung_id')
+                    @error('komplek_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -217,7 +217,7 @@
 
                 <!-- Data Ayah -->
                 <div class="col-12">
-                    <h6 class="mt-3 mb-3">Data Ayah</h6>
+                    <h6 class="mt-3 mb-3">Data Ayah (Opsional)</h6>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -225,17 +225,17 @@
                     <input type="text" class="form-control @error('nama_ayah') is-invalid @enderror" 
                         id="nama_ayah" name="nama_ayah" 
                         value="{{ old('nama_ayah', $santri->waliSantri->nama_ayah) }}" 
-                        placeholder="Masukkan Nama Ayah" required>
+                        placeholder="Masukkan Nama Ayah">
                     @error('nama_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="col-md-12 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="alamat_kk_ayah" class="form-label">Alamat KK Ayah</label>
                     <textarea class="form-control @error('alamat_kk_ayah') is-invalid @enderror" 
                         id="alamat_kk_ayah" name="alamat_kk_ayah" rows="3" 
-                        placeholder="Masukkan Alamat Sesuai KK" required>{{ old('alamat_kk_ayah', $santri->waliSantri->alamat_kk_ayah) }}</textarea>
+                        placeholder="Masukkan Alamat Sesuai KK">{{ old('alamat_kk_ayah', $santri->waliSantri->alamat_kk_ayah) }}</textarea>
                     @error('alamat_kk_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -245,7 +245,7 @@
                     <label for="alamat_domisili_ayah" class="form-label">Alamat Domisili Ayah</label>
                     <textarea class="form-control @error('alamat_domisili_ayah') is-invalid @enderror" 
                         id="alamat_domisili_ayah" name="alamat_domisili_ayah" rows="3" 
-                        placeholder="Masukkan Alamat Domisili" required>{{ old('alamat_domisili_ayah', $santri->waliSantri->alamat_domisili_ayah) }}</textarea>
+                        placeholder="Masukkan Alamat Domisili">{{ old('alamat_domisili_ayah', $santri->waliSantri->alamat_domisili_ayah) }}</textarea>
                     @error('alamat_domisili_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -278,7 +278,7 @@
                     <input type="text" class="form-control @error('pendidikan_ayah') is-invalid @enderror" 
                         id="pendidikan_ayah" name="pendidikan_ayah" 
                         value="{{ old('pendidikan_ayah', $santri->waliSantri->pendidikan_ayah) }}" 
-                        placeholder="Masukkan Pendidikan Ayah" required>
+                        placeholder="Masukkan Pendidikan Ayah">
                     @error('pendidikan_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -289,7 +289,7 @@
                     <input type="text" class="form-control @error('pekerjaan_ayah') is-invalid @enderror" 
                         id="pekerjaan_ayah" name="pekerjaan_ayah" 
                         value="{{ old('pekerjaan_ayah', $santri->waliSantri->pekerjaan_ayah) }}" 
-                        placeholder="Masukkan Pekerjaan Ayah" required>
+                        placeholder="Masukkan Pekerjaan Ayah">
                     @error('pekerjaan_ayah')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -297,7 +297,7 @@
 
                 <!-- Data Ibu -->
                 <div class="col-12">
-                    <h6 class="mt-3 mb-3">Data Ibu</h6>
+                    <h6 class="mt-3 mb-3">Data Ibu (Opsional)</h6>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -305,7 +305,7 @@
                     <input type="text" class="form-control @error('nama_ibu') is-invalid @enderror" 
                         id="nama_ibu" name="nama_ibu" 
                         value="{{ old('nama_ibu', $santri->waliSantri->nama_ibu) }}" 
-                        placeholder="Masukkan Nama Ibu" required>
+                        placeholder="Masukkan Nama Ibu">
                     @error('nama_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -315,7 +315,7 @@
                     <label for="alamat_kk_ibu" class="form-label">Alamat KK Ibu</label>
                     <textarea class="form-control @error('alamat_kk_ibu') is-invalid @enderror" 
                         id="alamat_kk_ibu" name="alamat_kk_ibu" rows="3" 
-                        placeholder="Masukkan Alamat Sesuai KK" required>{{ old('alamat_kk_ibu', $santri->waliSantri->alamat_kk_ibu) }}</textarea>
+                        placeholder="Masukkan Alamat Sesuai KK">{{ old('alamat_kk_ibu', $santri->waliSantri->alamat_kk_ibu) }}</textarea>
                     @error('alamat_kk_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -325,7 +325,7 @@
                     <label for="alamat_domisili_ibu" class="form-label">Alamat Domisili Ibu</label>
                     <textarea class="form-control @error('alamat_domisili_ibu') is-invalid @enderror" 
                         id="alamat_domisili_ibu" name="alamat_domisili_ibu" rows="3" 
-                        placeholder="Masukkan Alamat Domisili" required>{{ old('alamat_domisili_ibu', $santri->waliSantri->alamat_domisili_ibu) }}</textarea>
+                        placeholder="Masukkan Alamat Domisili">{{ old('alamat_domisili_ibu', $santri->waliSantri->alamat_domisili_ibu) }}</textarea>
                     @error('alamat_domisili_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -358,7 +358,7 @@
                     <input type="text" class="form-control @error('pendidikan_ibu') is-invalid @enderror" 
                         id="pendidikan_ibu" name="pendidikan_ibu" 
                         value="{{ old('pendidikan_ibu', $santri->waliSantri->pendidikan_ibu) }}" 
-                        placeholder="Masukkan Pendidikan Ibu" required>
+                        placeholder="Masukkan Pendidikan Ibu">
                     @error('pendidikan_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -369,7 +369,7 @@
                     <input type="text" class="form-control @error('pekerjaan_ibu') is-invalid @enderror" 
                         id="pekerjaan_ibu" name="pekerjaan_ibu" 
                         value="{{ old('pekerjaan_ibu', $santri->waliSantri->pekerjaan_ibu) }}" 
-                        placeholder="Masukkan Pekerjaan Ibu" required>
+                        placeholder="Masukkan Pekerjaan Ibu">
                     @error('pekerjaan_ibu')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -378,7 +378,7 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="submit" class="btn btn-success me-3">Simpan</button>
             <a href="{{ route('santri.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
     </form>
@@ -389,9 +389,9 @@
 <script>
     $(document).ready(function() {
         // Initialize select2
-        $('#gedung_id').select2({
+        $('#komplek_id').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Pilih Gedung',
+            placeholder: 'Pilih Komplek',
             allowClear: true
         });
 
@@ -401,35 +401,32 @@
             allowClear: true
         });
 
-        // Handle gedung change
-        $('#gedung_id').on('change', function() {
-            var gedungId = $(this).val();
-            var kamarSelect = $('#kamar_id');
+        // Handle komplek change
+        $('#komplek_id').on('change', function() {
+            var komplekId = $(this).val();
+            $('#kamar_id').empty().append('<option value="">Pilih Kamar</option>');
             
-            // Reset kamar dropdown
-            kamarSelect.empty().append('<option value="">Pilih Kamar</option>');
-            
-            if (gedungId) {
-                // Fetch kamar based on gedung
+            if (komplekId) {
+                // Fetch kamar based on komplek
                 $.ajax({
-                    url: '/api/kamar/' + gedungId,
+                    url: '/api/kamar/' + komplekId,
                     type: 'GET',
                     success: function(data) {
                         data.forEach(function(kamar) {
-                            kamarSelect.append(new Option(kamar.nama_kamar, kamar.id));
+                            $('#kamar_id').append(new Option(kamar.nama_kamar, kamar.id));
                         });
                         // If editing, set the previously selected kamar
                         @if(old('kamar_id', $santri->kamar_id))
-                            kamarSelect.val('{{ old('kamar_id', $santri->kamar_id) }}').trigger('change');
+                            $('#kamar_id').val('{{ old('kamar_id', $santri->kamar_id) }}').trigger('change');
                         @endif
                     }
                 });
             }
         });
 
-        // Trigger gedung change on page load if gedung is selected
-        if ($('#gedung_id').val()) {
-            $('#gedung_id').trigger('change');
+        // Trigger komplek change on page load if komplek is selected
+        if ($('#komplek_id').val()) {
+            $('#komplek_id').trigger('change');
         }
     });
 </script>

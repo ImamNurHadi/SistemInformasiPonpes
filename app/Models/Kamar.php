@@ -13,17 +13,17 @@ class Kamar extends Model
     protected $table = 'kamar';
 
     protected $fillable = [
-        'gedung_id',
         'nama_kamar',
+        'komplek_id'
     ];
 
-    public function gedung()
+    public function komplek()
     {
-        return $this->belongsTo(Gedung::class, 'gedung_id');
+        return $this->belongsTo(Komplek::class, 'komplek_id');
     }
 
     public function santri()
     {
-        return $this->hasMany(Santri::class, 'kamar_id');
+        return $this->hasMany(Santri::class);
     }
 } 

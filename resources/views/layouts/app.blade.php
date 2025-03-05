@@ -510,7 +510,7 @@
                                                 <a href="{{ route('kamar.index') }}" class="nav-link {{ request()->routeIs('kamar.*') ? 'active' : '' }}">Kamar</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('gedung.index') }}" class="nav-link {{ request()->routeIs('gedung.*') ? 'active' : '' }}">Gedung</a>
+                                                <a href="{{ route('komplek.index') }}" class="nav-link {{ request()->routeIs('komplek.*') ? 'active' : '' }}">Komplek</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -836,7 +836,7 @@
 
                     // Definisi struktur menu
                     const menuStructure = {
-                        'santri': ['tingkatan', 'kamar', 'gedung'],
+                        'santri': ['tingkatan', 'kamar', 'komplek'],
                         'pengurus': [],
                         'pengajar': [],
                         'divisi': [],
@@ -860,7 +860,7 @@
                         saveMenuState('santriSubmenu', true);
 
                         // Khusus untuk tingkatan dan kamar
-                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
+                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'komplek') {
                             // Pastikan parent menu tetap terbuka
                             $('#masterDataSubmenu').addClass('show');
                             $('#santriSubmenu').addClass('show');
@@ -882,7 +882,7 @@
                             $(this).addClass('active');
                             
                             // Jika ini adalah link tingkatan atau kamar, cegah collapse
-                            if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
+                            if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'komplek') {
                                 $(this).on('click', function(e) {
                                     e.stopPropagation();
                                 });
@@ -902,7 +902,7 @@
                         const routeBase = currentRoute.split('.')[0];
                         
                         // Jika sedang di halaman tingkatan atau kamar, cegah collapse
-                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'gedung') {
+                        if (routeBase === 'tingkatan' || routeBase === 'kamar' || routeBase === 'komplek') {
                             e.preventDefault();
                             e.stopPropagation();
                             return false;

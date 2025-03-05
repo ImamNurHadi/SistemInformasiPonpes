@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kamar;
-use App\Models\Gedung;
+use App\Models\Komplek;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -11,7 +11,7 @@ class KompleksKamarController extends Controller
 {
     public function index()
     {
-        $kamar = Kamar::with('gedung', 'santri')
+        $kamar = Kamar::with('komplek', 'santri')
             ->select('kamar.*')
             ->selectRaw('(SELECT COUNT(*) FROM santri WHERE santri.kamar_id = kamar.id) as santri_count')
             ->orderBy('nama_kamar')
@@ -23,7 +23,7 @@ class KompleksKamarController extends Controller
     public function storeKamar(Request $request)
     {
         $request->validate([
-            'nama_gedung' => 'required|string|max:255',
+            'nama_komplek' => 'required|string|max:255',
             'nama_kamar' => [
                 'required',
                 'string',
@@ -31,16 +31,16 @@ class KompleksKamarController extends Controller
             ],
         ]);
 
-        // Cari atau buat gedung baru
-        $gedung = Gedung::firstOrCreate(
-            ['nama_gedung' => strtoupper($request->nama_gedung)],
+        // Cari atau buat komplek baru
+        $komplek = Komplek::firstOrCreate(
+            ['nama_komplek' => strtoupper($request->nama_komplek)],
             ['keterangan' => '']
         );
 
         // Buat kamar baru
         Kamar::create([
             'nama_kamar' => strtoupper($request->nama_kamar),
-            'gedung_id' => $gedung->id,
+            'komplek_id' => $komplek->id,
         ]);
 
         return redirect()->route('kompleks-kamar.index')
@@ -58,28 +58,28 @@ class KompleksKamarController extends Controller
 
     public function edit($id)
     {
-        $kamar = Kamar::with('gedung')->findOrFail($id);
+        $kamar = Kamar::with('komplek')->findOrFail($id);
         return view('kompleks-kamar.edit', compact('kamar'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_gedung' => 'required|string|max:255',
+            'nama_komplek' => 'required|string|max:255',
             'nama_kamar' => 'required|string|max:255',
         ]);
 
         $kamar = Kamar::findOrFail($id);
         
-        // Update atau buat gedung baru
-        $gedung = Gedung::firstOrCreate(
-            ['nama_gedung' => strtoupper($request->nama_gedung)],
+        // Update atau buat komplek baru
+        $komplek = Komplek::firstOrCreate(
+            ['nama_komplek' => strtoupper($request->nama_komplek)],
             ['keterangan' => '']
         );
 
         $kamar->update([
             'nama_kamar' => strtoupper($request->nama_kamar),
-            'gedung_id' => $gedung->id,
+            'komplek_id' => $komplek->id,
         ]);
 
         return redirect()->route('kompleks-kamar.index')

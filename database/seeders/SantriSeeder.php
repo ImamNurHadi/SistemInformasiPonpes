@@ -7,7 +7,7 @@ use App\Models\Santri;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\MasterTingkatan;
-use App\Models\Gedung;
+use App\Models\Komplek;
 use App\Models\Kamar;
 use Illuminate\Support\Facades\Hash;
 
@@ -39,7 +39,7 @@ class SantriSeeder extends Seeder
             'nama' => $user->name,
             'nis' => '2024001',
             'tingkatan_id' => $tingkatan->id,
-            'gedung_id' => null,
+            'komplek_id' => null,
             'kamar_id' => null,
             'tempat_lahir' => 'Jakarta',
             'tanggal_lahir' => '2000-01-01',

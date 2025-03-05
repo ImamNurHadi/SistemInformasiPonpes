@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Gedung')
+@section('title', 'Data Komplek')
 
 @push('styles')
 <!-- DataTables CSS -->
@@ -22,10 +22,10 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h2 class="m-0 font-weight-bold text-success">Data Gedung</h2>
+            <h2 class="m-0 font-weight-bold text-success">Data Komplek</h2>
             @if(auth()->user()->isAdmin())
-            <a href="{{ route('gedung.create') }}" class="btn btn-success">
-                <i class="bi bi-plus-circle me-1"></i>Tambah Gedung
+            <a href="{{ route('komplek.create') }}" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i>Tambah Komplek
             </a>
             @endif
         </div>
@@ -43,11 +43,11 @@
             @endif
 
             <div class="table-responsive">
-                <table class="table table-bordered" id="gedungTable">
+                <table class="table table-bordered" id="komplekTable">
                     <thead>
                         <tr>
                             <th class="text-center" style="width: 80px">No</th>
-                            <th>Nama Gedung</th>
+                            <th>Nama Komplek</th>
                             <th class="text-center">Jumlah Kamar</th>
                             @if(auth()->user()->isAdmin())
                             <th class="text-center" style="width: 150px">Aksi</th>
@@ -55,18 +55,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($gedung as $item)
+                        @forelse($komplek as $item)
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
-                            <td>{{ $item->nama_gedung }}</td>
+                            <td>{{ $item->nama_komplek }}</td>
                             <td class="text-center">{{ $item->kamar_count }} Kamar</td>
                             @if(auth()->user()->isAdmin())
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('gedung.edit', $item->id) }}" class="btn btn-warning btn-sm me-1">
+                                    <a href="{{ route('komplek.edit', $item->id) }}" class="btn btn-warning btn-sm me-1">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <form action="{{ route('gedung.destroy', $item->id) }}" method="POST" 
+                                    <form action="{{ route('komplek.destroy', $item->id) }}" method="POST" 
                                         id="delete-form-{{ $item->id }}" class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -82,7 +82,7 @@
                         @empty
                         <tr>
                             <td colspan="{{ auth()->user()->isAdmin() ? '4' : '3' }}" class="text-center">
-                                Tidak ada data gedung
+                                Tidak ada data komplek
                             </td>
                         </tr>
                         @endforelse
@@ -94,22 +94,22 @@
 </div>
 
 @if(auth()->user()->isAdmin())
-<!-- Modal Tambah Gedung -->
-<div class="modal fade" id="tambahGedungModal" tabindex="-1" aria-labelledby="tambahGedungModalLabel" aria-hidden="true">
+<!-- Modal Tambah Komplek -->
+<div class="modal fade" id="tambahKomplekModal" tabindex="-1" aria-labelledby="tambahKomplekModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahGedungModalLabel">Tambah Gedung</h5>
+                <h5 class="modal-title" id="tambahKomplekModalLabel">Tambah Komplek</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('gedung.store') }}" method="POST">
+            <form action="{{ route('komplek.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nama_gedung" class="form-label">Nama Gedung</label>
-                        <input type="text" class="form-control @error('nama_gedung') is-invalid @enderror" 
-                            id="nama_gedung" name="nama_gedung" value="{{ old('nama_gedung') }}" required>
-                        @error('nama_gedung')
+                        <label for="nama_komplek" class="form-label">Nama Komplek</label>
+                        <input type="text" class="form-control @error('nama_komplek') is-invalid @enderror" 
+                            id="nama_komplek" name="nama_komplek" value="{{ old('nama_komplek') }}" required>
+                        @error('nama_komplek')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -136,15 +136,15 @@
 <script>
     $(document).ready(function() {
         // Inisialisasi DataTable
-        $('#gedungTable').DataTable({
+        $('#komplekTable').DataTable({
             responsive: true,
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
             }
         });
 
-        // Auto-capitalize input gedung
-        $('#nama_gedung').on('input', function() {
+        // Auto-capitalize input komplek
+        $('#nama_komplek').on('input', function() {
             $(this).val(function(_, val) {
                 return val.toUpperCase();
             });

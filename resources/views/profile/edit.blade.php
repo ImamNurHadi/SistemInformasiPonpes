@@ -146,8 +146,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="profile-info">
-                                <label>Gedung</label>
-                                <p>{{ $santri->gedung ? $santri->gedung->nama_gedung : '-' }}</p>
+                                <label>Komplek</label>
+                                <p>{{ $santri->komplek ? $santri->komplek->nama_komplek : '-' }}</p>
                             </div>
                         </div>
                         <div class="col-md-6">

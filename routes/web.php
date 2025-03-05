@@ -17,7 +17,7 @@ use App\Http\Controllers\CekSaldoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\HistoriSaldoController;
-use App\Http\Controllers\GedungController;
+use App\Http\Controllers\KomplekController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\HistoriBelanjaController;
 use App\Http\Controllers\AkunBelanjaController;
@@ -166,10 +166,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/kantin/bayar', [\App\Http\Controllers\KantinController::class, 'bayar'])->name('kantin.bayar');
     });
 
-    // Route untuk Kamar dan Gedung
+    // Route untuk Kamar dan Komplek
     Route::resource('kamar', KamarController::class);
-    Route::resource('gedung', GedungController::class);
-    Route::get('/kamar/gedung/{gedung_id}', [KamarController::class, 'getByGedung'])->name('kamar.by-gedung');
+    Route::resource('komplek', KomplekController::class);
+    Route::get('/kamar/komplek/{komplek_id}', [KamarController::class, 'getByKomplek'])->name('kamar.by-komplek');
 
     // Histori Belanja
     Route::get('/histori-belanja', [HistoriBelanjaController::class, 'index'])->name('histori-belanja.index');
