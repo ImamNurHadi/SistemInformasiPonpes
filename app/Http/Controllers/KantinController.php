@@ -131,28 +131,17 @@ class KantinController extends Controller
                     throw new \RuntimeException('Gagal mencatat histori saldo: ' . $e->getMessage());
                 }
 
-                // Catat setiap item transaksi
-                foreach ($validated['items'] as $item) {
-                    Log::info('Processing item kantin:', $item);
-                    
-                    try {
-                        $transaksi = TransaksiKoperasi::create([
-                            'santri_id' => $santri->id,
-                            'nama_barang' => $item['nama'],
-                            'harga_satuan' => $item['harga'],
-                            'kuantitas' => $item['kuantitas'],
-                            'total' => $item['total']
-                        ]);
-
-                        Log::info('Transaksi created:', $transaksi->toArray());
-                    } catch (\Exception $e) {
-                        Log::error('Error creating transaksi:', [
-                            'message' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString()
-                        ]);
-                        throw new \RuntimeException('Gagal mencatat transaksi: ' . $e->getMessage());
-                    }
-                }
+            // Catat setiap item transaksi
+            foreach ($validated['items'] as $item) {
+                TransaksiKoperasi::create([
+                    'santri_id' => $santri->id,
+                    'jenis' => 'kantin',
+                    'nama_barang' => $item['nama'] ?? 'Item Kantin',
+                    'harga_satuan' => $item['harga_satuan'],
+                    'kuantitas' => $item['jumlah'],
+                    'total' => $item['sub_total']
+                ]);
+            }
 
                 DB::commit();
                 Log::info('Transaction committed successfully kantin. Final saldo: ' . $santri->saldo_belanja);

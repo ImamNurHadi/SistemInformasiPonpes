@@ -281,12 +281,11 @@ class SantriController extends Controller
     public function getSaldo(Santri $santri)
     {
         try {
-            // Get saldo data for the santri
-            $saldo = $santri->saldo();
-            
+            // Return saldo fields directly from the santri model
             return response()->json([
-                'status' => 'success',
-                'data' => $saldo
+                'saldo_utama' => $santri->saldo_utama,
+                'saldo_belanja' => $santri->saldo_belanja,
+                'saldo_tabungan' => $santri->saldo_tabungan
             ]);
             
         } catch (\Exception $e) {

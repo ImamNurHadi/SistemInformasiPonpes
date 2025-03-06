@@ -310,7 +310,7 @@
 
                 <!-- Data Ayah -->
                 <div class="col-12">
-                    <h6 class="mt-3 mb-3">Data Ayah (Opsional)</h6>
+                    <h6 class="mt-3 mb-3">Data Ayah</h6>
                 </div>
 
                 <div class="col-md-12 mb-3">
@@ -375,7 +375,7 @@
 
                 <!-- Data Ibu -->
                 <div class="col-12">
-                    <h6 class="mt-3 mb-3">Data Ibu (Opsional)</h6>
+                    <h6 class="mt-3 mb-3">Data Ibu</h6>
                 </div>
 
                 <div class="col-md-12 mb-3">

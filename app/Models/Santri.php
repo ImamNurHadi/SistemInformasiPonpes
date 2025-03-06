@@ -103,13 +103,24 @@ class Santri extends Model
 
     public function generateQrCode()
     {
-        $qrCode = QrCode::size(100)->generate($this->id);
+        $data = [
+            'type' => 'santri_qr',
+            'id' => $this->id,
+            'nama' => $this->nama,
+            'tingkatan' => $this->tingkatan ? $this->tingkatan->nama : '-'
+        ];
+        
+        $qrCode = QrCode::size(100)->generate(json_encode($data));
         return $qrCode;
     }
 
     public function saldo()
     {
-        return $this->hasOne(Saldo::class);
+        return [
+            'saldo_utama' => $this->saldo_utama,
+            'saldo_belanja' => $this->saldo_belanja,
+            'saldo_tabungan' => $this->saldo_tabungan
+        ];
     }
 
     public function transaksiKoperasi()

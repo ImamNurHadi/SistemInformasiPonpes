@@ -384,26 +384,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(paymentData)
+            body: JSON.stringify({
+                santri_id: selectedSantriId,
+                total: total,
+                items: [{
+                    nama: 'Item Kantin',
+                    harga_satuan: parseFloat(hargaSatuanInput.value),
+                    jumlah: parseFloat(jumlahInput.value),
+                    sub_total: total
+                }]
+            })
         })
-        .then(response => {
-            console.log('Status response:', response.status);
-            console.log('Response headers:', [...response.headers.entries()]);
-            
-            return response.json().then(data => {
-                console.log('Response body:', data);
-                if (!response.ok) {
-                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-                }
-                return data;
-            }).catch(err => {
-                console.error('Error parsing JSON:', err);
-                if (!response.ok) {
-                    throw new Error('Terjadi kesalahan pada server. Status: ' + response.status);
-                }
-                throw err;
-            });
-        })
+        .then(response => response.json())
         .then(data => {
             console.log('Response data:', data);
             if (data.success) {
