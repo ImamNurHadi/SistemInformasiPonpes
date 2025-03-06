@@ -44,7 +44,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center" style="width: 80px">No</th>
-                                    <th>Nama Gedung</th>
+                                    <th>Nama Komplek</th>
                                     <th>Nama Kamar</th>
                                     <th class="text-center">Jumlah Santri</th>
                                     @if(auth()->user()->isAdmin())
@@ -56,7 +56,7 @@
                                 @forelse($kamar as $item)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ $item->gedung->nama_gedung }}</td>
+                                    <td>{{ $item->komplek->nama_komplek }}</td>
                                     <td>{{ $item->nama_kamar }}</td>
                                     <td class="text-center">{{ $item->santri_count }} Santri</td>
                                     @if(auth()->user()->isAdmin())
@@ -107,10 +107,10 @@
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nama_gedung" class="form-label">Nama Gedung</label>
-                        <input type="text" class="form-control @error('nama_gedung') is-invalid @enderror" 
-                            id="nama_gedung" name="nama_gedung" value="{{ old('nama_gedung') }}" required>
-                        @error('nama_gedung')
+                        <label for="nama_komplek" class="form-label">Nama Komplek</label>
+                        <input type="text" class="form-control @error('nama_komplek') is-invalid @enderror" 
+                            id="nama_komplek" name="nama_komplek" value="{{ old('nama_komplek') }}" required>
+                        @error('nama_komplek')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -152,8 +152,8 @@
             }
         });
 
-        // Auto-capitalize input gedung dan kamar
-        $('#nama_gedung, #nama_kamar').on('input', function() {
+        // Auto-capitalize input komplek dan kamar
+        $('#nama_komplek, #nama_kamar').on('input', function() {
             $(this).val(function(_, val) {
                 return val.toUpperCase();
             });

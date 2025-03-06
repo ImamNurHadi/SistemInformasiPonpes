@@ -28,7 +28,7 @@
                             <th>NIS</th>
                             <th>Nama</th>
                             <th>Tingkatan</th>
-                            <th>Gedung</th>
+                            <th>Komplek</th>
                             <th>Kamar</th>
                             @if(auth()->user()->isAdmin())
                             <th class="text-center" style="width: 150px">Aksi</th>
@@ -42,7 +42,7 @@
                             <td>{{ $item->nis }}</td>
                             <td>{{ $item->nama }}</td>
                             <td>{{ optional($item->tingkatan)->nama }}</td>
-                            <td>{{ optional($item->gedung)->nama_gedung }}</td>
+                            <td>{{ optional($item->komplek)->nama_komplek }}</td>
                             <td>{{ optional($item->kamar)->nama_kamar }}</td>
                             @if(auth()->user()->isAdmin())
                             <td class="text-center">

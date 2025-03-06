@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Santri;
 use App\Models\MasterTingkatan;
-use App\Models\Gedung;
 use App\Models\Kamar;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Komplek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,9 +28,9 @@ class SantriController extends Controller
     public function create()
     {
         $tingkatan = MasterTingkatan::all();
-        $gedung = Gedung::all();
-        $kamar = Kamar::with('gedung')->get();
-        return view('santri.create', compact('tingkatan', 'gedung', 'kamar'));
+        $komplek = Komplek::all();
+        $kamar = Kamar::with('komplek')->get();
+        return view('santri.create', compact('tingkatan', 'komplek', 'kamar'));
     }
 
     /**
@@ -56,26 +56,26 @@ class SantriController extends Controller
                 'kecamatan' => 'required|string|max:255',
                 'kabupaten_kota' => 'required|string|max:255',
                 'tingkatan_id' => 'required|exists:master_tingkatan,id',
-                'gedung_id' => 'required|exists:gedung,id',
                 'kamar_id' => 'required|exists:kamar,id',
+                'komplek_id' => 'required|exists:komplek,id',
                 
                 // Data Wali Santri
                 'nama_wali' => 'required|string|max:255',
                 'asal_kota' => 'required|string|max:255',
-                'nama_ayah' => 'required|string|max:255',
-                'alamat_kk_ayah' => 'required|string',
-                'alamat_domisili_ayah' => 'required|string',
+                'nama_ayah' => 'nullable|string|max:255',
+                'alamat_kk_ayah' => 'nullable|string',
+                'alamat_domisili_ayah' => 'nullable|string',
                 'no_identitas_ayah' => 'nullable|string|max:20',
                 'no_hp_ayah' => 'nullable|string|max:15',
-                'pendidikan_ayah' => 'required|string|max:255',
-                'pekerjaan_ayah' => 'required|string|max:255',
-                'nama_ibu' => 'required|string|max:255',
-                'alamat_kk_ibu' => 'required|string',
-                'alamat_domisili_ibu' => 'required|string',
+                'pendidikan_ayah' => 'nullable|string|max:255',
+                'pekerjaan_ayah' => 'nullable|string|max:255',
+                'nama_ibu' => 'nullable|string|max:255',
+                'alamat_kk_ibu' => 'nullable|string',
+                'alamat_domisili_ibu' => 'nullable|string',
                 'no_identitas_ibu' => 'nullable|string|max:20',
                 'no_hp_ibu' => 'nullable|string|max:15',
-                'pendidikan_ibu' => 'required|string|max:255',
-                'pekerjaan_ibu' => 'required|string|max:255',
+                'pendidikan_ibu' => 'nullable|string|max:255',
+                'pekerjaan_ibu' => 'nullable|string|max:255',
             ]);
 
             \Log::info('Validasi berhasil, mencoba membuat user dan data santri');
@@ -113,8 +113,8 @@ class SantriController extends Controller
                 'kabupaten_kota' => $request->kabupaten_kota,
                 'tingkatan_id' => $request->tingkatan_id,
                 'tingkatan_masuk' => $request->tingkatan_id,
-                'gedung_id' => $request->gedung_id,
                 'kamar_id' => $request->kamar_id,
+                'komplek_id' => $request->komplek_id,
                 'saldo_utama' => 0,
                 'saldo_belanja' => 0,
                 'saldo_tabungan' => 0
@@ -172,7 +172,7 @@ class SantriController extends Controller
      */
     public function show(string $id)
     {
-        $santri = Santri::with(['tingkatan', 'gedung', 'kamar', 'waliSantri'])->findOrFail($id);
+        $santri = Santri::with(['tingkatan', 'kamar', 'waliSantri'])->findOrFail($id);
         return view('santri.show', compact('santri'));
     }
 
@@ -182,9 +182,9 @@ class SantriController extends Controller
     public function edit(Santri $santri)
     {
         $tingkatan = MasterTingkatan::all();
-        $gedung = Gedung::all();
-        $kamar = Kamar::where('gedung_id', $santri->gedung_id)->get();
-        return view('santri.edit', compact('santri', 'tingkatan', 'gedung', 'kamar'));
+        $komplek = Komplek::all();
+        $kamar = Kamar::where('komplek_id', $santri->komplek_id)->get();
+        return view('santri.edit', compact('santri', 'tingkatan', 'komplek', 'kamar'));
     }
 
     /**
@@ -203,24 +203,24 @@ class SantriController extends Controller
             'kecamatan' => 'required|string|max:255',
             'kabupaten_kota' => 'required|string|max:255',
             'tingkatan_id' => 'required|exists:master_tingkatan,id',
-            'gedung_id' => 'required|exists:gedung,id',
             'kamar_id' => 'required|exists:kamar,id',
+            'komplek_id' => 'required|exists:komplek,id',
             'nama_wali' => 'required|string|max:255',
             'asal_kota' => 'required|string|max:255',
-            'nama_ayah' => 'required|string|max:255',
-            'alamat_kk_ayah' => 'required|string',
-            'alamat_domisili_ayah' => 'required|string',
+            'nama_ayah' => 'nullable|string|max:255',
+            'alamat_kk_ayah' => 'nullable|string',
+            'alamat_domisili_ayah' => 'nullable|string',
             'no_identitas_ayah' => 'nullable|string|max:20',
             'no_hp_ayah' => 'nullable|string|max:15',
-            'pendidikan_ayah' => 'required|string|max:255',
-            'pekerjaan_ayah' => 'required|string|max:255',
-            'nama_ibu' => 'required|string|max:255',
-            'alamat_kk_ibu' => 'required|string',
-            'alamat_domisili_ibu' => 'required|string',
+            'pendidikan_ayah' => 'nullable|string|max:255',
+            'pekerjaan_ayah' => 'nullable|string|max:255',
+            'nama_ibu' => 'nullable|string|max:255',
+            'alamat_kk_ibu' => 'nullable|string',
+            'alamat_domisili_ibu' => 'nullable|string',
             'no_identitas_ibu' => 'nullable|string|max:20',
             'no_hp_ibu' => 'nullable|string|max:15',
-            'pendidikan_ibu' => 'required|string|max:255',
-            'pekerjaan_ibu' => 'required|string|max:255',
+            'pendidikan_ibu' => 'nullable|string|max:255',
+            'pekerjaan_ibu' => 'nullable|string|max:255',
         ]);
 
         // Set nis dari nomor_induk_santri
@@ -269,58 +269,41 @@ class SantriController extends Controller
             ->with('success', 'Data santri berhasil dihapus!');
     }
 
-    public function getKamarByGedung($gedungId)
+    public function getKamarByKomplek($komplekId)
+    {
+        $kamar = Kamar::where('komplek_id', $komplekId)
+            ->orderBy('nama_kamar')
+            ->get();
+
+        return response()->json($kamar);
+    }
+
+    public function getSaldo(Santri $santri)
     {
         try {
-            \Log::info('Mengambil data kamar untuk gedung ID: ' . $gedungId);
-            
-            $kamar = Kamar::where('gedung_id', $gedungId)
-                         ->select('id', 'nama_kamar')
-                         ->orderBy('nama_kamar')
-                         ->get();
-            
-            \Log::info('Jumlah kamar yang ditemukan: ' . $kamar->count());
+            // Get saldo data for the santri
+            $saldo = $santri->saldo();
             
             return response()->json([
                 'status' => 'success',
-                'data' => $kamar
+                'data' => $saldo
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error saat mengambil data kamar: ' . $e->getMessage());
+            \Log::error('Error saat mengambil data saldo: ' . $e->getMessage());
             
             return response()->json([
                 'status' => 'error',
-                'message' => 'Terjadi kesalahan saat mengambil data kamar'
+                'message' => 'Terjadi kesalahan saat mengambil data saldo'
             ], 500);
         }
     }
 
     public function getSaldo(Santri $santri)
     {
-        try {
-            \Log::info('Mengambil data saldo santri:', [
-                'santri_id' => $santri->id,
-                'nama' => $santri->nama,
-                'saldo_belanja' => $santri->saldo_belanja,
-                'saldo_utama' => $santri->saldo_utama
-            ]);
-            
-            return response()->json([
-                'saldo_belanja' => $santri->saldo_belanja,
-                'saldo_utama' => $santri->saldo_utama
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Error saat mengambil data saldo:', [
-                'santri_id' => $santri->id ?? 'unknown',
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'error' => true,
-                'message' => 'Gagal mengambil data saldo: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'saldo_belanja' => $santri->saldo_belanja,
+            'saldo_utama' => $santri->saldo_utama
+        ]);
     }
 }

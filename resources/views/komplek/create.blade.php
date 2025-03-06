@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Gedung')
+@section('title', 'Tambah Komplek')
 
 @push('styles')
 <style>
@@ -40,22 +40,22 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h2 class="m-0 font-weight-bold text-success">Tambah Gedung</h2>
+            <h2 class="m-0 font-weight-bold text-success">Tambah Komplek</h2>
         </div>
         <div class="card-body">
-            <form action="{{ route('gedung.store') }}" method="POST">
+            <form action="{{ route('komplek.store') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-section">
-                            <h4 class="section-title">Data Gedung</h4>
+                            <h4 class="section-title">Data Komplek</h4>
                             
                             <div class="mb-3">
-                                <label for="nama_gedung" class="form-label">Nama Gedung</label>
-                                <input type="text" class="form-control @error('nama_gedung') is-invalid @enderror" 
-                                    id="nama_gedung" name="nama_gedung" value="{{ old('nama_gedung') }}" 
-                                    placeholder="Masukkan nama gedung" required>
-                                @error('nama_gedung')
+                                <label for="nama_komplek" class="form-label">Nama Komplek</label>
+                                <input type="text" class="form-control @error('nama_komplek') is-invalid @enderror" 
+                                    id="nama_komplek" name="nama_komplek" value="{{ old('nama_komplek') }}" 
+                                    placeholder="Masukkan nama komplek" required>
+                                @error('nama_komplek')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -68,7 +68,7 @@
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-save me-1"></i>Simpan
                         </button>
-                        <a href="{{ route('gedung.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('komplek.index') }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Kembali
                         </a>
                     </div>
@@ -82,8 +82,8 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        // Auto-capitalize input gedung
-        $('#nama_gedung').on('input', function() {
+        // Auto-capitalize input komplek
+        $('#nama_komplek').on('input', function() {
             $(this).val($(this).val().toUpperCase());
         });
     });

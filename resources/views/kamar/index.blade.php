@@ -67,7 +67,7 @@
                         <tr>
                             <th class="text-center" style="width: 80px">No</th>
                             <th>Nama Kamar</th>
-                            <th>Gedung</th>
+                            <th>Komplek</th>
                             <th class="text-center">Jumlah Santri</th>
                             @if(auth()->user()->isAdmin())
                             <th class="text-center" style="width: 150px">Aksi</th>
@@ -79,7 +79,7 @@
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $item->nama_kamar }}</td>
-                            <td>{{ $item->gedung->nama_gedung }}</td>
+                            <td>{{ $item->komplek->nama_komplek }}</td>
                             <td class="text-center">{{ $item->santri_count }} Santri</td>
                             @if(auth()->user()->isAdmin())
                             <td class="text-center">
@@ -128,16 +128,16 @@
                 <div class="modal-body">
                     <div class="form-section">
                         <div class="mb-3">
-                            <label for="gedung_id" class="form-label">Gedung</label>
-                            <select class="form-select @error('gedung_id') is-invalid @enderror" id="gedung_id" name="gedung_id" required>
-                                <option value="">Pilih Gedung</option>
-                                @foreach($gedung as $g)
-                                    <option value="{{ $g->id }}" {{ old('gedung_id') == $g->id ? 'selected' : '' }}>
-                                        {{ $g->nama_gedung }}
+                            <label for="komplek_id" class="form-label">Komplek</label>
+                            <select class="form-select @error('komplek_id') is-invalid @enderror" id="komplek_id" name="komplek_id" required>
+                                <option value="">Pilih Komplek</option>
+                                @foreach($komplek as $g)
+                                    <option value="{{ $g->id }}" {{ old('komplek_id') == $g->id ? 'selected' : '' }}>
+                                        {{ $g->nama_komplek }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('gedung_id')
+                            @error('komplek_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -189,10 +189,10 @@
         });
 
         // Initialize select2 for gedung dropdown
-        $('#gedung_id').select2({
+        $('#komplek_id').select2({
             theme: 'bootstrap-5',
             width: '100%',
-            placeholder: 'Pilih Gedung',
+            placeholder: 'Pilih Komplek',
             dropdownParent: $('#tambahKamarModal')
         });
 

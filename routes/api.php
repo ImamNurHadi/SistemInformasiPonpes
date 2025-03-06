@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/kamar/{gedung_id}', [KamarController::class, 'getByGedung']);
+Route::get('/kamar/{komplek_id}', [KamarController::class, 'getByKomplek']);
 Route::get('/santri/{santri}/saldo', [SantriController::class, 'getSaldo']); 

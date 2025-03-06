@@ -2,9 +2,9 @@
 <script>
     $(document).ready(function() {
         // Initialize select2
-        $('#gedung_id').select2({
+        $('#komplek_id').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Pilih Gedung',
+            placeholder: 'Pilih Komplek',
             allowClear: true
         });
 
@@ -15,17 +15,18 @@
         });
 
         // Function to load kamar options
-        function loadKamarOptions(gedungId) {
-            if (gedungId) {
+        function loadKamarOptions(komplekId) {
+            if (komplekId) {
                 $.ajax({
-                    url: `/kamar/gedung/${gedungId}`,
+                    url: `/kamar/komplek/${komplekId}`,
                     type: 'GET',
-                    success: function(response) {
+                    dataType: 'json',
+                    success: function(data) {
                         let kamarSelect = $('#kamar_id');
                         kamarSelect.empty();
                         kamarSelect.append('<option value="">Pilih Kamar</option>');
                         
-                        response.forEach(function(kamar) {
+                        data.forEach(function(kamar) {
                             kamarSelect.append(`<option value="${kamar.id}">${kamar.nama_kamar}</option>`);
                         });
 
@@ -43,15 +44,15 @@
             }
         }
 
-        // Handle gedung selection change
-        $('#gedung_id').change(function() {
+        // Handle komplek selection change
+        $('#komplek_id').change(function() {
             loadKamarOptions($(this).val());
         });
 
-        // Load kamar options on page load if gedung is selected
-        let selectedGedung = $('#gedung_id').val();
-        if (selectedGedung) {
-            loadKamarOptions(selectedGedung);
+        // Load kamar options on page load if komplek is selected
+        let selectedKomplek = $('#komplek_id').val();
+        if (selectedKomplek) {
+            loadKamarOptions(selectedKomplek);
         }
     });
 </script>

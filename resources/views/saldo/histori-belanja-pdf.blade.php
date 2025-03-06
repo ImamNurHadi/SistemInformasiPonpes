@@ -57,6 +57,7 @@
                 <th>Nama Santri</th>
                 <th>Kelas</th>
                 <th>Tanggal</th>
+                <th>Jenis Transaksi</th>
                 <th>Harga Satuan</th>
                 <th>Kuantitas</th>
                 <th>Sub Total</th>
@@ -70,6 +71,7 @@
                 <td>{{ $t->santri->nama }}</td>
                 <td>{{ optional($t->santri->tingkatan)->nama }}</td>
                 <td>{{ $t->created_at->format('d/m/Y H:i') }}</td>
+                <td>{{ ucfirst($t->jenis_transaksi) }}</td>
                 <td class="text-right">Rp {{ number_format($t->harga_satuan, 0, ',', '.') }}</td>
                 <td class="text-right">{{ $t->kuantitas }}</td>
                 <td class="text-right">Rp {{ number_format($t->total, 0, ',', '.') }}</td>
