@@ -293,6 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 santri_id: selectedSantriId,
                 total: total,
                 items: [{
+                    nama: 'Item Kantin',
                     harga_satuan: parseFloat(hargaSatuanInput.value),
                     jumlah: parseFloat(jumlahInput.value),
                     sub_total: total

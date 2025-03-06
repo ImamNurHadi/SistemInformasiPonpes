@@ -123,7 +123,7 @@
                             <td>{{ optional($t->santri->tingkatan)->nama }}</td>
                             @endif
                             <td>{{ $t->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ ucfirst($t->jenis_transaksi) }}</td>
+                            <td>{{ ucfirst($t->jenis) }}</td>
                             <td>Rp {{ number_format($t->harga_satuan, 0, ',', '.') }}</td>
                             <td>{{ $t->kuantitas }}</td>
                             <td>Rp {{ number_format($t->total, 0, ',', '.') }}</td>

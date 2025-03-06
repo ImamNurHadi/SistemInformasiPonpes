@@ -49,10 +49,11 @@ class KantinController extends Controller
             foreach ($validated['items'] as $item) {
                 TransaksiKoperasi::create([
                     'santri_id' => $santri->id,
-                    'nama_barang' => $item['nama'],
-                    'harga_satuan' => $item['harga'],
-                    'kuantitas' => $item['kuantitas'],
-                    'total' => $item['harga'] * $item['kuantitas']
+                    'jenis' => 'kantin',
+                    'nama_barang' => $item['nama'] ?? 'Item Kantin',
+                    'harga_satuan' => $item['harga_satuan'],
+                    'kuantitas' => $item['jumlah'],
+                    'total' => $item['sub_total']
                 ]);
             }
 

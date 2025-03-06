@@ -13,6 +13,7 @@ class TransaksiKoperasi extends Model
 
     protected $fillable = [
         'santri_id',
+        'jenis',
         'nama_barang',
         'harga_satuan',
         'kuantitas',
