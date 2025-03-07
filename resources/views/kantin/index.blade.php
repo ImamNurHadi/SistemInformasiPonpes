@@ -323,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
         const jumlah = parseFloat(jumlahInput.value) || 0;
+        const calculatedTotal = hargaSatuan * jumlah;
         
         // Validasi input
         if (!hargaSatuan || hargaSatuan <= 0) {
@@ -342,8 +343,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             return;
         }
-        
-        const calculatedTotal = hargaSatuan * jumlah;
         
         if (calculatedTotal <= 0) {
             Swal.fire({
@@ -374,7 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         console.log('Data pembayaran yang akan dikirim:', paymentData);
-        console.log('Data pembayaran (JSON):', JSON.stringify(paymentData));
 
         // Kirim request pembayaran
         fetch('/kantin/bayar', {
@@ -384,18 +382,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({
-                santri_id: selectedSantriId,
-                total: total,
-                items: [{
-                    nama: 'Item Kantin',
-                    harga_satuan: parseFloat(hargaSatuanInput.value),
-                    jumlah: parseFloat(jumlahInput.value),
-                    sub_total: total
-                }]
-            })
+            body: JSON.stringify(paymentData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Terjadi kesalahan saat memproses pembayaran');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Response data:', data);
             if (data.success) {

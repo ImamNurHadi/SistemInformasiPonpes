@@ -321,19 +321,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Gagal mendapatkan saldo');
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Gagal mendapatkan saldo');
+                    });
                 }
                 return response.json();
             })
             .then(response => {
                 console.log("Respons saldo:", response);
-                // Perubahan di sini: tidak perlu memeriksa response.success
-                // Langsung gunakan saldo_belanja dan saldo_utama dari respons
+                if (response.error) {
+                    throw new Error(response.message || 'Gagal mendapatkan saldo');
+                }
                 currentSaldoBelanja = response.saldo_belanja;
                 saldoDisplay.textContent = formatRupiah(response.saldo_belanja);
                 updateGrandTotal();

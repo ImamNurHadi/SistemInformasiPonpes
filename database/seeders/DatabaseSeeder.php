@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             OutletSeeder::class,
             OperatorSeeder::class,
             MasterTingkatanSeeder::class,
+            KomplekSeeder::class,
+            KamarSeeder::class,
             SantriSeeder::class,
         ]);
     }

@@ -292,7 +292,7 @@
                     <label for="nama_wali" class="form-label">Nama Wali</label>
                     <input type="text" class="form-control @error('nama_wali') is-invalid @enderror" 
                         id="nama_wali" name="nama_wali" value="{{ old('nama_wali') }}" 
-                        placeholder="Masukkan Nama Wali" required>
+                        placeholder="Masukkan Nama Wali">
                     @error('nama_wali')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -302,7 +302,7 @@
                     <label for="asal_kota" class="form-label">Asal Kota</label>
                     <input type="text" class="form-control @error('asal_kota') is-invalid @enderror" 
                         id="asal_kota" name="asal_kota" value="{{ old('asal_kota') }}" 
-                        placeholder="Masukkan Asal Kota" required>
+                        placeholder="Masukkan Asal Kota">
                     @error('asal_kota')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

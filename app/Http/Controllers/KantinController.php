@@ -137,9 +137,9 @@ class KantinController extends Controller
                     'santri_id' => $santri->id,
                     'jenis' => 'kantin',
                     'nama_barang' => $item['nama'] ?? 'Item Kantin',
-                    'harga_satuan' => $item['harga_satuan'],
-                    'kuantitas' => $item['jumlah'],
-                    'total' => $item['sub_total']
+                    'harga_satuan' => $item['harga'],
+                    'kuantitas' => $item['kuantitas'],
+                    'total' => $item['total']
                 ]);
             }
 

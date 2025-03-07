@@ -60,8 +60,8 @@ class SantriController extends Controller
                 'komplek_id' => 'required|exists:komplek,id',
                 
                 // Data Wali Santri
-                'nama_wali' => 'required|string|max:255',
-                'asal_kota' => 'required|string|max:255',
+                'nama_wali' => 'nullable|string|max:255',
+                'asal_kota' => 'nullable|string|max:255',
                 'nama_ayah' => 'nullable|string|max:255',
                 'alamat_kk_ayah' => 'nullable|string',
                 'alamat_domisili_ayah' => 'nullable|string',
@@ -205,8 +205,8 @@ class SantriController extends Controller
             'tingkatan_id' => 'required|exists:master_tingkatan,id',
             'kamar_id' => 'required|exists:kamar,id',
             'komplek_id' => 'required|exists:komplek,id',
-            'nama_wali' => 'required|string|max:255',
-            'asal_kota' => 'required|string|max:255',
+            'nama_wali' => 'nullable|string|max:255',
+            'asal_kota' => 'nullable|string|max:255',
             'nama_ayah' => 'nullable|string|max:255',
             'alamat_kk_ayah' => 'nullable|string',
             'alamat_domisili_ayah' => 'nullable|string',
@@ -281,28 +281,27 @@ class SantriController extends Controller
     public function getSaldo(Santri $santri)
     {
         try {
-            // Return saldo fields directly from the santri model
-            return response()->json([
-                'saldo_utama' => $santri->saldo_utama,
-                'saldo_belanja' => $santri->saldo_belanja,
-                'saldo_tabungan' => $santri->saldo_tabungan
+            \Log::info('Mengambil data saldo untuk santri:', [
+                'santri_id' => $santri->id,
+                'nama' => $santri->nama
             ]);
             
+            $saldo = $santri->saldo();
+            \Log::info('Data saldo:', $saldo);
+            
+            return response()->json($saldo);
+            
         } catch (\Exception $e) {
-            \Log::error('Error saat mengambil data saldo: ' . $e->getMessage());
+            \Log::error('Error saat mengambil data saldo:', [
+                'santri_id' => $santri->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             
             return response()->json([
-                'status' => 'error',
-                'message' => 'Terjadi kesalahan saat mengambil data saldo'
+                'error' => true,
+                'message' => 'Gagal mengambil data saldo: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    public function getSaldo(Santri $santri)
-    {
-        return response()->json([
-            'saldo_belanja' => $santri->saldo_belanja,
-            'saldo_utama' => $santri->saldo_utama
-        ]);
     }
 }
