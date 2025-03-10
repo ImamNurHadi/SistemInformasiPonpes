@@ -196,6 +196,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hidden-saldo-belanja', [HiddenSaldoBelanjaController::class, 'store'])->name('hidden-saldo-belanja.store');
     });
 
+    // Laporan Routes
+    Route::middleware(['auth', RoleMiddleware::class])->group(function () {
+        Route::get('/laporan-transaksi', [App\Http\Controllers\LaporanTransaksiController::class, 'index'])->name('laporan-transaksi.index');
+        Route::get('/laporan-pembayaran', [App\Http\Controllers\LaporanPembayaranController::class, 'index'])->name('laporan-pembayaran.index');
+        Route::get('/laporan-tarik-tunai', [App\Http\Controllers\LaporanTarikTunaiController::class, 'index'])->name('laporan-tarik-tunai.index');
+        Route::get('/laporan-akun-saldo', [App\Http\Controllers\LaporanAkunSaldoController::class, 'index'])->name('laporan-akun-saldo.index');
+    });
+
 });
 
 Route::middleware('auth')->group(function () {

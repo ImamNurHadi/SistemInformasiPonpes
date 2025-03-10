@@ -614,6 +614,49 @@
                             </ul>
                         </div>
                     </li>
+                    
+                    <!-- Laporan Menu -->
+                    @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
+                    <li class="nav-item">
+                        <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#laporanMenu" role="button" 
+                            aria-expanded="{{ request()->routeIs('laporan-transaksi.*') || request()->routeIs('laporan-pembayaran.*') || request()->routeIs('laporan-tarik-tunai.*') || request()->routeIs('laporan-akun-saldo.*') ? 'true' : 'false' }}" 
+                            aria-controls="laporanMenu">
+                            <div>
+                                <i class="bi bi-file-earmark-text me-2"></i>
+                                <span>Laporan</span>
+                            </div>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('laporan-transaksi.*') || request()->routeIs('laporan-pembayaran.*') || request()->routeIs('laporan-tarik-tunai.*') || request()->routeIs('laporan-akun-saldo.*') ? 'show' : '' }}" id="laporanMenu">
+                            <ul class="nav submenu">
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('laporan-transaksi.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('laporan-transaksi.*') ? 'active' : '' }}">
+                                        <i class="bi bi-receipt me-2"></i>
+                                        <span>Laporan Transaksi Santri</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('laporan-pembayaran.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('laporan-pembayaran.*') ? 'active' : '' }}">
+                                        <i class="bi bi-credit-card me-2"></i>
+                                        <span>Laporan Pembayaran</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('laporan-tarik-tunai.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('laporan-tarik-tunai.*') ? 'active' : '' }}">
+                                        <i class="bi bi-cash-coin me-2"></i>
+                                        <span>Laporan Tarik Tunai</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('laporan-akun-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('laporan-akun-saldo.*') ? 'active' : '' }}">
+                                        <i class="bi bi-wallet me-2"></i>
+                                        <span>Laporan Akun dan Saldo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
                     @endif
                 </ul>
             </div>
