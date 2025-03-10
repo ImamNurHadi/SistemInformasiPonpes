@@ -26,17 +26,6 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Histori Saldo</h3>
                     <div>
-                        <form action="{{ route('histori-saldo.print') }}" method="GET" class="d-inline me-2">
-                            <input type="hidden" name="nis" value="{{ request('nis') }}">
-                            <input type="hidden" name="nama" value="{{ request('nama') }}">
-                            <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
-                            <input type="hidden" name="tipe" value="{{ request('tipe') }}">
-                            <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
-                            <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-printer me-1"></i>Print PDF
-                            </button>
-                        </form>
                         @if(auth()->user()->isOperator())
                         <a href="{{ route('topup.index') }}" class="btn btn-success d-inline">
                             <i class="bi bi-plus-circle me-1"></i>Top Up Baru

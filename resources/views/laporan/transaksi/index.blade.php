@@ -3,7 +3,8 @@
 @section('title', 'Laporan Transaksi Santri')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 <style>
     .btn-search-green {
         background-color: #198754 !important;
@@ -22,44 +23,87 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h2 class="m-0 font-weight-bold text-success">Laporan Transaksi Santri</h2>
-            <button type="button" class="btn btn-primary" id="printBtn">
-                <i class="bi bi-printer"></i> Print PDF
-            </button>
+            @if($isSearching)
+            <form action="{{ route('laporan-transaksi.print') }}" method="GET" class="d-inline">
+                <input type="hidden" name="nis" value="{{ request('nis') }}">
+                <input type="hidden" name="nama" value="{{ request('nama') }}">
+                <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
+                <input type="hidden" name="tipe" value="{{ request('tipe') }}">
+                <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
+                <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-printer"></i> Print PDF
+                </button>
+            </form>
+            @endif
         </div>
         <div class="card-body">
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <form action="" method="GET" id="filterForm">
+                    <form action="{{ route('laporan-transaksi.index') }}" method="GET" id="filterForm">
+                        <input type="hidden" name="search" value="1">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
-                                    <input type="text" class="form-control" id="tanggal_mulai" name="tanggal_mulai" 
-                                        value="{{ request('tanggal_mulai') }}" placeholder="Pilih tanggal mulai...">
+                                    <label for="nis" class="form-label">NIS</label>
+                                    <input type="text" class="form-control" id="nis" name="nis" 
+                                        value="{{ request('nis') }}" placeholder="Cari NIS...">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
-                                    <input type="text" class="form-control" id="tanggal_selesai" name="tanggal_selesai" 
-                                        value="{{ request('tanggal_selesai') }}" placeholder="Pilih tanggal selesai...">
+                                    <label for="nama" class="form-label">Nama Santri</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" 
+                                        value="{{ request('nama') }}" placeholder="Cari nama...">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="jenis_transaksi" class="form-label">Jenis Transaksi</label>
-                                    <select class="form-select" id="jenis_transaksi" name="jenis_transaksi">
-                                        <option value="">Semua Jenis</option>
-                                        <option value="kantin" {{ request('jenis_transaksi') == 'kantin' ? 'selected' : '' }}>Kantin</option>
-                                        <option value="koperasi" {{ request('jenis_transaksi') == 'koperasi' ? 'selected' : '' }}>Koperasi</option>
+                                    <label for="tingkatan_id" class="form-label">Kelas</label>
+                                    <select class="form-select" id="tingkatan_id" name="tingkatan_id">
+                                        <option value="">Semua Kelas</option>
+                                        @foreach($tingkatan as $t)
+                                            <option value="{{ $t->id }}" {{ request('tingkatan_id') == $t->id ? 'selected' : '' }}>
+                                                {{ $t->nama }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <div class="form-group w-100">
-                                    <button type="submit" class="btn btn-search-green w-100">
-                                        <i class="bi bi-search"></i> Cari
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tipe" class="form-label">Tipe Transaksi</label>
+                                    <select class="form-select" id="tipe" name="tipe">
+                                        <option value="">Semua Tipe</option>
+                                        <option value="masuk" {{ request('tipe') == 'masuk' ? 'selected' : '' }}>Masuk</option>
+                                        <option value="keluar" {{ request('tipe') == 'keluar' ? 'selected' : '' }}>Keluar</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                                    <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" 
+                                        value="{{ request('tanggal_mulai') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                                    <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir" 
+                                        value="{{ request('tanggal_akhir') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-search-green me-2">
+                                        <i class="bi bi-search me-1"></i>Cari
                                     </button>
+                                    <a href="{{ route('laporan-transaksi.index') }}" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -67,60 +111,72 @@
                 </div>
             </div>
 
+            @if($isSearching)
             <div class="table-responsive">
                 <table class="table table-bordered table-striped" id="dataTable">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Tanggal</th>
                             <th>NIS</th>
                             <th>Nama Santri</th>
-                            <th>Jenis Transaksi</th>
-                            <th>Nama Barang</th>
-                            <th>Harga Satuan</th>
-                            <th>Kuantitas</th>
-                            <th>Total</th>
+                            <th>Kelas</th>
+                            <th>Tanggal</th>
+                            <th>Jumlah</th>
+                            <th>Keterangan</th>
+                            <th>Tipe</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data will be loaded here -->
+                        @forelse($historiSaldo as $index => $histori)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $histori->santri->nis }}</td>
+                            <td>{{ $histori->santri->nama }}</td>
+                            <td>{{ optional($histori->santri->tingkatan)->nama }}</td>
+                            <td>{{ $histori->created_at->format('d/m/Y H:i') }}</td>
+                            <td>Rp {{ number_format($histori->jumlah, 0, ',', '.') }}</td>
+                            <td>{{ $histori->keterangan ?? '-' }}</td>
+                            <td>
+                                <span class="badge bg-{{ $histori->tipe == 'masuk' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($histori->tipe) }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center">Tidak ada data transaksi</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+            @else
+            <div class="alert alert-info">
+                Silahkan masukkan kriteria pencarian dan klik tombol "Cari" untuk menampilkan data.
+            </div>
+            @endif
         </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Initialize DataTable
-        $('#dataTable').DataTable();
-
-        // Initialize date pickers
-        flatpickr("#tanggal_mulai", {
-            dateFormat: "Y-m-d"
+        @if($isSearching)
+        $('#dataTable').DataTable({
+            order: [[4, 'desc']], // Sort by tanggal column descending
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
+            }
         });
-        
-        flatpickr("#tanggal_selesai", {
-            dateFormat: "Y-m-d"
-        });
+        @endif
 
-        // Print button functionality
-        $('#printBtn').click(function() {
-            const tanggalMulai = $('#tanggal_mulai').val();
-            const tanggalSelesai = $('#tanggal_selesai').val();
-            const jenisTransaksi = $('#jenis_transaksi').val();
-            
-            let url = '{{ route("laporan-transaksi.index") }}?print=true';
-            
-            if (tanggalMulai) url += `&tanggal_mulai=${tanggalMulai}`;
-            if (tanggalSelesai) url += `&tanggal_selesai=${tanggalSelesai}`;
-            if (jenisTransaksi) url += `&jenis_transaksi=${jenisTransaksi}`;
-            
-            window.open(url, '_blank');
+        // Initialize select2 for tingkatan and tipe dropdowns
+        $('#tingkatan_id, #tipe').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
         });
     });
 </script>

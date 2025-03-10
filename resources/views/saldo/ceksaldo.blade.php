@@ -9,14 +9,6 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Daftar Saldo Santri</h3>
-                    <form action="{{ route('cek-saldo.print') }}" method="GET" class="d-inline">
-                        <input type="hidden" name="nis" value="{{ request('nis') }}">
-                        <input type="hidden" name="nama" value="{{ request('nama') }}">
-                        <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-printer me-1"></i>Print PDF
-                        </button>
-                    </form>
                 </div>
                 <div class="card-body">
                     <div class="row mb-4">

@@ -22,16 +22,6 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h2 class="m-0 font-weight-bold text-success">Histori Belanja</h2>
-            <form action="{{ route('histori-belanja.print') }}" method="GET" class="d-inline">
-                <input type="hidden" name="nis" value="{{ request('nis') }}">
-                <input type="hidden" name="nama" value="{{ request('nama') }}">
-                <input type="hidden" name="tingkatan_id" value="{{ request('tingkatan_id') }}">
-                <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
-                <input type="hidden" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-printer"></i> Print PDF
-                </button>
-            </form>
         </div>
         <div class="card-body">
             @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
