@@ -19,6 +19,10 @@
         padding-bottom: 10px;
         border-bottom: 2px solid #4e73df;
     }
+    .qr-code-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 </style>
 @endpush
 
@@ -32,6 +36,15 @@
         @csrf
         @method('PUT')
         
+        <!-- QR Code Section -->
+        <div class="form-section">
+            <h5 class="section-title">QR Code</h5>
+            <div class="qr-code-container">
+                {!! $santri->generateQrCode() !!}
+                <p class="text-muted mt-2">QR Code Santri</p>
+            </div>
+        </div>
+
         <!-- Data Pribadi -->
         <div class="form-section">
             <h5 class="section-title">Data Pribadi</h5>

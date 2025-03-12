@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Komplek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class SantriController extends Controller
 {
@@ -227,32 +228,54 @@ class SantriController extends Controller
         $validatedData['nis'] = $validatedData['nomor_induk_santri'];
         unset($validatedData['nomor_induk_santri']); // Hapus nomor_induk_santri dari array
 
-        // Update data santri
-        $santri->update($validatedData);
+        try {
+            DB::beginTransaction();
 
-        // Update data wali santri
-        $waliData = $request->only([
-            'nama_wali',
-            'asal_kota',
-            'nama_ayah',
-            'alamat_kk_ayah',
-            'alamat_domisili_ayah',
-            'no_identitas_ayah',
-            'no_hp_ayah',
-            'pendidikan_ayah',
-            'pekerjaan_ayah',
-            'nama_ibu',
-            'alamat_kk_ibu',
-            'alamat_domisili_ibu',
-            'no_identitas_ibu',
-            'no_hp_ibu',
-            'pendidikan_ibu',
-            'pekerjaan_ibu',
-        ]);
-        $santri->waliSantri()->update($waliData);
+            // Update data santri
+            $santri->update($validatedData);
 
-        return redirect()->route('santri.index')
-            ->with('success', 'Data santri berhasil diperbarui');
+            // Update data wali santri
+            $waliData = $request->only([
+                'nama_wali',
+                'asal_kota',
+                'nama_ayah',
+                'alamat_kk_ayah',
+                'alamat_domisili_ayah',
+                'no_identitas_ayah',
+                'no_hp_ayah',
+                'pendidikan_ayah',
+                'pekerjaan_ayah',
+                'nama_ibu',
+                'alamat_kk_ibu',
+                'alamat_domisili_ibu',
+                'no_identitas_ibu',
+                'no_hp_ibu',
+                'pendidikan_ibu',
+                'pekerjaan_ibu',
+            ]);
+            $santri->waliSantri()->update($waliData);
+
+            // Update user email jika NIS berubah
+            if ($santri->user && $santri->wasChanged('nis')) {
+                $santri->user->update([
+                    'email' => $santri->nis . '@santri.ponpes.id'
+                ]);
+            }
+
+            // Generate ulang QR Code
+            $santri->generateQrCode();
+
+            DB::commit();
+
+            return redirect()->route('santri.index')
+                ->with('success', 'Data santri berhasil diperbarui');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
+        }
     }
 
     /**
