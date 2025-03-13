@@ -478,6 +478,23 @@
                                 Kantin
                             </a>
                         </li>
+                        <li class="nav-item">
+                        <a href="#supplySubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('supply.*') ? 'active' : '' }}">
+                            <i class="bi bi-box-seam me-2"></i>
+                            Supply
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('supply.*') ? 'show' : '' }}" id="supplySubmenu">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('supply.index', ['kategori' => 'koperasi']) }}" class="nav-link {{ request()->routeIs('supply.*') && request()->query('kategori') == 'koperasi' ? 'active' : '' }}">
+                                        <i class="bi bi-shop me-2"></i>
+                                        Koperasi
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 @endif
 
                 @if(!auth()->user()->isOutlet())

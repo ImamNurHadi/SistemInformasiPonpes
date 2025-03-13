@@ -327,4 +327,45 @@ class SantriController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get santri data for API
+     */
+    public function getSantriData(Santri $santri)
+    {
+        try {
+            \Log::info('Mengambil data santri:', [
+                'santri_id' => $santri->id,
+                'nama' => $santri->nama
+            ]);
+            
+            $data = [
+                'id' => $santri->id,
+                'nama' => $santri->nama,
+                'tempat_lahir' => $santri->tempat_lahir,
+                'tanggal_lahir' => $santri->tanggal_lahir ? $santri->tanggal_lahir->format('Y-m-d') : null,
+                'jenis_kelamin' => $santri->jenis_kelamin,
+                'tingkatan' => $santri->tingkatan ? $santri->tingkatan->nama : null,
+                'kelas' => $santri->kelas ? $santri->kelas->nama : null,
+                'komplek' => $santri->komplek ? $santri->komplek->nama : null,
+                'kamar' => $santri->kamar ? $santri->kamar->nama : null
+            ];
+            
+            \Log::info('Data santri berhasil diambil');
+            
+            return response()->json($data);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error saat mengambil data santri:', [
+                'santri_id' => $santri->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => true,
+                'message' => 'Gagal mengambil data santri: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

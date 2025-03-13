@@ -198,6 +198,7 @@
                     <div id="santriInfo" class="santri-info" style="display: none;">
                         <h5>Informasi Santri</h5>
                         <p>Nama Santri: <span id="namaSantri">-</span></p>
+                        <p>Tempat Lahir: <span id="tempatLahirSantri">-</span></p>
                         <p>Kelas: <span id="kelasSantri">-</span></p>
                         <p>Saldo Belanja: <span id="saldoBelanja">Rp 0</span></p>
                         <input type="hidden" id="santriIdDisplay">
@@ -282,12 +283,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Tampilkan data awal dari QR
         document.getElementById('namaSantri').textContent = data.nama;
+        // Tampilkan tempat lahir dari QR jika ada
+        if (data.tempat_lahir) {
+            document.getElementById('tempatLahirSantri').textContent = data.tempat_lahir;
+        }
         document.getElementById('kelasSantri').textContent = data.tingkatan;
         santriInfo.style.display = 'block';
         
-        // Ambil data saldo terbaru
-        fetch(`/api/santri/${selectedSantriId}/saldo`)
+        // Ambil data lengkap santri dan saldo terbaru
+        fetch(`/api/santri/${selectedSantriId}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Gagal mengambil data santri');
+                    });
+                }
+                return response.json();
+            })
+            .then(santriData => {
+                console.log("Data santri dari API:", santriData);
+                // Update tempat lahir dengan data dari API jika ada
+                if (santriData.tempat_lahir) {
+                    document.getElementById('tempatLahirSantri').textContent = santriData.tempat_lahir;
+                }
+                
+                // Lanjutkan dengan mengambil saldo
+                return fetch(`/api/santri/${selectedSantriId}/saldo`);
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Gagal mengambil data saldo');
@@ -301,12 +325,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 hitungTotal(); // Update status tombol bayar
             })
             .catch(error => {
-                console.error('Error fetching saldo:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Gagal mengambil data saldo: ' + error.message
-                });
+                console.error('Error fetching data:', error);
+                // Jika gagal mengambil data dari API, tetap tampilkan saldo
+                fetch(`/api/santri/${selectedSantriId}/saldo`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Gagal mengambil data saldo');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Data saldo (fallback):", data);
+                        const saldoBelanja = parseFloat(data.saldo_belanja) || 0;
+                        document.getElementById('saldoBelanja').textContent = formatRupiah(saldoBelanja);
+                        hitungTotal(); // Update status tombol bayar
+                    })
+                    .catch(saldoError => {
+                        console.error('Error fetching saldo (fallback):', saldoError);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Gagal mengambil data saldo: ' + saldoError.message
+                        });
+                    });
             });
     }
 
@@ -436,18 +477,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         html5QrcodeScanner.render((decodedText, decodedResult) => {
             try {
+                console.log("Decoded QR:", decodedText); // Debug: Log raw QR data
                 const data = JSON.parse(decodedText);
-                if (data.type === 'santri_qr') {
+                console.log("Parsed QR data:", data); // Debug: Log parsed data
+                
+                // Periksa tipe data QR
+                if (data.type === 'santri_qr' || data.type === 'santri') {
                     updateSantriInfo(data);
                     html5QrcodeScanner.clear();
                     scannerContainer.style.display = 'none';
+                } else if (data.id && (data.nama || data.name)) {
+                    // Jika tidak ada type tapi memiliki id dan nama, anggap sebagai data santri
+                    updateSantriInfo(data);
+                    html5QrcodeScanner.clear();
+                    scannerContainer.style.display = 'none';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'QR Code Tidak Valid',
+                        text: 'QR Code bukan milik santri'
+                    });
                 }
-            } catch (e) {
-                console.error('Invalid QR Code format');
+            } catch (error) {
+                console.error('Error parsing QR code:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Format QR Code tidak valid'
+                    title: 'QR Code Tidak Valid',
+                    text: 'Format QR Code tidak sesuai: ' + error.message
                 });
             }
         });

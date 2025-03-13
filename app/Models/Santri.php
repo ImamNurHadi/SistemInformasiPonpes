@@ -107,6 +107,7 @@ class Santri extends Model
             'type' => 'santri_qr',
             'id' => $this->id,
             'nama' => $this->nama,
+            'tempat_lahir' => $this->tempat_lahir,
             'tingkatan' => $this->tingkatan ? $this->tingkatan->nama : '-'
         ];
         

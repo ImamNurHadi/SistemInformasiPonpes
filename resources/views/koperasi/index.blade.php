@@ -172,6 +172,7 @@
         <div id="santriInfo" class="santri-info mt-3">
             <h5>Informasi Santri</h5>
             <p>Nama Santri: <span id="namaSantri">-</span></p>
+            <p>Tempat Lahir: <span id="tempatLahirSantri">-</span></p>
             <p>Kelas: <span id="kelasSantri">-</span></p>
             <p>Saldo Belanja: <span id="saldoBelanja">Rp 0</span></p>
             <button type="button" class="btn btn-success w-100 mt-3" id="bayarBtn" disabled>
@@ -311,19 +312,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('ID Santri tidak valid');
             }
             
-            // Tampilkan informasi santri
+            // Tampilkan informasi awal santri
             santriInfo.style.display = 'block';
             namaSantri.textContent = santriData.nama || 'Tidak diketahui';
+            // Tampilkan tempat lahir dari QR jika ada
+            if (santriData.tempat_lahir) {
+                document.getElementById('tempatLahirSantri').textContent = santriData.tempat_lahir;
+            }
             kelasSantri.textContent = santriData.kelas ? santriData.kelas.nama : (santriData.tingkatan || 'Tidak ada kelas');
             
-            // Ambil saldo terbaru
-            fetch(`/api/santri/${selectedSantriId}/saldo`, {
+            // Ambil data lengkap santri dari API
+            fetch(`/api/santri/${selectedSantriId}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Gagal mendapatkan data santri');
+                    });
+                }
+                return response.json();
+            })
+            .then(santriDetail => {
+                console.log("Data detail santri:", santriDetail);
+                // Update tempat lahir dengan data dari API jika ada
+                if (santriDetail.tempat_lahir) {
+                    document.getElementById('tempatLahirSantri').textContent = santriDetail.tempat_lahir;
+                }
+                
+                // Lanjutkan dengan mengambil saldo
+                return fetch(`/api/santri/${selectedSantriId}/saldo`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
             })
             .then(response => {
                 if (!response.ok) {
@@ -344,11 +374,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Saldo berhasil diperbarui:", currentSaldoBelanja);
             })
             .catch(error => {
-                console.error('Error fetching saldo:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal Mendapatkan Saldo',
-                    text: error.message || 'Terjadi kesalahan saat mengambil data saldo'
+                console.error('Error fetching data:', error);
+                // Jika gagal mengambil data santri, tetap coba ambil saldo
+                fetch(`/api/santri/${selectedSantriId}/saldo`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || 'Gagal mendapatkan saldo');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(response => {
+                    console.log("Respons saldo (fallback):", response);
+                    if (response.error) {
+                        throw new Error(response.message || 'Gagal mendapatkan saldo');
+                    }
+                    currentSaldoBelanja = response.saldo_belanja;
+                    saldoDisplay.textContent = formatRupiah(response.saldo_belanja);
+                    updateGrandTotal();
+                })
+                .catch(saldoError => {
+                    console.error('Error fetching saldo (fallback):', saldoError);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Mendapatkan Saldo',
+                        text: saldoError.message || 'Terjadi kesalahan saat mengambil data saldo'
+                    });
                 });
             });
         } catch (error) {
