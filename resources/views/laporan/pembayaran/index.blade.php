@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Pembayaran')
+@section('title', 'Laporan Pembelanjaan Santri')
 
 @push('styles')
 <style>
@@ -20,7 +20,7 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h2 class="m-0 font-weight-bold text-success">Laporan Pembayaran</h2>
+            <h2 class="m-0 font-weight-bold text-success">Laporan Pembelanjaan Santri</h2>
             @if($isSearching)
             <form action="{{ route('laporan-pembayaran.print') }}" method="GET" class="d-inline">
                 <input type="hidden" name="nis" value="{{ request('nis') }}">

@@ -32,6 +32,20 @@
         <h1 class="h3 mb-0 text-gray-800">Edit Santri</h1>
     </div>
 
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
     <form action="{{ route('santri.update', $santri->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -196,6 +210,23 @@
                         @endforeach
                     </select>
                     @error('kamar_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="ruang_kelas_id" class="form-label">Ruang Kelas</label>
+                    <select class="form-control @error('ruang_kelas_id') is-invalid @enderror" 
+                        id="ruang_kelas_id" name="ruang_kelas_id">
+                        <option value="">Pilih Ruang Kelas</option>
+                        @foreach($ruangKelas as $rk)
+                            <option value="{{ $rk->id }}" 
+                                {{ old('ruang_kelas_id', $santri->ruang_kelas_id) == $rk->id ? 'selected' : '' }}>
+                                {{ $rk->nama_ruang_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('ruang_kelas_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -399,8 +430,45 @@
 @endsection 
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Initialize datepicker
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        // Handle komplek_id change
+        $('#komplek_id').on('change', function() {
+            var komplekId = $(this).val();
+            if (komplekId) {
+                $.ajax({
+                    url: '/get-kamar/' + komplekId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#kamar_id').empty();
+                        $('#kamar_id').append('<option value="">Pilih Kamar</option>');
+                        $.each(data, function(key, value) {
+                            $('#kamar_id').append('<option value="' + value.id + '">' + value.nama_kamar + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#kamar_id').empty();
+                $('#kamar_id').append('<option value="">Pilih Kamar</option>');
+            }
+        });
+
+        // Log form submission
+        $('form').on('submit', function(e) {
+            console.log('Form submitted');
+            console.log('ruang_kelas_id value:', $('#ruang_kelas_id').val());
+            // Continue with form submission
+        });
+
         // Initialize select2
         $('#komplek_id').select2({
             theme: 'bootstrap-5',
@@ -414,29 +482,12 @@
             allowClear: true
         });
 
-        // Handle komplek change
-        $('#komplek_id').on('change', function() {
-            var komplekId = $(this).val();
-            $('#kamar_id').empty().append('<option value="">Pilih Kamar</option>');
-            
-            if (komplekId) {
-                // Fetch kamar based on komplek
-                $.ajax({
-                    url: '/api/kamar/' + komplekId,
-                    type: 'GET',
-                    success: function(data) {
-                        data.forEach(function(kamar) {
-                            $('#kamar_id').append(new Option(kamar.nama_kamar, kamar.id));
-                        });
-                        // If editing, set the previously selected kamar
-                        @if(old('kamar_id', $santri->kamar_id))
-                            $('#kamar_id').val('{{ old('kamar_id', $santri->kamar_id) }}').trigger('change');
-                        @endif
-                    }
-                });
-            }
+        $('#ruang_kelas_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Ruang Kelas',
+            allowClear: true
         });
-
+        
         // Trigger komplek change on page load if komplek is selected
         if ($('#komplek_id').val()) {
             $('#komplek_id').trigger('change');

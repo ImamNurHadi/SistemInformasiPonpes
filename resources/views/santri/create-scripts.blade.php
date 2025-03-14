@@ -14,6 +14,12 @@
             allowClear: true
         });
 
+        $('#ruang_kelas_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Pilih Ruang Kelas',
+            allowClear: true
+        });
+
         // Function to load kamar options
         function loadKamarOptions(komplekId) {
             if (komplekId) {

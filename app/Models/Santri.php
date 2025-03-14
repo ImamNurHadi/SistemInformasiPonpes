@@ -20,6 +20,7 @@ class Santri extends Model
         'tingkatan_id',
         'komplek_id',
         'kamar_id',
+        'ruang_kelas_id',
         'nama',
         'nis',
         'tempat_lahir',
@@ -99,6 +100,11 @@ class Santri extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class);
+    }
+
+    public function ruangKelas()
+    {
+        return $this->belongsTo(RuangKelas::class, 'ruang_kelas_id');
     }
 
     public function generateQrCode()

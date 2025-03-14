@@ -511,11 +511,11 @@
                                     <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Pengajar</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'active' : '' }}">
+                                    <a href="#santriSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') || request()->routeIs('kamar.*') || request()->routeIs('komplek.*') || request()->routeIs('ruang-kelas.*') ? 'active' : '' }}">
                                         Santri
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') ? 'show' : '' }}" id="santriSubmenu">
+                                    <div class="collapse {{ request()->routeIs('santri.*') || request()->routeIs('tingkatan.*') || request()->routeIs('kamar.*') || request()->routeIs('komplek.*') || request()->routeIs('ruang-kelas.*') ? 'show' : '' }}" id="santriSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
                                                 <a href="{{ route('santri.index') }}" class="nav-link {{ request()->routeIs('santri.*') ? 'active' : '' }}">Data Santri</a>
@@ -528,6 +528,9 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="{{ route('komplek.index') }}" class="nav-link {{ request()->routeIs('komplek.*') ? 'active' : '' }}">Komplek</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('ruang-kelas.index') }}" class="nav-link {{ request()->routeIs('ruang-kelas.*') ? 'active' : '' }}">Ruang Kelas</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -655,7 +658,7 @@
                                 <li class="nav-item w-100">
                                     <a href="{{ route('laporan-pembayaran.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('laporan-pembayaran.*') ? 'active' : '' }}">
                                         <i class="bi bi-credit-card me-2"></i>
-                                        <span>Laporan Pembayaran</span>
+                                        <span>Laporan Pembelanjaan Santri</span>
                                     </a>
                                 </li>
                                 <li class="nav-item w-100">
