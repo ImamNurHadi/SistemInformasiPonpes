@@ -28,6 +28,7 @@ use App\Http\Controllers\KantinController;
 use App\Http\Controllers\HiddenSaldoBelanjaController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\RuangKelasController;
+use App\Http\Controllers\TransferController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -227,6 +228,12 @@ Route::middleware(['auth'])->group(function () {
     // Supply routes - Only for users with the 'kantin' role
     Route::middleware(['auth', \App\Http\Middleware\IsOutlet::class])->group(function () {
         Route::resource('supply', SupplyController::class);
+    });
+
+    // Transfer routes - Only for users with the 'santri' role
+    Route::middleware(['auth', \App\Http\Middleware\IsSantri::class])->group(function () {
+        Route::get('/transfer', [TransferController::class, 'index'])->name('transfer.index');
+        Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store');
     });
 
 });

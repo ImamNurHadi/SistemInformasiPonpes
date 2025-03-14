@@ -195,12 +195,14 @@
                     @endif
 
                     <div class="profile-actions">
+                        @if(!auth()->user()->isSantri())
                         <a href="{{ route('profile.edit-info') }}" class="btn btn-primary w-100 btn-action">
                             <i class="bi bi-person-gear"></i> Update Profile
                         </a>
                         <a href="{{ route('profile.edit-security') }}" class="btn btn-warning w-100 btn-action">
                             <i class="bi bi-shield-lock"></i> Update Email & Password
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>

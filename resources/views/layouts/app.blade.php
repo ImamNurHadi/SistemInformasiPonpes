@@ -499,13 +499,14 @@
 
                 @if(!auth()->user()->isOutlet())
                     <!-- Master Data -->
+                    @if(!auth()->user()->isSantri())
                     <li class="nav-item">
-                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'active' : '' }}">
+                        <a href="#masterDataSubmenu" data-bs-toggle="collapse" class="nav-link main-menu {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'active' : '' }}">
                             <i class="bi bi-database me-2"></i>
                             Master Data
                             <i class="bi bi-chevron-down float-end"></i>
                         </a>
-                        <div class="collapse {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('mahrom.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'show' : '' }}" id="masterDataSubmenu">
+                        <div class="collapse {{ request()->routeIs('pengajar.*') || request()->routeIs('santri.*') || request()->routeIs('pengurus.*') || request()->routeIs('divisi.*') || request()->routeIs('koperasi.*') || request()->routeIs('saldo.*') || request()->routeIs('tabungan.*') ? 'show' : '' }}" id="masterDataSubmenu">
                             <ul class="nav flex-column submenu">
                                 <li class="nav-item">
                                     <a href="{{ route('pengajar.index') }}" class="nav-link {{ request()->routeIs('pengajar.*') ? 'active' : '' }}">Pengajar</a>
@@ -536,68 +537,24 @@
                                     </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#pengurusSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">
-                                        Pengurus
-                                        <i class="bi bi-chevron-down float-end"></i>
-                                    </a>
-                                    <div class="collapse {{ request()->routeIs('pengurus.*') ? 'show' : '' }}" id="pengurusSubmenu">
-                                        <ul class="nav flex-column submenu">
-                                            <li class="nav-item">
-                                                <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Data Pengurus</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <a href="{{ route('pengurus.index') }}" class="nav-link {{ request()->routeIs('pengurus.*') ? 'active' : '' }}">Pengurus</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">
-                                        <i class="bi bi-diagram-3 me-2"></i>
-                                        Divisi
-                                    </a>
+                                    <a href="{{ route('divisi.index') }}" class="nav-link {{ request()->routeIs('divisi.*') ? 'active' : '' }}">Divisi</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#saldoMenu" role="button" 
-                                        aria-expanded="{{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'true' : 'false' }}" 
-                                        aria-controls="saldoMenu">
-                                        <div>
-                                            <i class="bi bi-wallet2 me-2"></i>
-                                            <span>Transaksi</span>
-                                        </div>
-                                        <i class="bi bi-chevron-down"></i>
-                                    </a>
-                                    <div class="collapse {{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'show' : '' }}" id="saldoMenu">
-                                        <ul class="nav submenu">
-                                            <li class="nav-item w-100">
-                                                <a href="{{ route('cek-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('cek-saldo.*') ? 'active' : '' }}">
-                                                    <i class="bi bi-cash me-2"></i>
-                                                    <span>Cek Saldo</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item w-100">
-                                                <a href="{{ route('histori-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
-                                                    <i class="bi bi-clock-history me-2"></i>
-                                                    <span>Top Up Saldo</span>
-                                                </a>
-                                            </li>
-                                            @if(auth()->user()->isOperator())
-                                            <li class="nav-item w-100">
-                                                <a href="{{ route('tarik-tunai.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('tarik-tunai.*') ? 'active' : '' }}">
-                                                    <i class="bi bi-cash-stack me-2"></i>
-                                                    <span>Tarik Tunai</span>
-                                                </a>
-                                            </li>
-                                            @endif
-                                            <li class="nav-item w-100">
-                                                <a href="{{ route('histori-belanja.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-belanja.*') ? 'active' : '' }}">
-                                                    <i class="bi bi-cart-check me-2"></i>
-                                                    <span>Histori Belanja</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <a href="{{ route('koperasi.index') }}" class="nav-link {{ request()->routeIs('koperasi.*') ? 'active' : '' }}">Koperasi</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('saldo.index') }}" class="nav-link {{ request()->routeIs('saldo.*') ? 'active' : '' }}">Saldo</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('tabungan.index') }}" class="nav-link {{ request()->routeIs('tabungan.*') ? 'active' : '' }}">Tabungan</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
+                    @endif
                    
                     
                     <!-- Akun Menu -->
@@ -634,6 +591,65 @@
                             </ul>
                         </div>
                     </li>
+                    
+                    <!-- Transaksi Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#transaksiMenu" role="button" 
+                            aria-expanded="{{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') || request()->routeIs('topup.*') || request()->routeIs('tarik-tunai.*') ? 'true' : 'false' }}" 
+                            aria-controls="transaksiMenu">
+                            <div>
+                                <i class="bi bi-cash-coin me-2"></i>
+                                <span>Transaksi</span>
+                            </div>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') || request()->routeIs('topup.*') || request()->routeIs('tarik-tunai.*') ? 'show' : '' }}" id="transaksiMenu">
+                            <ul class="nav submenu">
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('cek-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('cek-saldo.*') ? 'active' : '' }}">
+                                        <i class="bi bi-wallet me-2"></i>
+                                        <span>Cek Saldo</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('histori-saldo.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-saldo.*') ? 'active' : '' }}">
+                                        <i class="bi bi-clock-history me-2"></i>
+                                        <span>Histori Saldo</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('histori-belanja.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('histori-belanja.*') ? 'active' : '' }}">
+                                        <i class="bi bi-bag-check me-2"></i>
+                                        <span>Histori Belanja</span>
+                                    </a>
+                                </li>
+                                @if(auth()->user()->isOperator())
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('topup.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('topup.*') ? 'active' : '' }}">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        <span>Top Up</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a href="{{ route('tarik-tunai.index') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('tarik-tunai.*') ? 'active' : '' }}">
+                                        <i class="bi bi-cash me-2"></i>
+                                        <span>Tarik Tunai</span>
+                                    </a>
+                                </li>
+                                @endif
+                            </ul>
+                        </div>
+                    </li>
+                    
+                    <!-- Transfer Menu - Only visible for Santri -->
+                    @if(auth()->user()->isSantri())
+                    <li class="nav-item">
+                        <a href="{{ route('transfer.index') }}" class="nav-link main-menu {{ request()->routeIs('transfer.*') ? 'active' : '' }}">
+                            <i class="bi bi-arrow-left-right me-2"></i>
+                            Transfer
+                        </a>
+                    </li>
+                    @endif
                     
                     <!-- Laporan Menu -->
                     @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
@@ -1022,4 +1038,5 @@
         </script>
         @endpush
     </body>
+</html>
 </html>

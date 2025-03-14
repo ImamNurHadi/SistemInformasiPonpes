@@ -12,8 +12,20 @@ class CekSaldoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Santri::with('tingkatan');
+        $user = Auth::user();
         $tingkatan = MasterTingkatan::all();
+        
+        // Jika user adalah santri, hanya tampilkan data santri tersebut
+        if ($user->isSantri()) {
+            $santri = Santri::with('tingkatan')
+                ->where('user_id', $user->id)
+                ->get();
+            
+            return view('saldo.ceksaldo', compact('santri', 'tingkatan'));
+        }
+        
+        // Jika user bukan santri (admin/operator), tampilkan semua santri dengan filter
+        $query = Santri::with('tingkatan');
 
         // Filter berdasarkan NIS
         if ($request->filled('nis')) {
@@ -36,6 +48,23 @@ class CekSaldoController extends Controller
 
     public function printPDF(Request $request)
     {
+        $user = Auth::user();
+        
+        // Jika user adalah santri, hanya cetak data santri tersebut
+        if ($user->isSantri()) {
+            $santri = Santri::with('tingkatan')
+                ->where('user_id', $user->id)
+                ->get();
+                
+            $pdf = PDF::loadView('saldo.ceksaldo-pdf', [
+                'santri' => $santri,
+                'tanggal' => now()->format('d/m/Y H:i')
+            ]);
+    
+            return $pdf->stream('daftar-saldo-santri.pdf');
+        }
+        
+        // Jika user bukan santri (admin/operator), cetak semua santri dengan filter
         $query = Santri::with('tingkatan');
 
         // Filter berdasarkan NIS
