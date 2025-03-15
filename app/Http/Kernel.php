@@ -82,6 +82,7 @@ class Kernel extends HttpKernel
         'is.operator' => \App\Http\Middleware\IsOperator::class,
         'is.outlet' => \App\Http\Middleware\IsOutlet::class,
         'is.adminop' => \App\Http\Middleware\IsAdminOrOperator::class,
+        'is.santri' => \App\Http\Middleware\IsSantri::class,
     ];
 
     /**

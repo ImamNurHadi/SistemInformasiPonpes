@@ -11,6 +11,7 @@
                     <h3 class="card-title">Daftar Saldo Santri</h3>
                 </div>
                 <div class="card-body">
+                    @if(!auth()->user()->isSantri())
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <form action="{{ route('cek-saldo.index') }}" method="GET" id="filterForm">
@@ -56,6 +57,7 @@
                             </form>
                         </div>
                     </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped" id="dataTable">

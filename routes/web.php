@@ -28,6 +28,8 @@ use App\Http\Controllers\KantinController;
 use App\Http\Controllers\HiddenSaldoBelanjaController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\DataKoperasiController;
+use App\Http\Controllers\RuangKelasController;
+use App\Http\Controllers\TransferController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -58,6 +60,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/santri/{santri}/edit', [SantriController::class, 'edit'])->name('santri.edit');
         Route::put('/santri/{santri}', [SantriController::class, 'update'])->name('santri.update');
         Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy');
+    });
+    Route::post('/santri/{santri}/update-ruang-kelas', [SantriController::class, 'updateRuangKelas'])->name('santri.update-ruang-kelas');
+
+    // Data Ruang Kelas
+    Route::get('/ruang-kelas', [RuangKelasController::class, 'index'])->name('ruang-kelas.index');
+    Route::middleware(RoleMiddleware::class)->group(function () {
+        Route::get('/ruang-kelas/create', [RuangKelasController::class, 'create'])->name('ruang-kelas.create');
+        Route::post('/ruang-kelas', [RuangKelasController::class, 'store'])->name('ruang-kelas.store');
+        Route::get('/ruang-kelas/{ruangKela}/edit', [RuangKelasController::class, 'edit'])->name('ruang-kelas.edit');
+        Route::put('/ruang-kelas/{ruangKela}', [RuangKelasController::class, 'update'])->name('ruang-kelas.update');
+        Route::delete('/ruang-kelas/{ruangKela}', [RuangKelasController::class, 'destroy'])->name('ruang-kelas.destroy');
     });
 
     // Data Pengajar
@@ -223,6 +236,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('supply', SupplyController::class);
     });
 
+    // Transfer routes - Only for users with the 'santri' role
+    Route::middleware(['auth', \App\Http\Middleware\IsSantri::class])->group(function () {
+        Route::get('/transfer', [TransferController::class, 'index'])->name('transfer.index');
+        Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store');
+    });
+
 });
 
 Route::middleware('auth')->group(function () {
@@ -232,6 +251,42 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.update-email');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Test route for checking ruang_kelas table
+Route::get('/test-ruang-kelas', function () {
+    $ruangKelas = \App\Models\RuangKelas::all();
+    return response()->json($ruangKelas);
+});
+
+// Test route for checking santri table
+Route::get('/test-santri', function () {
+    $santri = \App\Models\Santri::with('ruangKelas')->get();
+    return response()->json($santri);
+});
+
+// Test route for updating a santri record
+Route::get('/test-update-santri/{id}', function ($id) {
+    $santri = \App\Models\Santri::findOrFail($id);
+    $ruangKelas = \App\Models\RuangKelas::first();
+    
+    if ($ruangKelas) {
+        $santri->ruang_kelas_id = $ruangKelas->id;
+        $santri->save();
+        return response()->json(['success' => true, 'santri' => $santri, 'ruang_kelas' => $ruangKelas]);
+    } else {
+        return response()->json(['success' => false, 'message' => 'No RuangKelas found']);
+    }
+});
+
+// Test route for creating a new RuangKelas
+Route::get('/test-create-ruang-kelas', function () {
+    $ruangKelas = new \App\Models\RuangKelas();
+    $ruangKelas->nama_ruang_kelas = 'KELAS TEST ' . rand(1, 100);
+    $ruangKelas->keterangan = 'Kelas untuk testing';
+    $ruangKelas->save();
+    
+    return response()->json(['success' => true, 'ruang_kelas' => $ruangKelas]);
 });
 
 require __DIR__.'/auth.php';

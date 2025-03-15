@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Pembayaran</title>
+    <title>Laporan Pembelanjaan Santri</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,7 +45,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>LAPORAN PEMBAYARAN</h1>
+        <h1>LAPORAN PEMBELANJAAN SANTRI</h1>
         <p>Tanggal Cetak: {{ $tanggal }}</p>
     </div>
 

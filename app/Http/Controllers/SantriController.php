@@ -8,6 +8,7 @@ use App\Models\Kamar;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Komplek;
+use App\Models\RuangKelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,8 @@ class SantriController extends Controller
         $tingkatan = MasterTingkatan::all();
         $komplek = Komplek::all();
         $kamar = Kamar::with('komplek')->get();
-        return view('santri.create', compact('tingkatan', 'komplek', 'kamar'));
+        $ruangKelas = RuangKelas::orderBy('nama_ruang_kelas')->get();
+        return view('santri.create', compact('tingkatan', 'komplek', 'kamar', 'ruangKelas'));
     }
 
     /**
@@ -59,6 +61,7 @@ class SantriController extends Controller
                 'tingkatan_id' => 'required|exists:master_tingkatan,id',
                 'kamar_id' => 'required|exists:kamar,id',
                 'komplek_id' => 'required|exists:komplek,id',
+                'ruang_kelas_id' => 'nullable|exists:ruang_kelas,id',
                 
                 // Data Wali Santri
                 'nama_wali' => 'nullable|string|max:255',
@@ -116,6 +119,7 @@ class SantriController extends Controller
                 'tingkatan_masuk' => $request->tingkatan_id,
                 'kamar_id' => $request->kamar_id,
                 'komplek_id' => $request->komplek_id,
+                'ruang_kelas_id' => $request->ruang_kelas_id,
                 'saldo_utama' => 0,
                 'saldo_belanja' => 0,
                 'saldo_tabungan' => 0
@@ -185,7 +189,8 @@ class SantriController extends Controller
         $tingkatan = MasterTingkatan::all();
         $komplek = Komplek::all();
         $kamar = Kamar::where('komplek_id', $santri->komplek_id)->get();
-        return view('santri.edit', compact('santri', 'tingkatan', 'komplek', 'kamar'));
+        $ruangKelas = RuangKelas::orderBy('nama_ruang_kelas')->get();
+        return view('santri.edit', compact('santri', 'tingkatan', 'komplek', 'kamar', 'ruangKelas'));
     }
 
     /**
@@ -193,6 +198,10 @@ class SantriController extends Controller
      */
     public function update(Request $request, Santri $santri)
     {
+        // Debug the request data
+        \Log::info('Update request data:', ['request' => $request->all()]);
+        \Log::info('Original santri ruang_kelas_id: ' . $santri->ruang_kelas_id);
+        
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
             'nomor_induk_santri' => 'required|string|max:20|unique:santri,nis,' . $santri->id,
@@ -206,6 +215,7 @@ class SantriController extends Controller
             'tingkatan_id' => 'required|exists:master_tingkatan,id',
             'kamar_id' => 'required|exists:kamar,id',
             'komplek_id' => 'required|exists:komplek,id',
+            'ruang_kelas_id' => 'nullable|exists:ruang_kelas,id',
             'nama_wali' => 'nullable|string|max:255',
             'asal_kota' => 'nullable|string|max:255',
             'nama_ayah' => 'nullable|string|max:255',
@@ -228,11 +238,53 @@ class SantriController extends Controller
         $validatedData['nis'] = $validatedData['nomor_induk_santri'];
         unset($validatedData['nomor_induk_santri']); // Hapus nomor_induk_santri dari array
 
+        // Handle ruang_kelas_id explicitly
+        if ($request->has('ruang_kelas_id')) {
+            if (empty($request->ruang_kelas_id)) {
+                $validatedData['ruang_kelas_id'] = null;
+                \Log::info('Setting ruang_kelas_id to null');
+            } else {
+                $validatedData['ruang_kelas_id'] = $request->ruang_kelas_id;
+                \Log::info('Setting ruang_kelas_id to: ' . $request->ruang_kelas_id);
+            }
+        } else {
+            \Log::info('ruang_kelas_id not present in request');
+        }
+
+        // Pisahkan data santri dan data wali santri
+        $santriData = [
+            'nama' => $validatedData['nama'],
+            'nis' => $validatedData['nis'],
+            'tempat_lahir' => $validatedData['tempat_lahir'],
+            'tanggal_lahir' => $validatedData['tanggal_lahir'],
+            'anak_ke' => $validatedData['anak_ke'],
+            'jumlah_saudara_kandung' => $validatedData['jumlah_saudara_kandung'],
+            'kelurahan' => $validatedData['kelurahan'],
+            'kecamatan' => $validatedData['kecamatan'],
+            'kabupaten_kota' => $validatedData['kabupaten_kota'],
+            'tingkatan_id' => $validatedData['tingkatan_id'],
+            'kamar_id' => $validatedData['kamar_id'],
+            'komplek_id' => $validatedData['komplek_id'],
+            'ruang_kelas_id' => $validatedData['ruang_kelas_id'],
+        ];
+
+        // Debug the santriData array
+        \Log::info('Santri data:', ['santriData' => $santriData]);
+
         try {
             DB::beginTransaction();
 
             // Update data santri
-            $santri->update($validatedData);
+            $santri->update($santriData);
+            
+            // Debug the santri after update
+            \Log::info('Santri after update:', ['santri' => $santri->toArray()]);
+            \Log::info('Checking ruang_kelas_id after update: ' . $santri->ruang_kelas_id);
+            
+            // Force refresh from database to ensure we have the latest data
+            $santri = $santri->fresh();
+            \Log::info('Santri after fresh():', ['santri' => $santri->toArray()]);
+            \Log::info('Checking ruang_kelas_id after fresh(): ' . $santri->ruang_kelas_id);
 
             // Update data wali santri
             $waliData = $request->only([
@@ -253,7 +305,17 @@ class SantriController extends Controller
                 'pendidikan_ibu',
                 'pekerjaan_ibu',
             ]);
-            $santri->waliSantri()->update($waliData);
+            
+            // Debug the waliData array
+            \Log::info('Wali data:', ['waliData' => $waliData]);
+            
+            // Update wali santri jika ada
+            if ($santri->waliSantri) {
+                $santri->waliSantri()->update($waliData);
+            } else {
+                // Buat wali santri baru jika belum ada
+                $santri->waliSantri()->create($waliData);
+            }
 
             // Update user email jika NIS berubah
             if ($santri->user && $santri->wasChanged('nis')) {
@@ -272,6 +334,9 @@ class SantriController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
+            \Log::error('Error saat memperbarui data: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
             return back()
                 ->withInput()
                 ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
@@ -366,6 +431,55 @@ class SantriController extends Controller
                 'error' => true,
                 'message' => 'Gagal mengambil data santri: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Update ruang_kelas_id for a santri
+     */
+    public function updateRuangKelas(Request $request, Santri $santri)
+    {
+        \Log::info('Updating ruang_kelas_id for santri: ' . $santri->id);
+        \Log::info('Request data:', $request->all());
+        
+        $request->validate([
+            'ruang_kelas_id' => 'nullable|exists:ruang_kelas,id',
+        ]);
+        
+        $oldRuangKelasId = $santri->ruang_kelas_id;
+        \Log::info('Old ruang_kelas_id: ' . $oldRuangKelasId);
+        
+        try {
+            DB::beginTransaction();
+            
+            // Update directly using query builder to bypass any model events
+            DB::table('santri')
+                ->where('id', $santri->id)
+                ->update(['ruang_kelas_id' => $request->ruang_kelas_id]);
+                
+            // Refresh the model
+            $santri = $santri->fresh();
+            
+            \Log::info('Ruang kelas updated:', [
+                'old_value' => $oldRuangKelasId,
+                'new_value' => $santri->ruang_kelas_id,
+                'santri_id' => $santri->id,
+                'santri_nama' => $santri->nama
+            ]);
+            
+            DB::commit();
+            
+            return redirect()->route('santri.edit', $santri->id)
+                ->with('success', 'Ruang kelas berhasil diperbarui');
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error updating ruang_kelas_id: ' . $e->getMessage());
+            \Log::error('Error trace: ' . $e->getTraceAsString());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui ruang kelas: ' . $e->getMessage());
         }
     }
 }

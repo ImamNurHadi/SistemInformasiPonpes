@@ -281,6 +281,22 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="ruang_kelas_id" class="form-label">Ruang Kelas</label>
+                    <select class="form-control @error('ruang_kelas_id') is-invalid @enderror" 
+                        id="ruang_kelas_id" name="ruang_kelas_id">
+                        <option value="">Pilih Ruang Kelas</option>
+                        @foreach($ruangKelas as $rk)
+                            <option value="{{ $rk->id }}" {{ old('ruang_kelas_id') == $rk->id ? 'selected' : '' }}>
+                                {{ $rk->nama_ruang_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('ruang_kelas_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
         </div>
 
@@ -461,6 +477,9 @@ $(document).ready(function() {
         theme: 'bootstrap-5'
     });
     $('#kamar_id').select2({
+        theme: 'bootstrap-5'
+    });
+    $('#ruang_kelas_id').select2({
         theme: 'bootstrap-5'
     });
 });
