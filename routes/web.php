@@ -27,6 +27,7 @@ use App\Http\Controllers\TarikTunaiController;
 use App\Http\Controllers\KantinController;
 use App\Http\Controllers\HiddenSaldoBelanjaController;
 use App\Http\Controllers\SupplyController;
+use App\Http\Controllers\DataKoperasiController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -212,8 +213,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/laporan-akun-saldo/print', [App\Http\Controllers\LaporanAkunSaldoController::class, 'print'])->name('laporan-akun-saldo.print');
     });
 
-    // Supply routes - Only for users with the 'kantin' role
-    Route::middleware(['auth', \App\Http\Middleware\IsOutlet::class])->group(function () {
+    // Data Koperasi routes
+    Route::middleware(['auth', RoleMiddleware::class])->group(function () {
+        Route::resource('data-koperasi', DataKoperasiController::class);
+    });
+
+    // Supply routes - Only for users with the 'operator' role
+    Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::resource('supply', SupplyController::class);
     });
 

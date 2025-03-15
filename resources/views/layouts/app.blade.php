@@ -552,6 +552,24 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="#koperasiSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('data-koperasi.*') || request()->routeIs('supply.*') ? 'active' : '' }}">
+                                        Koperasi
+                                        <i class="bi bi-chevron-down float-end"></i>
+                                    </a>
+                                    <div class="collapse {{ request()->routeIs('data-koperasi.*') || request()->routeIs('supply.*') ? 'show' : '' }}" id="koperasiSubmenu">
+                                        <ul class="nav flex-column submenu">
+                                            <li class="nav-item">
+                                                <a href="{{ route('data-koperasi.index') }}" class="nav-link {{ request()->routeIs('data-koperasi.*') ? 'active' : '' }}">Data Koperasi</a>
+                                            </li>
+                                            @if(auth()->user()->isOperator())
+                                            <li class="nav-item">
+                                                <a href="{{ route('supply.index', ['kategori' => 'koperasi']) }}" class="nav-link {{ request()->routeIs('supply.*') && request()->query('kategori') == 'koperasi' ? 'active' : '' }}">Supply</a>
+                                            </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link main-menu d-flex align-items-center justify-content-between" data-bs-toggle="collapse" href="#saldoMenu" role="button" 
                                         aria-expanded="{{ request()->routeIs('cek-saldo.*') || request()->routeIs('histori-saldo.*') || request()->routeIs('histori-belanja.*') ? 'true' : 'false' }}" 
                                         aria-controls="saldoMenu">

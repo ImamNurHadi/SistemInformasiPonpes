@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             KomplekSeeder::class,
             KamarSeeder::class,
             SantriSeeder::class,
+            PengurusSeeder::class,
+            DataKoperasiSeeder::class,
         ]);
     }
 }
