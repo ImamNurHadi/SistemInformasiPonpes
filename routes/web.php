@@ -30,6 +30,12 @@ use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\DataKoperasiController;
 use App\Http\Controllers\RuangKelasController;
 use App\Http\Controllers\TransferController;
+use App\Http\Controllers\PembayaranPondokController;
+use App\Http\Controllers\PembayaranKamarController;
+use App\Http\Controllers\PembayaranRuangKelasController;
+use App\Http\Controllers\PembayaranTingkatanController;
+use App\Http\Controllers\PembayaranKomplekController;
+use App\Http\Controllers\LaporanPembayaranSantriController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -240,6 +246,41 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth', \App\Http\Middleware\IsSantri::class])->group(function () {
         Route::get('/transfer', [TransferController::class, 'index'])->name('transfer.index');
         Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store');
+    });
+
+    // Pembayaran (Admin & Operator Only)
+    Route::middleware(['auth', \App\Http\Middleware\IsAdminOrOperator::class])->group(function () {
+        // Pembayaran Pondok
+        Route::get('/pembayaran-pondok', [PembayaranPondokController::class, 'index'])->name('pembayaran-pondok.index');
+        Route::get('/pembayaran-pondok/search', [PembayaranPondokController::class, 'search'])->name('pembayaran-pondok.search');
+        Route::post('/pembayaran-pondok', [PembayaranPondokController::class, 'store'])->name('pembayaran-pondok.store');
+        
+        // Pembayaran Kamar
+        Route::get('/pembayaran-kamar', [PembayaranKamarController::class, 'index'])->name('pembayaran-kamar.index');
+        Route::get('/pembayaran-kamar/search', [PembayaranKamarController::class, 'search'])->name('pembayaran-kamar.search');
+        Route::post('/pembayaran-kamar', [PembayaranKamarController::class, 'store'])->name('pembayaran-kamar.store');
+        
+        // Pembayaran Ruang Kelas
+        Route::get('/pembayaran-ruang-kelas', [PembayaranRuangKelasController::class, 'index'])->name('pembayaran-ruang-kelas.index');
+        Route::get('/pembayaran-ruang-kelas/search', [PembayaranRuangKelasController::class, 'search'])->name('pembayaran-ruang-kelas.search');
+        Route::post('/pembayaran-ruang-kelas', [PembayaranRuangKelasController::class, 'store'])->name('pembayaran-ruang-kelas.store');
+        
+        // Pembayaran Tingkatan
+        Route::get('/pembayaran-tingkatan', [PembayaranTingkatanController::class, 'index'])->name('pembayaran-tingkatan.index');
+        Route::get('/pembayaran-tingkatan/search', [PembayaranTingkatanController::class, 'search'])->name('pembayaran-tingkatan.search');
+        Route::post('/pembayaran-tingkatan', [PembayaranTingkatanController::class, 'store'])->name('pembayaran-tingkatan.store');
+        
+        // Pembayaran Komplek
+        Route::get('/pembayaran-komplek', [PembayaranKomplekController::class, 'index'])->name('pembayaran-komplek.index');
+        Route::get('/pembayaran-komplek/search', [PembayaranKomplekController::class, 'search'])->name('pembayaran-komplek.search');
+        Route::post('/pembayaran-komplek', [PembayaranKomplekController::class, 'store'])->name('pembayaran-komplek.store');
+    });
+
+    // Laporan (Admin & Operator Only)
+    Route::middleware(['auth', \App\Http\Middleware\IsAdminOrOperator::class])->group(function () {
+        // Laporan Pembayaran Santri
+        Route::get('/laporan-pembayaran-santri', [LaporanPembayaranSantriController::class, 'index'])->name('laporan-pembayaran-santri.index');
+        Route::get('/laporan-pembayaran-santri/print', [LaporanPembayaranSantriController::class, 'print'])->name('laporan-pembayaran-santri.print');
     });
 
 });
