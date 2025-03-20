@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SantriSeeder::class,
             PengurusSeeder::class,
             DataKoperasiSeeder::class,
+            SupplierSeeder::class,
         ]);
     }
 }

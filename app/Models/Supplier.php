@@ -4,31 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-class DataKoperasi extends Model
+class Supplier extends Model
 {
     use HasFactory;
-
+    
+    protected $keyType = 'string';
+    public $incrementing = false;
+    
     protected $fillable = [
-        'nama_koperasi',
-        'lokasi',
-        'pengurus_id',
+        'nama_supplier',
+        'alamat',
+        'telepon',
+        'email',
         'username',
         'password_hash',
         'saldo_belanja',
         'user_id'
     ];
-
-    /**
-     * Get the pengurus that owns the koperasi.
-     */
-    public function pengurus()
+    
+    protected static function boot()
     {
-        return $this->belongsTo(Pengurus::class);
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = Str::uuid()->toString();
+            }
+        });
     }
     
     /**
-     * Get the user associated with the koperasi.
+     * Get the user associated with the supplier.
      */
     public function user()
     {
@@ -36,7 +44,7 @@ class DataKoperasi extends Model
     }
     
     /**
-     * Check if koperasi has enough saldo belanja.
+     * Check if supplier has enough saldo belanja.
      */
     public function hasSufficientSaldo($amount)
     {

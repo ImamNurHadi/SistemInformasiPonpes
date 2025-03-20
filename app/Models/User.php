@@ -72,6 +72,16 @@ class User extends Authenticatable
     {
         return $this->role && $this->role->name === 'Operator';
     }
+    
+    public function isKoperasi()
+    {
+        return $this->role && $this->role->name === 'Koperasi';
+    }
+    
+    public function isSupplier()
+    {
+        return $this->role && $this->role->name === 'Supplier';
+    }
 
     public function keranjang()
     {
@@ -81,5 +91,15 @@ class User extends Authenticatable
     public function santri()
     {
         return $this->hasOne(Santri::class);
+    }
+    
+    public function dataKoperasi()
+    {
+        return $this->hasOne(DataKoperasi::class);
+    }
+    
+    public function supplier()
+    {
+        return $this->hasOne(Supplier::class);
     }
 }
