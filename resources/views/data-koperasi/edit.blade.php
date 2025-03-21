@@ -6,6 +6,38 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 mx-auto">
+            <!-- Card untuk informasi saldo koperasi -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 text-dark">Informasi Saldo Koperasi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="mb-0">
+                                <h3 class="text-primary mb-1">Rp. {{ number_format($dataKoperasi->saldo_belanja, 0, ',', '.') }}</h3>
+                                <p class="text-muted mb-0">Saldo saat ini</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <form action="{{ route('data-koperasi.top-up', $dataKoperasi->id) }}" method="POST">
+                                @csrf
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" name="jumlah_topup" class="form-control @error('jumlah_topup') is-invalid @enderror" placeholder="Jumlah Top Up" min="1000" step="1000" required>
+                                    <button class="btn btn-success" type="submit">Top Up Saldo</button>
+                                </div>
+                                @error('jumlah_topup')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Minimal top up Rp. 1.000</div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card untuk edit data koperasi -->
             <div class="card shadow-sm">
                 <div class="card-header bg-light py-3">
                     <h5 class="mb-0 text-dark">Edit Data Koperasi</h5>

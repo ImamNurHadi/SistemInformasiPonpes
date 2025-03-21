@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\DataKoperasi;
 use App\Models\Pengurus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DataKoperasiController extends Controller
 {
@@ -86,5 +88,32 @@ class DataKoperasiController extends Controller
 
         return redirect()->route('data-koperasi.index')
             ->with('success', 'Data koperasi berhasil dihapus.');
+    }
+
+    /**
+     * Top up saldo koperasi
+     */
+    public function topUpSaldo(Request $request, DataKoperasi $dataKoperasi)
+    {
+        $request->validate([
+            'jumlah_topup' => 'required|numeric|min:1000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+            
+            // Tambahkan saldo
+            $dataKoperasi->addSaldoBelanja($request->jumlah_topup);
+            
+            DB::commit();
+            
+            return redirect()->route('data-koperasi.edit', $dataKoperasi->id)
+                ->with('success', 'Saldo koperasi berhasil ditambahkan sebesar Rp. ' . number_format($request->jumlah_topup, 0, ',', '.'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saat top up saldo: ' . $e->getMessage());
+            
+            return back()->with('error', 'Terjadi kesalahan saat menambah saldo: ' . $e->getMessage());
+        }
     }
 }

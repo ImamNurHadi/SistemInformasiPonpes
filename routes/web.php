@@ -36,6 +36,7 @@ use App\Http\Controllers\PembayaranRuangKelasController;
 use App\Http\Controllers\PembayaranTingkatanController;
 use App\Http\Controllers\PembayaranKomplekController;
 use App\Http\Controllers\LaporanPembayaranSantriController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -233,8 +234,11 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Data Koperasi routes
-    Route::middleware(['auth', RoleMiddleware::class])->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::resource('data-koperasi', DataKoperasiController::class);
+        Route::resource('supplier', SupplierController::class);
+        Route::post('supplier/{supplier}/top-up', [SupplierController::class, 'topUpSaldo'])->name('supplier.top-up');
+        Route::post('data-koperasi/{dataKoperasi}/top-up', [DataKoperasiController::class, 'topUpSaldo'])->name('data-koperasi.top-up');
     });
 
     // Supply routes - Only for users with the 'operator' role

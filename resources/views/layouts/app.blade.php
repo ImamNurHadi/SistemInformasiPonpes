@@ -552,6 +552,9 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('data-koperasi.index') }}" class="nav-link {{ request()->routeIs('data-koperasi.*') ? 'active' : '' }}">Data Koperasi</a>
                                             </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">Data Supplier</a>
+                                            </li>
                                             @if(auth()->user()->isOperator())
                                             <li class="nav-item">
                                                 <a href="{{ route('supply.index', ['kategori' => 'koperasi']) }}" class="nav-link {{ request()->routeIs('supply.*') && request()->query('kategori') == 'koperasi' ? 'active' : '' }}">Supply</a>

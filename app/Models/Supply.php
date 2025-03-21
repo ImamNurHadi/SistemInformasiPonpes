@@ -13,14 +13,33 @@ class Supply extends Model
     protected $fillable = [
         'nama_barang',
         'stok',
-        'harga_beli',
-        'harga_jual',
+        'harga_satuan',
+        'total_harga',
         'kategori',
-        'deskripsi'
+        'supplier_id',
+        'data_koperasi_id',
+        'tanggal_masuk'
     ];
 
     protected $casts = [
-        'harga_beli' => 'decimal:2',
-        'harga_jual' => 'decimal:2',
+        'tanggal_masuk' => 'datetime',
+        'harga_satuan' => 'decimal:2',
+        'total_harga' => 'decimal:2',
     ];
+    
+    /**
+     * Get the supplier that owns the supply.
+     */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+    
+    /**
+     * Get the koperasi that owns the supply.
+     */
+    public function dataKoperasi()
+    {
+        return $this->belongsTo(DataKoperasi::class, 'data_koperasi_id');
+    }
 } 

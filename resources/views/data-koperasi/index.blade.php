@@ -3,6 +3,19 @@
 @section('title', 'Data Koperasi')
 
 @section('content')
+<style>
+    /* Fix untuk tampilan tombol aksi */
+    .d-flex.gap-1 form {
+        display: inline-block;
+    }
+    .d-flex.gap-1 .btn {
+        border-radius: 4px;
+        margin: 0 1px;
+    }
+    .table td .d-flex.gap-1 {
+        justify-content: center;
+    }
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -28,21 +41,20 @@
                                     <th>Nama Koperasi</th>
                                     <th>Lokasi</th>
                                     <th>Pengurus</th>
-                                    <th width="15%">Aksi</th>
+                                    <th>Saldo Belanja</th>
+                                    <th width="15%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($dataKoperasi as $koperasi)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $koperasi->nama_koperasi }}</td>
                                     <td>{{ $koperasi->lokasi }}</td>
                                     <td>{{ $koperasi->pengurus->nama ?? 'Tidak ada' }}</td>
-                                    <td>
+                                    <td>Rp {{ number_format($koperasi->saldo_belanja, 0, ',', '.') }}</td>
+                                    <td class="text-center">
                                         <div class="d-flex gap-1">
-                                            <a href="{{ route('data-koperasi.show', $koperasi->id) }}" class="btn btn-sm btn-info">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
                                             <a href="{{ route('data-koperasi.edit', $koperasi->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
@@ -58,7 +70,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">Tidak ada data koperasi</td>
+                                    <td colspan="6" class="text-center">Tidak ada data koperasi</td>
                                 </tr>
                                 @endforelse
                             </tbody>

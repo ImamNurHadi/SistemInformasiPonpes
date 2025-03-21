@@ -33,6 +33,14 @@
                             <td>{{ $dataKoperasi->pengurus->nama ?? 'Tidak ada' }}</td>
                         </tr>
                         <tr>
+                            <th>Saldo Belanja</th>
+                            <td>Rp {{ number_format($dataKoperasi->saldo_belanja, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Username</th>
+                            <td>{{ $dataKoperasi->username ?? 'Tidak ada' }}</td>
+                        </tr>
+                        <tr>
                             <th>Tanggal Dibuat</th>
                             <td>{{ $dataKoperasi->created_at->format('d F Y H:i') }}</td>
                         </tr>
