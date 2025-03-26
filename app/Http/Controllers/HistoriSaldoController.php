@@ -20,6 +20,9 @@ class HistoriSaldoController extends Controller
         $query = HistoriSaldo::with('santri.tingkatan');
 
         if ($user->isAdmin() || $user->isOperator()) {
+            // Exclude "Transfer dari Saldo Utama" entries
+            $query->where('keterangan', '!=', 'Transfer dari Saldo Utama');
+            
             // Filter berdasarkan NIS
             if ($request->filled('nis')) {
                 $query->whereHas('santri', function($q) use ($request) {
@@ -60,6 +63,8 @@ class HistoriSaldoController extends Controller
             $santri = Santri::where('user_id', $user->id)->first();
             if ($santri) {
                 $query->where('santri_id', $santri->id);
+                // Exclude "Transfer dari Saldo Utama" entries for santri
+                $query->where('keterangan', '!=', 'Transfer dari Saldo Utama');
 
                 // Filter berdasarkan Tipe Transaksi untuk santri
                 if ($request->filled('tipe')) {
@@ -86,6 +91,9 @@ class HistoriSaldoController extends Controller
         $user = Auth::user();
         $tingkatan = MasterTingkatan::all();
         $query = HistoriSaldo::with('santri.tingkatan');
+        
+        // Exclude "Transfer dari Saldo Utama" entries
+        $query->where('keterangan', '!=', 'Transfer dari Saldo Utama');
 
         if ($user->isAdmin() || $user->isOperator()) {
             // Filter berdasarkan NIS

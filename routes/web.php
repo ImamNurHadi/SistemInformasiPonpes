@@ -37,6 +37,8 @@ use App\Http\Controllers\PembayaranTingkatanController;
 use App\Http\Controllers\PembayaranKomplekController;
 use App\Http\Controllers\LaporanPembayaranSantriController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AutoPaymentController;
+use App\Http\Middleware\IsAdminOrOperator;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -172,7 +174,6 @@ Route::middleware(['auth'])->group(function () {
     // Topup - Only for Operator
     Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::get('/topup', [TopUpController::class, 'index'])->name('topup.index');
-        Route::get('/topup/form/{santri}', [TopUpController::class, 'showForm'])->name('topup.form');
         Route::post('/topup', [TopUpController::class, 'topup'])->name('topup.store');
     });
 
@@ -207,7 +208,6 @@ Route::middleware(['auth'])->group(function () {
     // Tarik Tunai routes - Only for Operator
     Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai.index');
-        Route::get('/tarik-tunai/form/{santri}', [TarikTunaiController::class, 'showForm'])->name('tarik-tunai.form');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
     });
 
@@ -285,6 +285,16 @@ Route::middleware(['auth'])->group(function () {
         // Laporan Pembayaran Santri
         Route::get('/laporan-pembayaran-santri', [LaporanPembayaranSantriController::class, 'index'])->name('laporan-pembayaran-santri.index');
         Route::get('/laporan-pembayaran-santri/print', [LaporanPembayaranSantriController::class, 'print'])->name('laporan-pembayaran-santri.print');
+    });
+
+    // Pembayaran features
+    Route::middleware(IsAdminOrOperator::class)->group(function () {
+        // Auto Payment Settings
+        Route::get('/pembayaran-auto', [AutoPaymentController::class, 'index'])->name('pembayaran-auto.index');
+        Route::post('/pembayaran-auto', [AutoPaymentController::class, 'store'])->name('pembayaran-auto.store');
+        Route::put('/pembayaran-auto/{setting}', [AutoPaymentController::class, 'update'])->name('pembayaran-auto.update');
+        Route::patch('/pembayaran-auto/{setting}/toggle-status', [AutoPaymentController::class, 'toggleStatus'])->name('pembayaran-auto.toggle-status');
+        Route::post('/pembayaran-auto/process', [AutoPaymentController::class, 'processPayments'])->name('pembayaran-auto.process');
     });
 
 });

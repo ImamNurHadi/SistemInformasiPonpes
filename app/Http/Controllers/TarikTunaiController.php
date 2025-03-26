@@ -14,32 +14,39 @@ class TarikTunaiController extends Controller
         $query = Santri::with('tingkatan');
         $tingkatan = MasterTingkatan::all();
         $santri = null;
+        $selectedSantri = null;
 
-        // Filter berdasarkan NIS
-        if ($request->filled('nis')) {
-            $query->where('nis', 'like', '%' . $request->nis . '%');
+        // Jika ada santri_id yang dipilih untuk tarik tunai
+        if ($request->filled('santri_id')) {
+            $selectedSantri = Santri::findOrFail($request->santri_id);
         }
 
-        // Filter berdasarkan Nama
-        if ($request->filled('nama')) {
-            $query->where('nama', 'like', '%' . $request->nama . '%');
-        }
-
-        // Filter berdasarkan Kelas
-        if ($request->filled('tingkatan_id')) {
-            $query->where('tingkatan_id', $request->tingkatan_id);
-        }
-
-        // Jika ada filter yang digunakan
-        if ($request->filled('nis') || $request->filled('nama') || $request->filled('tingkatan_id')) {
-            $santri = $query->get();
+        // Jika tombol cari diklik (ditandai dengan adanya request)
+        if ($request->has('search') || $request->has('tingkatan_id')) {
+            // Filter berdasarkan pencarian (jika ada)
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nis', 'like', "%{$search}%")
+                      ->orWhere('nama', 'like', "%{$search}%");
+                });
+            }
             
-            if ($santri->isEmpty()) {
+            // Filter berdasarkan kelas (jika ada)
+            if ($request->filled('tingkatan_id')) {
+                $query->where('tingkatan_id', $request->tingkatan_id);
+            }
+            
+            // Ambil data santri (maksimal 100 data untuk performa)
+            $santri = $query->limit(100)->get();
+            
+            // Hanya tampilkan pesan error jika ada filter yang digunakan tapi tidak ada hasil
+            if ($santri->isEmpty() && ($request->filled('search') || $request->filled('tingkatan_id'))) {
                 return back()->with('error', 'Santri tidak ditemukan');
             }
         }
 
-        return view('saldo.tarik-tunai', compact('santri', 'tingkatan'));
+        return view('saldo.tarik-tunai', compact('santri', 'tingkatan', 'selectedSantri'));
     }
 
     public function showForm(Santri $santri)

@@ -2,6 +2,22 @@
 
 @section('title', 'Laporan Pembayaran Santri')
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<style>
+    .btn-search-green {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: white !important;
+    }
+    .btn-search-green:hover {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -10,7 +26,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Laporan Pembayaran Santri</h3>
                     @if($isSearching && count($pembayaran) > 0)
-                    <a href="{{ route('laporan-pembayaran-santri.print', request()->all()) }}" class="btn btn-success" target="_blank">
+                    <a href="{{ route('laporan-pembayaran-santri.print', request()->all()) }}" class="btn btn-primary" target="_blank">
                         <i class="bi bi-printer me-1"></i>Cetak PDF
                     </a>
                     @endif
@@ -73,7 +89,7 @@
                             </div>
                             <div class="col-md-6 d-flex align-items-end">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary me-2">
+                                    <button type="submit" class="btn btn-search-green me-2">
                                         <i class="bi bi-search me-1"></i>Cari
                                     </button>
                                     <a href="{{ route('laporan-pembayaran-santri.index') }}" class="btn btn-secondary">

@@ -565,11 +565,11 @@
                                 </li>
                                 <!-- Menu Pembayaran -->
                                 <li class="nav-item">
-                                    <a href="#pembayaranSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pembayaran-pondok.*') || request()->routeIs('pembayaran-kamar.*') || request()->routeIs('pembayaran-ruang-kelas.*') || request()->routeIs('pembayaran-tingkatan.*') || request()->routeIs('pembayaran-komplek.*') ? 'active' : '' }}">
+                                    <a href="#pembayaranSubmenu" data-bs-toggle="collapse" class="nav-link {{ request()->routeIs('pembayaran-pondok.*') || request()->routeIs('pembayaran-kamar.*') || request()->routeIs('pembayaran-ruang-kelas.*') || request()->routeIs('pembayaran-tingkatan.*') || request()->routeIs('pembayaran-komplek.*') || request()->routeIs('pembayaran-auto.*') ? 'active' : '' }}">
                                         Pembayaran
                                         <i class="bi bi-chevron-down float-end"></i>
                                     </a>
-                                    <div class="collapse {{ request()->routeIs('pembayaran-pondok.*') || request()->routeIs('pembayaran-kamar.*') || request()->routeIs('pembayaran-ruang-kelas.*') || request()->routeIs('pembayaran-tingkatan.*') || request()->routeIs('pembayaran-komplek.*') ? 'show' : '' }}" id="pembayaranSubmenu">
+                                    <div class="collapse {{ request()->routeIs('pembayaran-pondok.*') || request()->routeIs('pembayaran-kamar.*') || request()->routeIs('pembayaran-ruang-kelas.*') || request()->routeIs('pembayaran-tingkatan.*') || request()->routeIs('pembayaran-komplek.*') || request()->routeIs('pembayaran-auto.*') ? 'show' : '' }}" id="pembayaranSubmenu">
                                         <ul class="nav flex-column submenu">
                                             <li class="nav-item">
                                                 <a href="{{ route('pembayaran-pondok.index') }}" class="nav-link {{ request()->routeIs('pembayaran-pondok.*') ? 'active' : '' }}">Pembayaran Pondok</a>
@@ -585,6 +585,9 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="{{ route('pembayaran-komplek.index') }}" class="nav-link {{ request()->routeIs('pembayaran-komplek.*') ? 'active' : '' }}">Pembayaran Komplek</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('pembayaran-auto.index') }}" class="nav-link {{ request()->routeIs('pembayaran-auto.*') ? 'active' : '' }}">Pembayaran Otomatis</a>
                                             </li>
                                         </ul>
                                     </div>
