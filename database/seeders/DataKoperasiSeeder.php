@@ -80,7 +80,7 @@ class DataKoperasiSeeder extends Seeder
                 'username' => $data['username'],
                 'password_hash' => Hash::make($data['password']),
                 'saldo_belanja' => $data['saldo_belanja'],
-                'user_id' => $user->id,
+                'keuntungan' => 0
             ]);
             
             $this->command->info("Koperasi '{$data['nama_koperasi']}' berhasil dibuat dengan username: {$data['username']}");

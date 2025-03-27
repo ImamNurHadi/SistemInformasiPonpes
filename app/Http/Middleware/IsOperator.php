@@ -10,7 +10,8 @@ class IsOperator
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->role || $request->user()->role->name !== 'Operator') {
+        if (!$request->user() || !$request->user()->role || 
+            !in_array($request->user()->role->name, ['Admin', 'Operator'])) {
             abort(403, 'Unauthorized action.');
         }
 

@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('data_koperasis', function (Blueprint $table) {
             $table->id();
@@ -17,15 +14,16 @@ return new class extends Migration
             $table->string('lokasi');
             $table->uuid('pengurus_id');
             $table->foreign('pengurus_id')->references('id')->on('pengurus')->onDelete('cascade');
+            $table->string('username')->unique();
+            $table->string('password_hash');
+            $table->decimal('saldo_belanja', 12, 2)->default(0);
+            $table->decimal('keuntungan', 12, 2)->default(0);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('data_koperasis');
     }
-};
+}; 

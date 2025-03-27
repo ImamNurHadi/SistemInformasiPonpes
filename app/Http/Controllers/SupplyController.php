@@ -16,19 +16,41 @@ class SupplyController extends Controller
      */
     public function index(Request $request)
     {
-        $supplier_id = $request->get('supplier_id');
         $suppliers = Supplier::orderBy('nama_supplier')->get();
+        $koperasis = DataKoperasi::orderBy('nama_koperasi')->get();
         
         $query = Supply::query()->with(['supplier', 'dataKoperasi']);
         
-        if ($supplier_id) {
-            $query->where('supplier_id', $supplier_id);
+        // Filter berdasarkan supplier
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
+        }
+        
+        // Filter berdasarkan koperasi
+        if ($request->filled('koperasi_id')) {
+            $query->where('data_koperasi_id', $request->koperasi_id);
+        }
+        
+        // Filter berdasarkan tanggal
+        if ($request->filled('tanggal_awal')) {
+            $query->whereDate('tanggal_masuk', '>=', $request->tanggal_awal);
+        }
+        if ($request->filled('tanggal_akhir')) {
+            $query->whereDate('tanggal_masuk', '<=', $request->tanggal_akhir);
+        }
+        
+        // Filter berdasarkan pencarian teks
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_barang', 'like', "%{$search}%")
+                  ->orWhere('kategori', 'like', "%{$search}%");
+            });
         }
         
         $supplies = $query->orderBy('tanggal_masuk', 'desc')->paginate(10);
-        $selectedSupplier = $supplier_id ? Supplier::find($supplier_id) : null;
         
-        return view('supply.index', compact('supplies', 'suppliers', 'selectedSupplier'));
+        return view('supply.index', compact('supplies', 'suppliers', 'koperasis'));
     }
 
     /**
@@ -71,11 +93,9 @@ class SupplyController extends Controller
             // Dapatkan koperasi
             $koperasi = DataKoperasi::findOrFail($validated['data_koperasi_id']);
             
-            // Periksa apakah saldo koperasi cukup
-            if (!$koperasi->hasSufficientSaldo($validated['total_harga'])) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Saldo belanja koperasi tidak mencukupi');
+            // Cek apakah saldo koperasi mencukupi
+            if (!$koperasi->hasSufficientSaldoBelanja($validated['total_harga'])) {
+                return redirect()->back()->with('error', 'Saldo belanja koperasi tidak mencukupi.');
             }
             
             DB::beginTransaction();
@@ -159,10 +179,8 @@ class SupplyController extends Controller
                     $oldKoperasi->addSaldoBelanja($oldTotalHarga);
                     
                     // Periksa dan kurangi saldo koperasi baru
-                    if (!$newKoperasi->hasSufficientSaldo($newTotalHarga)) {
-                        return back()
-                            ->withInput()
-                            ->with('error', 'Saldo belanja koperasi tujuan tidak mencukupi');
+                    if (!$newKoperasi->hasSufficientSaldoBelanja($newTotalHarga)) {
+                        return redirect()->back()->with('error', 'Saldo belanja koperasi baru tidak mencukupi.');
                     }
                     
                     DB::beginTransaction();
@@ -174,10 +192,8 @@ class SupplyController extends Controller
                     $koperasi = DataKoperasi::findOrFail($validated['data_koperasi_id']);
                     
                     // Periksa apakah saldo cukup untuk selisih harga
-                    if ($priceDifference > 0 && !$koperasi->hasSufficientSaldo($priceDifference)) {
-                        return back()
-                            ->withInput()
-                            ->with('error', 'Saldo belanja koperasi tidak mencukupi untuk penambahan harga');
+                    if ($priceDifference > 0 && !$koperasi->hasSufficientSaldoBelanja($priceDifference)) {
+                        return redirect()->back()->with('error', 'Saldo belanja koperasi tidak mencukupi untuk penambahan harga.');
                     }
                     
                     DB::beginTransaction();

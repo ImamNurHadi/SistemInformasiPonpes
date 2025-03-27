@@ -16,7 +16,7 @@ class DataKoperasi extends Model
         'username',
         'password_hash',
         'saldo_belanja',
-        'user_id'
+        'keuntungan'
     ];
 
     /**
@@ -38,7 +38,7 @@ class DataKoperasi extends Model
     /**
      * Check if koperasi has enough saldo belanja.
      */
-    public function hasSufficientSaldo($amount)
+    public function hasSufficientSaldoBelanja($amount)
     {
         return $this->saldo_belanja >= $amount;
     }
@@ -59,7 +59,7 @@ class DataKoperasi extends Model
      */
     public function reduceSaldoBelanja($amount)
     {
-        if (!$this->hasSufficientSaldo($amount)) {
+        if (!$this->hasSufficientSaldoBelanja($amount)) {
             throw new \Exception('Saldo belanja tidak mencukupi.');
         }
         
@@ -67,5 +67,50 @@ class DataKoperasi extends Model
         $this->save();
         
         return $this;
+    }
+
+    public function supplies()
+    {
+        return $this->hasMany(Supply::class, 'data_koperasi_id');
+    }
+
+    /**
+     * Hitung keuntungan dari stok barang
+     */
+    public function hitungKeuntungan()
+    {
+        $totalKeuntungan = 0;
+        $keuntunganPerUnit = 750; // Keuntungan tetap per unit
+
+        foreach ($this->supplies as $supply) {
+            $totalKeuntungan += $supply->stok * $keuntunganPerUnit;
+        }
+
+        $this->keuntungan = $totalKeuntungan;
+        $this->save();
+    }
+
+    /**
+     * Cairkan keuntungan ke saldo belanja
+     */
+    public function cairkanKeuntungan()
+    {
+        if ($this->keuntungan <= 0) {
+            throw new \Exception('Tidak ada keuntungan yang dapat dicairkan.');
+        }
+
+        $this->saldo_belanja += $this->keuntungan;
+        $this->keuntungan = 0;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * Update keuntungan setiap kali ada perubahan stok
+     */
+    public function updateKeuntungan()
+    {
+        $this->hitungKeuntungan();
     }
 }

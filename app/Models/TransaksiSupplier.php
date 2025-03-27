@@ -51,9 +51,9 @@ class TransaksiSupplier extends Model
             // Hitung total harga
             $total_harga = $data['jumlah'] * $data['harga_satuan'];
             
-            // Cek apakah koperasi memiliki saldo yang cukup
-            if (!$koperasi->hasSufficientSaldo($total_harga)) {
-                throw new \Exception('Saldo koperasi tidak mencukupi untuk transaksi ini.');
+            // Cek saldo koperasi
+            if (!$koperasi->hasSufficientSaldoBelanja($total_harga)) {
+                throw new \Exception('Saldo belanja koperasi tidak mencukupi.');
             }
             
             // Buat transaksi

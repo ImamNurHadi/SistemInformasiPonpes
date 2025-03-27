@@ -233,12 +233,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/laporan-akun-saldo/print', [App\Http\Controllers\LaporanAkunSaldoController::class, 'print'])->name('laporan-akun-saldo.print');
     });
 
-    // Data Koperasi routes
+    // Data Koperasi routes - Admin & Operator Only
     Route::middleware(['auth', \App\Http\Middleware\IsOperator::class])->group(function () {
-        Route::resource('data-koperasi', DataKoperasiController::class);
+        Route::get('/data-koperasi', [DataKoperasiController::class, 'index'])->name('data-koperasi.index');
+        Route::get('/data-koperasi/create', [DataKoperasiController::class, 'create'])->name('data-koperasi.create');
+        Route::post('/data-koperasi', [DataKoperasiController::class, 'store'])->name('data-koperasi.store');
+        Route::get('/data-koperasi/{dataKoperasi}', [DataKoperasiController::class, 'show'])->name('data-koperasi.show');
+        Route::get('/data-koperasi/{dataKoperasi}/edit', [DataKoperasiController::class, 'edit'])->name('data-koperasi.edit');
+        Route::put('/data-koperasi/{dataKoperasi}', [DataKoperasiController::class, 'update'])->name('data-koperasi.update');
+        Route::delete('/data-koperasi/{dataKoperasi}', [DataKoperasiController::class, 'destroy'])->name('data-koperasi.destroy');
+        Route::post('/data-koperasi/{dataKoperasi}/cairkan-keuntungan', [DataKoperasiController::class, 'cairkanKeuntungan'])->name('data-koperasi.cairkan-keuntungan');
+        Route::post('/data-koperasi/{dataKoperasi}/top-up', [DataKoperasiController::class, 'topUpSaldo'])->name('data-koperasi.top-up');
+        
+        // Supplier routes
         Route::resource('supplier', SupplierController::class);
         Route::post('supplier/{supplier}/top-up', [SupplierController::class, 'topUpSaldo'])->name('supplier.top-up');
-        Route::post('data-koperasi/{dataKoperasi}/top-up', [DataKoperasiController::class, 'topUpSaldo'])->name('data-koperasi.top-up');
     });
 
     // Supply routes - Only for users with the 'operator' role

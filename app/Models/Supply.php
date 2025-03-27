@@ -42,4 +42,12 @@ class Supply extends Model
     {
         return $this->belongsTo(DataKoperasi::class, 'data_koperasi_id');
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($supply) {
+            // Update keuntungan koperasi setiap kali stok berubah
+            $supply->dataKoperasi->updateKeuntungan();
+        });
+    }
 } 
