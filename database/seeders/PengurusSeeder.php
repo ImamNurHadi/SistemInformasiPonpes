@@ -4,8 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Pengurus;
 use App\Models\Divisi;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class PengurusSeeder extends Seeder
 {
@@ -27,6 +30,15 @@ class PengurusSeeder extends Seeder
             $divisiIds[] = $divisi->id;
         }
         
+        // Dapatkan role pengurus
+        $pengurusRole = Role::where('name', 'Pengurus')->first();
+        if (!$pengurusRole) {
+            $pengurusRole = Role::create([
+                'name' => 'Pengurus',
+                'description' => 'Memiliki akses view-only ke sistem'
+            ]);
+        }
+        
         // Data pengurus
         $pengurus = [
             [
@@ -44,6 +56,7 @@ class PengurusSeeder extends Seeder
                 'jabatan' => 'Ketua',
                 'sub_divisi' => 'Koperasi Putra',
                 'divisi_id' => $divisiIds[0],
+                'email' => 'ahmadfauzi@ponpes.com'
             ],
             [
                 'nama' => 'Siti Aminah',
@@ -60,6 +73,7 @@ class PengurusSeeder extends Seeder
                 'jabatan' => 'Sekretaris',
                 'sub_divisi' => 'Koperasi Putri',
                 'divisi_id' => $divisiIds[0],
+                'email' => 'sitiaminah@ponpes.com'
             ],
             [
                 'nama' => 'Muhammad Rizki',
@@ -76,11 +90,27 @@ class PengurusSeeder extends Seeder
                 'jabatan' => 'Bendahara',
                 'sub_divisi' => 'Koperasi Putra',
                 'divisi_id' => $divisiIds[0],
+                'email' => 'muhammadrizki@ponpes.com'
             ],
         ];
 
         // Masukkan data pengurus
         foreach ($pengurus as $data) {
+            $email = $data['email'];
+            unset($data['email']);
+            
+            // Buat user untuk pengurus
+            $user = User::create([
+                'name' => $data['nama'],
+                'email' => $email,
+                'password' => Hash::make('pengurus123'),
+                'role_id' => $pengurusRole->id
+            ]);
+            
+            // Set user_id pada data pengurus
+            $data['user_id'] = $user->id;
+            
+            // Buat pengurus
             Pengurus::create($data);
         }
     }

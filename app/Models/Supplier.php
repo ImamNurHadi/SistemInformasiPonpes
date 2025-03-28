@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Supplier extends Model
 {
@@ -75,5 +76,21 @@ class Supplier extends Model
         $this->save();
         
         return $this;
+    }
+    
+    /**
+     * Generate QR Code for Supplier
+     */
+    public function generateQrCode()
+    {
+        $data = [
+            'type' => 'supplier_qr',
+            'id' => $this->id,
+            'nama' => $this->nama_supplier,
+            'email' => $this->email
+        ];
+        
+        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        return $qrCode;
     }
 }

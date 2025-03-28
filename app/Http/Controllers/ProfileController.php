@@ -17,8 +17,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $qrData = $this->generateQRData($user);
+        
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'qrData' => $qrData
         ]);
     }
 
@@ -99,5 +103,17 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Generate QR code data untuk pengguna.
+     *
+     * @param  \App\Models\User  $user
+     * @return string
+     */
+    private function generateQRData($user)
+    {
+        // Format sederhana: user:{user_id}
+        return "user:{$user->id}";
     }
 }

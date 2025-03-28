@@ -5,38 +5,66 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\DataKoperasi;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class OutletSeeder extends Seeder
+class KoperasiSeeder extends Seeder
 {
     public function run(): void
     {
-        $outletRole = Role::where('name', 'Outlet')->first();
+        $koperasiRole = Role::where('name', 'Koperasi')->first();
 
-        if (!$outletRole) {
-            $outletRole = Role::create([
-                'name' => 'Outlet',
-                'description' => 'Memiliki akses ke fitur kantin'
+        if (!$koperasiRole) {
+            $koperasiRole = Role::create([
+                'name' => 'Koperasi',
+                'description' => 'Memiliki akses ke fitur kantin dan koperasi'
             ]);
         }
 
-        $outlets = [
+        $koperasis = [
             [
-                'name' => 'Kantin 1',
-                'email' => 'kantin1@ponpes.com',
-                'password' => Hash::make('kantin123'),
-                'role_id' => $outletRole->id
+                'name' => 'Kantin Putra',
+                'email' => 'kantinputra@ponpes.com',
+                'password' => Hash::make('koperasi123'),
+                'role_id' => $koperasiRole->id,
+                'koperasi_data' => [
+                    'nama_koperasi' => 'Kantin Putra',
+                    'lokasi' => 'Gedung Putra Lt. 1',
+                    'saldo_belanja' => 5000000,
+                    'keuntungan' => 0
+                ]
             ],
             [
-                'name' => 'Kantin 2',
-                'email' => 'kantin2@ponpes.com',
-                'password' => Hash::make('kantin123'),
-                'role_id' => $outletRole->id
+                'name' => 'Kantin Putri',
+                'email' => 'kantinputri@ponpes.com',
+                'password' => Hash::make('koperasi123'),
+                'role_id' => $koperasiRole->id,
+                'koperasi_data' => [
+                    'nama_koperasi' => 'Kantin Putri',
+                    'lokasi' => 'Gedung Putri Lt. 1',
+                    'saldo_belanja' => 5000000,
+                    'keuntungan' => 0
+                ]
             ],
         ];
 
-        foreach ($outlets as $outlet) {
-            User::create($outlet);
+        foreach ($koperasis as $koperasi) {
+            $userData = [
+                'name' => $koperasi['name'],
+                'email' => $koperasi['email'],
+                'password' => $koperasi['password'],
+                'role_id' => $koperasi['role_id']
+            ];
+            
+            $user = User::create($userData);
+            
+            $koperasiData = $koperasi['koperasi_data'];
+            $koperasiData['user_id'] = $user->id;
+            $koperasiData['username'] = explode('@', $koperasi['email'])[0];
+            $koperasiData['password_hash'] = Hash::make('koperasi123');
+            
+            DataKoperasi::create($koperasiData);
         }
     }
 } 

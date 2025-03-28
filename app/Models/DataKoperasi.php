@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DataKoperasi extends Model
 {
@@ -112,5 +113,21 @@ class DataKoperasi extends Model
     public function updateKeuntungan()
     {
         $this->hitungKeuntungan();
+    }
+    
+    /**
+     * Generate QR Code for Koperasi
+     */
+    public function generateQrCode()
+    {
+        $data = [
+            'type' => 'koperasi_qr',
+            'id' => $this->id,
+            'nama' => $this->nama_koperasi,
+            'lokasi' => $this->lokasi
+        ];
+        
+        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        return $qrCode;
     }
 }

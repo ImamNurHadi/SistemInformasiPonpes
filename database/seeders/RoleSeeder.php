@@ -20,8 +20,8 @@ class RoleSeeder extends Seeder
                 'description' => 'Memiliki akses view-only ke sistem'
             ],
             [
-                'name' => 'Outlet',
-                'description' => 'Memiliki akses ke manajemen kantin'
+                'name' => 'Koperasi',
+                'description' => 'Memiliki akses ke manajemen kantin dan koperasi'
             ],
             [
                 'name' => 'Operator',
@@ -30,6 +30,10 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Santri',
                 'description' => 'Memiliki akses ke fitur santri'
+            ],
+            [
+                'name' => 'Supplier',
+                'description' => 'Memiliki akses ke fitur supplier untuk menyediakan barang'
             ]
         ];
 

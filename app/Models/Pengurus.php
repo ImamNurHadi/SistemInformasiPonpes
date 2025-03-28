@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Pengurus extends Model
 {
@@ -55,5 +56,22 @@ class Pengurus extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    
+    /**
+     * Generate QR Code for Pengurus
+     */
+    public function generateQrCode()
+    {
+        $data = [
+            'type' => 'pengurus_qr',
+            'id' => $this->id,
+            'nama' => $this->nama,
+            'jabatan' => $this->jabatan,
+            'divisi' => $this->divisi ? $this->divisi->nama : '-'
+        ];
+        
+        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        return $qrCode;
     }
 } 

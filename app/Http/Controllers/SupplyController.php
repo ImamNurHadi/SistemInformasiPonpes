@@ -93,6 +93,9 @@ class SupplyController extends Controller
             // Dapatkan koperasi
             $koperasi = DataKoperasi::findOrFail($validated['data_koperasi_id']);
             
+            // Dapatkan supplier
+            $supplier = Supplier::findOrFail($validated['supplier_id']);
+            
             // Cek apakah saldo koperasi mencukupi
             if (!$koperasi->hasSufficientSaldoBelanja($validated['total_harga'])) {
                 return redirect()->back()->with('error', 'Saldo belanja koperasi tidak mencukupi.');
@@ -103,6 +106,9 @@ class SupplyController extends Controller
             // Kurangi saldo koperasi
             $koperasi->reduceSaldoBelanja($validated['total_harga']);
             
+            // Tambahkan saldo belanja supplier
+            $supplier->addSaldoBelanja($validated['total_harga']);
+            
             // Simpan supply
             Supply::create($validated);
             
@@ -110,7 +116,7 @@ class SupplyController extends Controller
             
             return redirect()
                 ->route('supply.index', ['supplier_id' => $validated['supplier_id']])
-                ->with('success', 'Barang berhasil ditambahkan dan saldo koperasi berhasil dikurangi');
+                ->with('success', 'Barang berhasil ditambahkan. Saldo koperasi dikurangi dan saldo supplier bertambah.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saat menambah supply: ' . $e->getMessage());
@@ -168,6 +174,10 @@ class SupplyController extends Controller
             // Tentukan apakah ada perubahan pada total harga
             $priceDifference = $newTotalHarga - $oldTotalHarga;
             
+            // Dapatkan supplier lama dan baru
+            $oldSupplier = Supplier::findOrFail($supply->supplier_id);
+            $newSupplier = Supplier::findOrFail($validated['supplier_id']);
+            
             // Jika ada perubahan data_koperasi_id atau harga meningkat
             if ($supply->data_koperasi_id != $validated['data_koperasi_id'] || $priceDifference > 0) {
                 // Jika koperasi berubah
@@ -187,6 +197,20 @@ class SupplyController extends Controller
                     
                     // Kurangi saldo koperasi baru
                     $newKoperasi->reduceSaldoBelanja($newTotalHarga);
+                    
+                    // Update saldo supplier
+                    if ($supply->supplier_id != $validated['supplier_id']) {
+                        // Jika supplier berubah
+                        $oldSupplier->reduceSaldoBelanja($oldTotalHarga);
+                        $newSupplier->addSaldoBelanja($newTotalHarga);
+                    } else {
+                        // Jika supplier sama tapi total harga berubah
+                        if ($priceDifference > 0) {
+                            $oldSupplier->addSaldoBelanja($priceDifference);
+                        } else if ($priceDifference < 0) {
+                            $oldSupplier->reduceSaldoBelanja(abs($priceDifference));
+                        }
+                    }
                 } else {
                     // Koperasi sama, cek apakah harganya bertambah
                     $koperasi = DataKoperasi::findOrFail($validated['data_koperasi_id']);
@@ -204,8 +228,30 @@ class SupplyController extends Controller
                     } else if ($priceDifference < 0) {
                         $koperasi->addSaldoBelanja(abs($priceDifference));
                     }
+                    
+                    // Update saldo supplier
+                    if ($supply->supplier_id != $validated['supplier_id']) {
+                        // Jika supplier berubah
+                        $oldSupplier->reduceSaldoBelanja($oldTotalHarga);
+                        $newSupplier->addSaldoBelanja($newTotalHarga);
+                    } else {
+                        // Jika supplier sama tapi total harga berubah
+                        if ($priceDifference > 0) {
+                            $oldSupplier->addSaldoBelanja($priceDifference);
+                        } else if ($priceDifference < 0) {
+                            $oldSupplier->reduceSaldoBelanja(abs($priceDifference));
+                        }
+                    }
                 }
+            } else if ($supply->supplier_id != $validated['supplier_id']) {
+                // Koperasi dan total harga sama, tapi supplier berubah
+                DB::beginTransaction();
+                
+                // Update saldo supplier
+                $oldSupplier->reduceSaldoBelanja($oldTotalHarga);
+                $newSupplier->addSaldoBelanja($newTotalHarga);
             } else {
+                // Tidak ada perubahan yang mempengaruhi saldo
                 DB::beginTransaction();
             }
             
@@ -237,13 +283,17 @@ class SupplyController extends Controller
         try {
             $supplier_id = $supply->supplier_id;
             
-            // Kembalikan saldo koperasi
+            // Dapatkan koperasi dan supplier
             $koperasi = DataKoperasi::findOrFail($supply->data_koperasi_id);
+            $supplier = Supplier::findOrFail($supply->supplier_id);
             
             DB::beginTransaction();
             
             // Tambahkan kembali saldo koperasi
             $koperasi->addSaldoBelanja($supply->total_harga);
+            
+            // Kurangi saldo belanja supplier
+            $supplier->reduceSaldoBelanja($supply->total_harga);
             
             // Hapus supply
             $supply->delete();
@@ -252,7 +302,7 @@ class SupplyController extends Controller
             
             return redirect()
                 ->route('supply.index', ['supplier_id' => $supplier_id])
-                ->with('success', 'Barang berhasil dihapus dan saldo koperasi berhasil dikembalikan');
+                ->with('success', 'Barang berhasil dihapus. Saldo koperasi dikembalikan dan saldo supplier dikurangi.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saat menghapus supply: ' . $e->getMessage());

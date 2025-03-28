@@ -149,7 +149,7 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="email" class="form-label">EMAIL / NIS</label>
+                            <label for="email" class="form-label">EMAIL / USERNAME / NIS</label>
                             <input type="text" class="form-control @error('email') is-invalid @enderror" 
                                 id="email" name="email" value="{{ old('email') }}" required autofocus>
                             @error('email')

@@ -61,7 +61,7 @@ class SupplierSeeder extends Seeder
             $user = User::create([
                 'name' => $supplierData['nama_supplier'],
                 'email' => $supplierData['email'],
-                'password' => Hash::make($supplierData['password']),
+                'password' => Hash::make('supplier123'),
                 'role_id' => $supplierRole->id,
             ]);
             
@@ -72,7 +72,7 @@ class SupplierSeeder extends Seeder
                 'telepon' => $supplierData['telepon'],
                 'email' => $supplierData['email'],
                 'username' => $supplierData['username'],
-                'password_hash' => Hash::make($supplierData['password']),
+                'password_hash' => Hash::make('supplier123'),
                 'saldo_belanja' => $supplierData['saldo_belanja'],
                 'user_id' => $user->id,
             ]);

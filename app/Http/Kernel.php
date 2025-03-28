@@ -79,10 +79,10 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
-        'is.operator' => \App\Http\Middleware\IsOperator::class,
-        'is.outlet' => \App\Http\Middleware\IsOutlet::class,
-        'is.adminop' => \App\Http\Middleware\IsAdminOrOperator::class,
-        'is.santri' => \App\Http\Middleware\IsSantri::class,
+        'isOperator' => \App\Http\Middleware\IsOperator::class,
+        'isKoperasi' => \App\Http\Middleware\IsKoperasi::class,
+        'isAdminop' => \App\Http\Middleware\IsAdminOrOperator::class,
+        'isSantri' => \App\Http\Middleware\IsSantri::class,
     ];
 
     /**

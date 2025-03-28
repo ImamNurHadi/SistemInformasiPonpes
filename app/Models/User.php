@@ -60,7 +60,7 @@ class User extends Authenticatable
 
     public function isOutlet()
     {
-        return $this->role && $this->role->name === 'Outlet';
+        return $this->isKoperasi();
     }
 
     public function isPengurus()

@@ -9,6 +9,7 @@ use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DataKoperasiSeeder extends Seeder
 {
@@ -30,7 +31,7 @@ class DataKoperasiSeeder extends Seeder
         $koperasiRole = Role::where('name', 'Koperasi')->first();
         
         if (!$koperasiRole) {
-            $this->command->error('Role Koperasi tidak ditemukan. Silakan jalankan migrasi add_role_koperasi_supplier terlebih dahulu.');
+            $this->command->error('Role Koperasi tidak ditemukan. Silakan jalankan RoleSeeder terlebih dahulu.');
             return;
         }
         
@@ -41,7 +42,8 @@ class DataKoperasiSeeder extends Seeder
                 'lokasi' => 'Gedung A, Lantai 1',
                 'pengurus_id' => $pengurusIds[0], // Ahmad Fauzi
                 'username' => 'koperasiputra',
-                'password' => 'password123',
+                'email' => 'koperasi.putra@ponpes.com',
+                'password' => 'koperasi123',
                 'saldo_belanja' => 10000000.00
             ],
             [
@@ -49,7 +51,8 @@ class DataKoperasiSeeder extends Seeder
                 'lokasi' => 'Gedung B, Lantai 1',
                 'pengurus_id' => $pengurusIds[1], // Siti Aminah
                 'username' => 'koperasiputri',
-                'password' => 'password123',
+                'email' => 'koperasi.putri@ponpes.com',
+                'password' => 'koperasi123',
                 'saldo_belanja' => 8000000.00
             ],
             [
@@ -57,17 +60,31 @@ class DataKoperasiSeeder extends Seeder
                 'lokasi' => 'Gedung Utama, Lantai 2',
                 'pengurus_id' => $pengurusIds[2], // Muhammad Rizki
                 'username' => 'koperasiumum',
-                'password' => 'password123',
+                'email' => 'koperasi.umum@ponpes.com',
+                'password' => 'koperasi123',
                 'saldo_belanja' => 15000000.00
             ],
         ];
+        
+        // Hapus data koperasi dan user yang sudah ada sebelumnya
+        foreach ($dataKoperasi as $data) {
+            $oldUser = User::where('email', $data['email'])->first();
+            if ($oldUser) {
+                $oldKoperasi = DataKoperasi::where('user_id', $oldUser->id)->first();
+                if ($oldKoperasi) {
+                    $oldKoperasi->delete();
+                }
+                $oldUser->delete();
+                $this->command->info("Data lama {$data['email']} dihapus.");
+            }
+        }
         
         // Masukkan data koperasi
         foreach ($dataKoperasi as $data) {
             // Buat user untuk koperasi
             $user = User::create([
                 'name' => $data['nama_koperasi'],
-                'email' => strtolower(str_replace(' ', '.', $data['nama_koperasi'])) . '@ponpes.com',
+                'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'role_id' => $koperasiRole->id,
             ]);
@@ -80,10 +97,13 @@ class DataKoperasiSeeder extends Seeder
                 'username' => $data['username'],
                 'password_hash' => Hash::make($data['password']),
                 'saldo_belanja' => $data['saldo_belanja'],
-                'keuntungan' => 0
+                'keuntungan' => 0,
+                'user_id' => $user->id
             ]);
             
             $this->command->info("Koperasi '{$data['nama_koperasi']}' berhasil dibuat dengan username: {$data['username']}");
+            $this->command->info("Email: {$data['email']}");
+            $this->command->info("Password: {$data['password']}");
         }
     }
 }

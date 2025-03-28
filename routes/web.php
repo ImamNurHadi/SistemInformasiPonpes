@@ -39,13 +39,11 @@ use App\Http\Controllers\LaporanPembayaranSantriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AutoPaymentController;
 use App\Http\Middleware\IsAdminOrOperator;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CekSaldoQRController;
 
-Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('dashboard');
-    }
-    return redirect()->route('login');
-});
+// Rute publik untuk halaman Home/landing page
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -183,8 +181,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/cek-saldo/print', [CekSaldoController::class, 'printPDF'])->name('cek-saldo.print');
     });
 
-    // Menu Kantin (Outlet Only)
-    Route::middleware(['auth', \App\Http\Middleware\IsOutlet::class])->group(function () {
+    // Menu Kantin (Koperasi Only)
+    Route::middleware(['auth', \App\Http\Middleware\IsKoperasi::class])->group(function () {
         Route::get('/kantin', [\App\Http\Controllers\KantinController::class, 'index'])->name('kantin.index');
         Route::post('/kantin/bayar', [\App\Http\Controllers\KantinController::class, 'bayar'])->name('kantin.bayar');
     });
@@ -352,5 +350,17 @@ Route::get('/test-create-ruang-kelas', function () {
     
     return response()->json(['success' => true, 'ruang_kelas' => $ruangKelas]);
 });
+
+// Route untuk mengecek login sebelum akses cek saldo dari homepage
+Route::get('/cek-saldo-redirect', function() {
+    if (Auth::check()) {
+        return redirect()->route('cek-saldo.index');
+    }
+    return redirect()->route('login');
+})->name('cek-saldo-redirect');
+
+// Route untuk Cek Saldo QR Code (BADO)
+Route::get('/cek-saldo-qr', [CekSaldoQRController::class, 'index'])->name('cek-saldo-qr.index');
+Route::post('/cek-saldo-qr/check', [CekSaldoQRController::class, 'checkSaldo'])->name('cek-saldo-qr.check');
 
 require __DIR__.'/auth.php';

@@ -53,8 +53,38 @@ class AuthenticatedSessionController extends Controller
             }
         }
 
+        // Jika gagal, coba cari berdasarkan username koperasi
+        $koperasi = DB::table('data_koperasis')->where('username', $credentials['email'])->first();
+        if ($koperasi && $koperasi->user_id) {
+            $user = User::find($koperasi->user_id);
+            if ($user) {
+                if (Auth::attempt([
+                    'email' => $user->email,
+                    'password' => $credentials['password']
+                ])) {
+                    $request->session()->regenerate();
+                    return redirect()->intended(RouteServiceProvider::HOME);
+                }
+            }
+        }
+
+        // Jika gagal, coba cari berdasarkan username supplier
+        $supplier = DB::table('suppliers')->where('username', $credentials['email'])->first();
+        if ($supplier && $supplier->user_id) {
+            $user = User::find($supplier->user_id);
+            if ($user) {
+                if (Auth::attempt([
+                    'email' => $user->email,
+                    'password' => $credentials['password']
+                ])) {
+                    $request->session()->regenerate();
+                    return redirect()->intended(RouteServiceProvider::HOME);
+                }
+            }
+        }
+
         return back()->withErrors([
-            'email' => 'Email/NIS atau password salah.',
+            'email' => 'Email/Username/NIS atau password salah.',
         ])->onlyInput('email');
     }
 
