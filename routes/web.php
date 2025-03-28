@@ -41,6 +41,7 @@ use App\Http\Controllers\AutoPaymentController;
 use App\Http\Middleware\IsAdminOrOperator;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CekSaldoQRController;
+use App\Http\Controllers\BeritaController;
 
 // Rute publik untuk halaman Home/landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -69,6 +70,11 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy');
     });
     Route::post('/santri/{santri}/update-ruang-kelas', [SantriController::class, 'updateRuangKelas'])->name('santri.update-ruang-kelas');
+
+    // Data Berita (Admin Only)
+    Route::middleware(RoleMiddleware::class)->group(function () {
+        Route::resource('berita', BeritaController::class);
+    });
 
     // Data Ruang Kelas
     Route::get('/ruang-kelas', [RuangKelasController::class, 'index'])->name('ruang-kelas.index');

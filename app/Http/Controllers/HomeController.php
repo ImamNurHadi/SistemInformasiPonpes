@@ -10,6 +10,7 @@ use App\Models\Supplier;
 use App\Models\SaldoUtama;
 use App\Models\SaldoBelanja;
 use App\Models\SaldoTabungan;
+use App\Models\Berita;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -34,45 +35,58 @@ class HomeController extends Controller
             $userSaldo = $this->getUserSaldo($user);
         }
         
-        // Data berita statis (dalam aplikasi real bisa dari database)
-        $berita = [
-            [
-                'judul' => 'Pembukaan Pendaftaran Santri Baru 2024',
-                'tanggal' => '1 Mei 2024',
-                'image' => 'img/news/santri-baru.jpg',
-                'ringkasan' => 'Pendaftaran santri baru telah dibuka untuk tahun ajaran 2024/2025. Segera daftarkan putra-putri Anda untuk mendapatkan pendidikan terbaik.',
-            ],
-            [
-                'judul' => 'Peringatan Hari Santri Nasional',
-                'tanggal' => '22 Oktober 2023',
-                'image' => 'img/news/hari-santri.jpg',
-                'ringkasan' => 'Pondok pesantren mengadakan kegiatan besar untuk memperingati Hari Santri Nasional dengan berbagai lomba dan kajian.',
-            ],
-            [
-                'judul' => 'Peresmian Gedung Koperasi Baru',
-                'tanggal' => '15 Januari 2024',
-                'image' => 'img/news/koperasi.jpg',
-                'ringkasan' => 'Gedung koperasi baru telah diresmikan untuk mendukung kegiatan ekonomi santri dan masyarakat sekitar pondok pesantren.',
-            ],
-            [
-                'judul' => 'Prestasi Hafalan Quran Santri',
-                'tanggal' => '3 Maret 2024',
-                'image' => 'img/news/hafalan.jpg',
-                'ringkasan' => 'Beberapa santri berhasil menyelesaikan hafalan 30 juz Al-Quran dan mendapatkan penghargaan dari Kementerian Agama.',
-            ],
-            [
-                'judul' => 'Workshop Kewirausahaan Santri',
-                'tanggal' => '12 Februari 2024',
-                'image' => 'img/news/wirausaha.jpg',
-                'ringkasan' => 'Workshop kewirausahaan diadakan untuk membekali santri dengan keterampilan bisnis dan ekonomi kreatif.',
-            ],
-            [
-                'judul' => 'Pengembangan Sistem Informasi Pondok Modern',
-                'tanggal' => '20 April 2024',
-                'image' => 'img/news/teknologi.jpg',
-                'ringkasan' => 'Sistem informasi pondok telah diperbarui untuk meningkatkan efisiensi pengelolaan data santri dan keuangan.',
-            ],
-        ];
+        // Data berita dari database
+        $berita = Berita::orderBy('tanggal', 'desc')->take(6)->get()->map(function($item) {
+            return [
+                'judul' => $item->judul,
+                'tanggal' => \Carbon\Carbon::parse($item->tanggal)->format('d F Y'),
+                'image' => $item->image,
+                'ringkasan' => $item->ringkasan,
+                'id' => $item->id
+            ];
+        });
+        
+        // Jika tidak ada berita di database, gunakan data statis
+        if ($berita->isEmpty()) {
+            $berita = collect([
+                [
+                    'judul' => 'Pembukaan Pendaftaran Santri Baru 2024',
+                    'tanggal' => '1 Mei 2024',
+                    'image' => 'img/news/santri-baru.jpg',
+                    'ringkasan' => 'Pendaftaran santri baru telah dibuka untuk tahun ajaran 2024/2025. Segera daftarkan putra-putri Anda untuk mendapatkan pendidikan terbaik.',
+                ],
+                [
+                    'judul' => 'Peringatan Hari Santri Nasional',
+                    'tanggal' => '22 Oktober 2023',
+                    'image' => 'img/news/hari-santri.jpg',
+                    'ringkasan' => 'Pondok pesantren mengadakan kegiatan besar untuk memperingati Hari Santri Nasional dengan berbagai lomba dan kajian.',
+                ],
+                [
+                    'judul' => 'Peresmian Gedung Koperasi Baru',
+                    'tanggal' => '15 Januari 2024',
+                    'image' => 'img/news/koperasi.jpg',
+                    'ringkasan' => 'Gedung koperasi baru telah diresmikan untuk mendukung kegiatan ekonomi santri dan masyarakat sekitar pondok pesantren.',
+                ],
+                [
+                    'judul' => 'Prestasi Hafalan Quran Santri',
+                    'tanggal' => '3 Maret 2024',
+                    'image' => 'img/news/hafalan.jpg',
+                    'ringkasan' => 'Beberapa santri berhasil menyelesaikan hafalan 30 juz Al-Quran dan mendapatkan penghargaan dari Kementerian Agama.',
+                ],
+                [
+                    'judul' => 'Workshop Kewirausahaan Santri',
+                    'tanggal' => '12 Februari 2024',
+                    'image' => 'img/news/wirausaha.jpg',
+                    'ringkasan' => 'Workshop kewirausahaan diadakan untuk membekali santri dengan keterampilan bisnis dan ekonomi kreatif.',
+                ],
+                [
+                    'judul' => 'Pengembangan Sistem Informasi Pondok Modern',
+                    'tanggal' => '20 April 2024',
+                    'image' => 'img/news/teknologi.jpg',
+                    'ringkasan' => 'Sistem informasi pondok telah diperbarui untuk meningkatkan efisiensi pengelolaan data santri dan keuangan.',
+                ],
+            ]);
+        }
         
         // Data keunggulan pondok
         $keunggulan = [
