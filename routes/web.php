@@ -42,9 +42,18 @@ use App\Http\Middleware\IsAdminOrOperator;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CekSaldoQRController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\TransferQRController;
 
 // Rute publik untuk halaman Home/landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// QR Login routes - harus di luar middleware auth
+Route::get('/login/qrcode', [TransferQRController::class, 'showLoginQR'])->name('login.qrcode');
+Route::post('/login/qrcode/verify', [TransferQRController::class, 'verifyQRLogin'])->name('login.qrcode.verify');
+
+// Rute publik lainnya
+Route::get('/cek-saldo-qr', [CekSaldoQRController::class, 'index'])->name('cek-saldo-qr.index');
+Route::post('/cek-saldo-qr/check', [CekSaldoQRController::class, 'checkSaldo'])->name('cek-saldo-qr.check');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -310,6 +319,31 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pembayaran-auto/process', [AutoPaymentController::class, 'processPayments'])->name('pembayaran-auto.process');
     });
 
+    // Rute QR Code Transfer Saldo
+    Route::middleware('auth')->group(function () {
+        // Route untuk QR Code
+        Route::get('/my-qrcode', [App\Http\Controllers\TransferQRController::class, 'generateLoginQR'])->name('my.qrcode');
+        
+        // Route untuk Transfer QR
+        Route::get('/transfer-qr', [App\Http\Controllers\TransferQRController::class, 'index'])->name('transfer.qrcode');
+        Route::get('/transfer-qr/show', [App\Http\Controllers\TransferQRController::class, 'showQRCode'])->name('transfer.qrcode.show');
+        Route::get('/transfer-qr/form', [App\Http\Controllers\TransferQRController::class, 'showTransferForm'])->name('transfer.qrcode.form');
+        Route::post('/transfer-qr/process', [App\Http\Controllers\TransferQRController::class, 'processTransfer'])->name('transfer.qrcode.process');
+    });
+
+    // Transfer QR Code
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/transfer/qrcode', [TransferQRController::class, 'index'])->name('transfer.qrcode');
+        Route::get('/transfer/qrcode/show', [TransferQRController::class, 'showQRCode'])->name('transfer.qrcode.show');
+        Route::get('/transfer/qrcode/form', [TransferQRController::class, 'showTransferForm'])->name('transfer.qrcode.form');
+        Route::post('/transfer/qrcode/process', [TransferQRController::class, 'processTransfer'])->name('transfer.qrcode.process');
+        Route::get('/transfer/qrcode/login-qr', [TransferQRController::class, 'generateLoginQR'])->name('transfer.qrcode.login-qr');
+        
+        // Standalone QR Transfer routes
+        Route::get('/transfer/qrcode/standalone', [TransferQRController::class, 'standaloneQRTransfer'])->name('transfer.qrcode.standalone');
+        Route::post('/transfer/qrcode/standalone/process', [TransferQRController::class, 'processStandaloneTransfer'])->name('transfer.qrcode.standalone.process');
+    });
+
 });
 
 Route::middleware('auth')->group(function () {
@@ -364,9 +398,5 @@ Route::get('/cek-saldo-redirect', function() {
     }
     return redirect()->route('login');
 })->name('cek-saldo-redirect');
-
-// Route untuk Cek Saldo QR Code (BADO)
-Route::get('/cek-saldo-qr', [CekSaldoQRController::class, 'index'])->name('cek-saldo-qr.index');
-Route::post('/cek-saldo-qr/check', [CekSaldoQRController::class, 'checkSaldo'])->name('cek-saldo-qr.check');
 
 require __DIR__.'/auth.php';

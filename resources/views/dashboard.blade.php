@@ -112,5 +112,11 @@
             </div>
         </div>
     </div>
+
+    <div class="mt-4">
+        <a href="{{ route('my.qrcode') }}" class="btn btn-success">
+            <i class="bi bi-qr-code me-2"></i> Lihat QR Code Login Saya
+        </a>
+    </div>
 </div>
 @endsection

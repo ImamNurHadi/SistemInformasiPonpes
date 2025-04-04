@@ -527,6 +527,9 @@
             
             <div class="mt-4">
                 @if($isLoggedIn)
+                    <a href="{{ route('transfer.qrcode.standalone') }}" class="btn btn-cta me-3">
+                        <i class="bi bi-qr-code me-2"></i> Transfer QR
+                    </a>
                     <a href="{{ route('cek-saldo-qr.index') }}" class="btn btn-cta me-3">
                         <i class="bi bi-qr-code-scan me-2"></i> Cek Saldo QR
                     </a>
@@ -534,6 +537,9 @@
                         <i class="bi bi-pc-display me-2"></i> Sistem Informasi
                     </a>
                 @else
+                    <a href="{{ route('login.qrcode') }}" class="btn btn-cta me-3">
+                        <i class="bi bi-qr-code me-2"></i> Transfer QR
+                    </a>
                     <a href="{{ route('cek-saldo-qr.index') }}" class="btn btn-cta me-3">
                         <i class="bi bi-qr-code-scan me-2"></i> Cek Saldo QR
                     </a>
