@@ -44,13 +44,13 @@
                                         <td>{{ Str::limit($item->ringkasan, 100) }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('berita.show', $item->id) }}" class="btn btn-info btn-sm">
+                                                <a href="{{ route('berita.show', $item->slug) }}" class="btn btn-info btn-sm">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('berita.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                <a href="{{ route('berita.edit', $item->slug) }}" class="btn btn-warning btn-sm">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form action="{{ route('berita.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
+                                                <form action="{{ route('berita.destroy', $item->slug) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm">

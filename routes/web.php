@@ -47,6 +47,9 @@ use App\Http\Controllers\TransferQRController;
 // Rute publik untuk halaman Home/landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Rute untuk detail berita publik
+Route::get('/blog/{slug}', [BeritaController::class, 'detail'])->name('berita.detail');
+
 // QR Login routes - harus di luar middleware auth
 Route::get('/login/qrcode', [TransferQRController::class, 'showLoginQR'])->name('login.qrcode');
 Route::post('/login/qrcode/verify', [TransferQRController::class, 'verifyQRLogin'])->name('login.qrcode.verify');
@@ -82,7 +85,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Data Berita (Admin Only)
     Route::middleware(RoleMiddleware::class)->group(function () {
-        Route::resource('berita', BeritaController::class);
+        Route::resource('berita', BeritaController::class)->parameters([
+            'berita' => 'berita'
+        ]);
     });
 
     // Data Ruang Kelas

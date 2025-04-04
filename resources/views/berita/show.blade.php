@@ -8,7 +8,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Detail Berita</h5>
                     <div>
-                        <a href="{{ route('berita.edit', $berita->id) }}" class="btn btn-warning btn-sm me-1">
+                        <a href="{{ route('berita.edit', $berita->slug) }}" class="btn btn-warning btn-sm me-1">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
                         <a href="{{ route('berita.index') }}" class="btn btn-secondary btn-sm">
@@ -52,7 +52,7 @@
                         <a href="{{ route('berita.index') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> Kembali ke Daftar
                         </a>
-                        <form action="{{ route('berita.destroy', $berita->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
+                        <form action="{{ route('berita.destroy', $berita->slug) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">

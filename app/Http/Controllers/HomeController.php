@@ -42,7 +42,8 @@ class HomeController extends Controller
                 'tanggal' => \Carbon\Carbon::parse($item->tanggal)->format('d F Y'),
                 'image' => $item->image,
                 'ringkasan' => $item->ringkasan,
-                'id' => $item->id
+                'id' => $item->id,
+                'slug' => $item->slug
             ];
         });
         
