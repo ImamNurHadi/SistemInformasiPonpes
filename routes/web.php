@@ -347,6 +347,10 @@ Route::middleware(['auth'])->group(function () {
         // Standalone QR Transfer routes
         Route::get('/transfer/qrcode/standalone', [TransferQRController::class, 'standaloneQRTransfer'])->name('transfer.qrcode.standalone');
         Route::post('/transfer/qrcode/standalone/process', [TransferQRController::class, 'processStandaloneTransfer'])->name('transfer.qrcode.standalone.process');
+        
+        // API routes untuk QR Transfer
+        Route::get('/api/get-available-saldo/{userId}', [TransferQRController::class, 'getAvailableSaldo']);
+        Route::get('/api/santri/saldo/{santriId}', [TransferQRController::class, 'getSantriSaldo']);
     });
 
 });

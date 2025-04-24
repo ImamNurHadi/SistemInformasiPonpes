@@ -232,25 +232,38 @@
             </div>
             <div class="user-body">
                 <div class="saldo-container">
-                    @if(isset($saldo['utama']))
-                    <div class="saldo-card primary">
-                        <div class="saldo-title">Saldo Utama</div>
-                        <div class="saldo-amount" id="saldo-utama">Rp {{ number_format($saldo['utama']) }}</div>
-                    </div>
-                    @endif
-                    
-                    @if(isset($saldo['belanja']))
-                    <div class="saldo-card success">
-                        <div class="saldo-title">Saldo Belanja</div>
-                        <div class="saldo-amount" id="saldo-belanja">Rp {{ number_format($saldo['belanja']) }}</div>
-                    </div>
-                    @endif
-                    
-                    @if(isset($saldo['tabungan']))
-                    <div class="saldo-card info">
-                        <div class="saldo-title">Saldo Tabungan</div>
-                        <div class="saldo-amount" id="saldo-tabungan">Rp {{ number_format($saldo['tabungan']) }}</div>
-                    </div>
+                    @if(auth()->user()->isKoperasi() || auth()->user()->isSupplier())
+                        <div class="saldo-card success">
+                            <div class="saldo-title">Saldo Belanja</div>
+                            <div class="saldo-amount" id="saldo-belanja">
+                                @php
+                                    $santri = \App\Models\Santri::where('user_id', Auth::id())->first();
+                                    $saldoBelanja = $santri ? $santri->saldo_belanja : 0;
+                                @endphp
+                                Rp {{ number_format($saldoBelanja) }}
+                            </div>
+                        </div>
+                    @else
+                        @if(isset($saldo['utama']))
+                        <div class="saldo-card primary">
+                            <div class="saldo-title">Saldo Utama</div>
+                            <div class="saldo-amount" id="saldo-utama">Rp {{ number_format($saldo['utama']) }}</div>
+                        </div>
+                        @endif
+                        
+                        @if(isset($saldo['belanja']))
+                        <div class="saldo-card success">
+                            <div class="saldo-title">Saldo Belanja</div>
+                            <div class="saldo-amount" id="saldo-belanja">Rp {{ number_format($saldo['belanja']) }}</div>
+                        </div>
+                        @endif
+                        
+                        @if(isset($saldo['tabungan']))
+                        <div class="saldo-card info">
+                            <div class="saldo-title">Saldo Tabungan</div>
+                            <div class="saldo-amount" id="saldo-tabungan">Rp {{ number_format($saldo['tabungan']) }}</div>
+                        </div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -329,9 +342,19 @@
                                 <label for="sourceType" class="form-label">Dari Saldo</label>
                                 <select class="form-select" id="sourceType" required>
                                     <option value="">-- Pilih --</option>
-                                    <option value="utama">Utama</option>
-                                    <option value="belanja">Belanja</option>
-                                    <option value="tabungan">Tabungan</option>
+                                    @if(auth()->user()->isKoperasi() || auth()->user()->isSupplier())
+                                        <option value="belanja">Belanja</option>
+                                    @else
+                                        @if(isset($saldo['utama']))
+                                        <option value="utama">Utama</option>
+                                        @endif
+                                        @if(isset($saldo['belanja']))
+                                        <option value="belanja">Belanja</option>
+                                        @endif
+                                        @if(isset($saldo['tabungan']))
+                                        <option value="tabungan">Tabungan</option>
+                                        @endif
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -517,24 +540,51 @@
                         return;
                     }
                     
-                    // Validate QR data
-                    if (!qrData.user_id || !qrData.name) {
-                        // Try alternative format
-                        if (qrData.type === 'santri_qr' && qrData.id && qrData.nama) {
-                            fetchSantriData(qrData.id);
-                        } else {
-                            showError('Data QR code tidak lengkap atau tidak valid');
-                            resetScanner();
-                        }
+                    // Validate QR data for standard format
+                    if (qrData.user_id && qrData.name) {
+                        // Set transfer data for standard format
+                        targetUserId = qrData.user_id;
+                        targetName = qrData.name;
+                        
+                        // Untuk QR standard, kami perlu mendapatkan informasi saldo yang dimiliki user
+                        fetch(`/api/get-available-saldo/${qrData.user_id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showTransferForm(data.available_saldo);
+                                } else {
+                                    // Fallback jika gagal mendapatkan data saldo: tampilkan semua opsi
+                                    showTransferForm(['utama', 'belanja', 'tabungan']);
+                                }
+                            })
+                            .catch(error => {
+                                // Default pada kasus error
+                                showTransferForm(['belanja']);
+                            });
                         return;
                     }
                     
-                    // Set transfer data
-                    targetUserId = qrData.user_id;
-                    targetName = qrData.name;
+                    // Handle santri format
+                    if (qrData.type === 'santri_qr' && qrData.id && qrData.nama) {
+                        fetchSantriData(qrData.id);
+                        return;
+                    }
                     
-                    // Show transfer form
-                    showTransferForm();
+                    // Handle koperasi format
+                    if (qrData.type === 'koperasi_qr' && qrData.id && qrData.nama) {
+                        fetchKoperasiData(qrData.id);
+                        return;
+                    }
+                    
+                    // Handle supplier format
+                    if (qrData.type === 'supplier_qr' && qrData.id && qrData.nama) {
+                        fetchSupplierData(qrData.id, qrData.nama);
+                        return;
+                    }
+                    
+                    // If we got here, the QR format is not supported
+                    showError('Format QR code tidak dikenali. Pastikan memindai QR code yang benar.');
+                    resetScanner();
                 } catch (error) {
                     showError('Gagal memproses QR code: ' + error.message);
                     resetScanner();
@@ -551,7 +601,17 @@
                         if (data.success) {
                             targetUserId = data.user_id;
                             targetName = data.nama;
-                            showTransferForm();
+                            
+                            // Get available target saldo types
+                            fetch(`/api/santri/saldo/${santriId}`)
+                                .then(response => response.json())
+                                .then(saldoData => {
+                                    showTransferForm(saldoData.available_saldo || ['utama', 'belanja', 'tabungan']);
+                                })
+                                .catch(error => {
+                                    // Default: show all saldo types if we can't fetch the available ones
+                                    showTransferForm(['utama', 'belanja', 'tabungan']);
+                                });
                         } else {
                             showError(data.message || 'Data santri tidak ditemukan');
                             resetScanner();
@@ -564,8 +624,66 @@
                     });
             }
             
+            // Fetch koperasi data
+            function fetchKoperasiData(koperasiId) {
+                statusMessage.textContent = 'Mengambil data koperasi...';
+                
+                // Cari data koperasi berdasarkan ID
+                fetch(`/api/koperasi/id/${koperasiId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            targetUserId = data.user_id;
+                            targetName = data.nama;
+                            
+                            // Get available target saldo types - assume belanja only for koperasi
+                            showTransferForm(['belanja']);
+                        } else {
+                            showError('Data koperasi tidak ditemukan');
+                            resetScanner();
+                        }
+                    })
+                    .catch(error => {
+                        showError('Gagal mengambil data koperasi');
+                        console.error('Error:', error);
+                        resetScanner();
+                    });
+            }
+            
+            // Fetch supplier data
+            function fetchSupplierData(supplierId, supplierName) {
+                statusMessage.textContent = 'Memproses data supplier...';
+                
+                // Untuk supplier, kita gunakan data dari QR langsung
+                targetUserId = supplierId;
+                targetName = supplierName;
+                
+                // Verifikasi data supplier di server (optional)
+                fetch(`/api/supplier/verify/${supplierId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Jika berhasil verifikasi, gunakan data dari server
+                        if (data.success) {
+                            // Jika ada update nama dari server, gunakan itu
+                            if (data.nama) {
+                                targetName = data.nama;
+                            }
+                            // Untuk supplier, defaultnya hanya saldo belanja
+                            showTransferForm(['belanja']);
+                        } else {
+                            // Jika gagal verifikasi tapi masih punya data dari QR, tetap lanjutkan
+                            showTransferForm(['belanja']);
+                        }
+                    })
+                    .catch(error => {
+                        // Jika error pada API, tetap gunakan data dari QR
+                        console.warn('Warning: Could not verify supplier data, using QR data instead', error);
+                        showTransferForm(['belanja']);
+                    });
+            }
+            
             // Show transfer form
-            function showTransferForm() {
+            function showTransferForm(availableTargetTypes = ['utama', 'belanja', 'tabungan']) {
                 // Hide scanner container and show transfer container
                 scannerContainer.classList.add('d-none');
                 transferContainer.classList.remove('d-none');
@@ -576,7 +694,23 @@
                 // Clear form fields
                 document.getElementById('amount').value = '';
                 document.getElementById('sourceType').selectedIndex = 0;
-                document.getElementById('targetType').selectedIndex = 0;
+                
+                // Update target type options
+                const targetTypeSelect = document.getElementById('targetType');
+                // Clear existing options except the first one
+                while (targetTypeSelect.options.length > 1) {
+                    targetTypeSelect.remove(1);
+                }
+                
+                // Add only available target saldo types
+                availableTargetTypes.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                    targetTypeSelect.appendChild(option);
+                });
+                
+                targetTypeSelect.selectedIndex = 0;
                 document.getElementById('note').value = '';
             }
             
