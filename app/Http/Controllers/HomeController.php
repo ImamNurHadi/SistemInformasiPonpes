@@ -6,10 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Santri;
 use App\Models\Pengurus;
 use App\Models\DataKoperasi;
-use App\Models\Supplier;
-use App\Models\SaldoUtama;
-use App\Models\SaldoBelanja;
-use App\Models\SaldoTabungan;
 use App\Models\Berita;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,10 +16,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Mendapatkan jumlah data untuk statistik
-        $totalSantri = Santri::count();
-        $totalPengurus = Pengurus::count();
-        $totalKoperasi = DataKoperasi::count();
+        try {
+            // Mendapatkan jumlah data untuk statistik - dengan penanganan error
+            $totalSantri = Santri::count() ?? 0;
+            $totalPengurus = Pengurus::count() ?? 0;
+            $totalKoperasi = DataKoperasi::count() ?? 0;
+        } catch (\Exception $e) {
+            // Jika ada error (misalnya tabel belum ada), set nilai default
+            $totalSantri = 0;
+            $totalPengurus = 0;
+            $totalKoperasi = 0;
+        }
         
         // Cek apakah user sudah login
         $isLoggedIn = Auth::check();
@@ -31,75 +34,61 @@ class HomeController extends Controller
         
         if ($isLoggedIn) {
             $user = Auth::user();
-            // Kita cek jenis user dan saldo yang dimiliki
-            $userSaldo = $this->getUserSaldo($user);
+            // Kita cek jenis user dan saldo yang dimiliki jika diperlukan
+            // $userSaldo = $this->getUserSaldo($user);
         }
         
-        // Data berita dari database
-        $berita = Berita::orderBy('tanggal', 'desc')->take(6)->get()->map(function($item) {
-            return [
-                'judul' => $item->judul,
-                'tanggal' => \Carbon\Carbon::parse($item->tanggal)->format('d F Y'),
-                'image' => $item->image,
-                'ringkasan' => $item->ringkasan,
-                'id' => $item->id,
-                'slug' => $item->slug ?? $item->id
-            ];
-        });
-        
-        // Jika tidak ada berita di database, gunakan data statis
-        if ($berita->isEmpty()) {
-            $berita = collect([
-                [
-                    'judul' => 'Pembukaan Pendaftaran Santri Baru 2024',
-                    'tanggal' => '1 Mei 2024',
-                    'image' => 'img/news/santri-baru.jpg',
-                    'ringkasan' => 'Pendaftaran santri baru telah dibuka untuk tahun ajaran 2024/2025. Segera daftarkan putra-putri Anda untuk mendapatkan pendidikan terbaik.',
-                    'id' => 1,
-                    'slug' => 'pembukaan-pendaftaran-santri-baru-2024'
-                ],
-                [
-                    'judul' => 'Peringatan Hari Santri Nasional',
-                    'tanggal' => '22 Oktober 2023',
-                    'image' => 'img/news/hari-santri.jpg',
-                    'ringkasan' => 'Pondok pesantren mengadakan kegiatan besar untuk memperingati Hari Santri Nasional dengan berbagai lomba dan kajian.',
-                    'id' => 2,
-                    'slug' => 'peringatan-hari-santri-nasional'
-                ],
-                [
-                    'judul' => 'Peresmian Gedung Koperasi Baru',
-                    'tanggal' => '15 Januari 2024',
-                    'image' => 'img/news/koperasi.jpg',
-                    'ringkasan' => 'Gedung koperasi baru telah diresmikan untuk mendukung kegiatan ekonomi santri dan masyarakat sekitar pondok pesantren.',
-                    'id' => 3,
-                    'slug' => 'peresmian-gedung-koperasi-baru'
-                ],
-                [
-                    'judul' => 'Prestasi Hafalan Quran Santri',
-                    'tanggal' => '3 Maret 2024',
-                    'image' => 'img/news/hafalan.jpg',
-                    'ringkasan' => 'Beberapa santri berhasil menyelesaikan hafalan 30 juz Al-Quran dan mendapatkan penghargaan dari Kementerian Agama.',
-                    'id' => 4,
-                    'slug' => 'prestasi-hafalan-quran-santri'
-                ],
-                [
-                    'judul' => 'Workshop Kewirausahaan Santri',
-                    'tanggal' => '12 Februari 2024',
-                    'image' => 'img/news/wirausaha.jpg',
-                    'ringkasan' => 'Workshop kewirausahaan diadakan untuk membekali santri dengan keterampilan bisnis dan ekonomi kreatif.',
-                    'id' => 5,
-                    'slug' => 'workshop-kewirausahaan-santri'
-                ],
-                [
-                    'judul' => 'Pengembangan Sistem Informasi Pondok Modern',
-                    'tanggal' => '20 April 2024',
-                    'image' => 'img/news/teknologi.jpg',
-                    'ringkasan' => 'Sistem informasi pondok telah diperbarui untuk meningkatkan efisiensi pengelolaan data santri dan keuangan.',
-                    'id' => 6,
-                    'slug' => 'pengembangan-sistem-informasi-pondok-modern'
-                ],
-            ]);
-        }
+        // Data berita statis (untuk sementara)
+        $berita = collect([
+            [
+                'judul' => 'Pembukaan Pendaftaran Santri Baru 2024',
+                'tanggal' => '1 Mei 2024',
+                'image' => 'img/news/santri-baru.jpg',
+                'ringkasan' => 'Pendaftaran santri baru telah dibuka untuk tahun ajaran 2024/2025. Segera daftarkan putra-putri Anda untuk mendapatkan pendidikan terbaik.',
+                'id' => 1,
+                'slug' => 'pembukaan-pendaftaran-santri-baru-2024'
+            ],
+            [
+                'judul' => 'Peringatan Hari Santri Nasional',
+                'tanggal' => '22 Oktober 2023',
+                'image' => 'img/news/hari-santri.jpg',
+                'ringkasan' => 'Pondok pesantren mengadakan kegiatan besar untuk memperingati Hari Santri Nasional dengan berbagai lomba dan kajian.',
+                'id' => 2,
+                'slug' => 'peringatan-hari-santri-nasional'
+            ],
+            [
+                'judul' => 'Peresmian Gedung Koperasi Baru',
+                'tanggal' => '15 Januari 2024',
+                'image' => 'img/news/koperasi.jpg',
+                'ringkasan' => 'Gedung koperasi baru telah diresmikan untuk mendukung kegiatan ekonomi santri dan masyarakat sekitar pondok pesantren.',
+                'id' => 3,
+                'slug' => 'peresmian-gedung-koperasi-baru'
+            ],
+            [
+                'judul' => 'Prestasi Hafalan Quran Santri',
+                'tanggal' => '3 Maret 2024',
+                'image' => 'img/news/hafalan.jpg',
+                'ringkasan' => 'Beberapa santri berhasil menyelesaikan hafalan 30 juz Al-Quran dan mendapatkan penghargaan dari Kementerian Agama.',
+                'id' => 4,
+                'slug' => 'prestasi-hafalan-quran-santri'
+            ],
+            [
+                'judul' => 'Workshop Kewirausahaan Santri',
+                'tanggal' => '12 Februari 2024',
+                'image' => 'img/news/wirausaha.jpg',
+                'ringkasan' => 'Workshop kewirausahaan diadakan untuk membekali santri dengan keterampilan bisnis dan ekonomi kreatif.',
+                'id' => 5,
+                'slug' => 'workshop-kewirausahaan-santri'
+            ],
+            [
+                'judul' => 'Pengembangan Sistem Informasi Pondok Modern',
+                'tanggal' => '20 April 2024',
+                'image' => 'img/news/teknologi.jpg',
+                'ringkasan' => 'Sistem informasi pondok telah diperbarui untuk meningkatkan efisiensi pengelolaan data santri dan keuangan.',
+                'id' => 6,
+                'slug' => 'pengembangan-sistem-informasi-pondok-modern'
+            ],
+        ]);
         
         // Data keunggulan pondok
         $keunggulan = [
@@ -133,47 +122,7 @@ class HomeController extends Controller
      */
     private function getUserSaldo($user)
     {
-        $saldo = [];
-        
-        // Cek berdasarkan role user
-        if ($user->hasRole('santri')) {
-            $santri = Santri::where('user_id', $user->id)->first();
-            if ($santri) {
-                // Cek saldo utama
-                $saldoUtama = SaldoUtama::where('santri_id', $santri->id)->first();
-                if ($saldoUtama) {
-                    $saldo['utama'] = $saldoUtama->jumlah_saldo;
-                }
-                
-                // Cek saldo belanja
-                $saldoBelanja = SaldoBelanja::where('santri_id', $santri->id)->first();
-                if ($saldoBelanja) {
-                    $saldo['belanja'] = $saldoBelanja->jumlah_saldo;
-                }
-                
-                // Cek saldo tabungan
-                $saldoTabungan = SaldoTabungan::where('santri_id', $santri->id)->first();
-                if ($saldoTabungan) {
-                    $saldo['tabungan'] = $saldoTabungan->jumlah_saldo;
-                }
-            }
-        } elseif ($user->hasRole('supplier')) {
-            $supplier = Supplier::where('user_id', $user->id)->first();
-            if ($supplier) {
-                $saldo['utama'] = $supplier->saldo;
-            }
-        } elseif ($user->hasRole('koperasi')) {
-            $koperasi = DataKoperasi::where('user_id', $user->id)->first();
-            if ($koperasi) {
-                $saldo['utama'] = $koperasi->saldo;
-            }
-        } elseif ($user->hasRole('pengurus')) {
-            $pengurus = Pengurus::where('user_id', $user->id)->first();
-            if ($pengurus) {
-                $saldo['utama'] = $pengurus->saldo;
-            }
-        }
-        
-        return $saldo;
+        // Fungsi ini tidak digunakan untuk sementara
+        return [];
     }
 } 
