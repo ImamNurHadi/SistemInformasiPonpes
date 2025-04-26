@@ -1,0 +1,3 @@
+# .htaccess root dinonaktifkan karena sudah menggunakan Procfile ke public/
+# RewriteEngine On
+# RewriteRule ^(.*)$ public/$1 [L] 

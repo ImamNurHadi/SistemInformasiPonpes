@@ -57,7 +57,11 @@
         "post-install-cmd": [
             "php artisan clear-compiled",
             "chmod -R 777 public/",
-            "php artisan storage:link || true"
+            "chmod -R 777 storage/",
+            "chmod -R 775 bootstrap/cache/",
+            "php artisan storage:link || true",
+            "php artisan config:cache",
+            "php artisan optimize"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
