@@ -90,7 +90,7 @@ class Supplier extends Model
             'email' => $this->email
         ];
         
-        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        $qrCode = QrCode::format('svg')->size(200)->generate(json_encode($data));
         return $qrCode;
     }
 }

@@ -38,7 +38,7 @@ class TransferQRController extends Controller
         ];
         
         // Generate QR code
-        $qrCode = QrCode::format('png')
+        $qrCode = QrCode::format('svg')
                         ->size(300)
                         ->margin(2)
                         ->generate(json_encode($qrData));
@@ -243,7 +243,7 @@ class TransferQRController extends Controller
         ];
         
         // Generate QR code
-        $qrCode = QrCode::format('png')
+        $qrCode = QrCode::format('svg')
                         ->size(300)
                         ->margin(2)
                         ->generate(json_encode($qrData));

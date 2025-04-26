@@ -71,7 +71,7 @@ class Pengurus extends Model
             'divisi' => $this->divisi ? $this->divisi->nama : '-'
         ];
         
-        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        $qrCode = QrCode::format('svg')->size(200)->generate(json_encode($data));
         return $qrCode;
     }
 } 

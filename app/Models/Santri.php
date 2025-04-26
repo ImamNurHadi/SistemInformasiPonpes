@@ -117,7 +117,7 @@ class Santri extends Model
             'tingkatan' => $this->tingkatan ? $this->tingkatan->nama : '-'
         ];
         
-        $qrCode = QrCode::size(200)->generate(json_encode($data));
+        $qrCode = QrCode::format('svg')->size(200)->generate(json_encode($data));
         return $qrCode;
     }
 

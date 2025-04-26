@@ -616,7 +616,7 @@
                         <div class="news-body">
                             <h5 class="news-title">{{ $item['judul'] }}</h5>
                             <p class="news-text">{{ $item['ringkasan'] }}</p>
-                            <a href="{{ route('berita.detail', $item['slug']) }}" class="btn-more">Baca Selengkapnya <i class="bi bi-arrow-right"></i></a>
+                            <a href="{{ route('berita.detail', isset($item['slug']) ? $item['slug'] : (isset($item['id']) ? $item['id'] : '1')) }}" class="btn-more">Baca Selengkapnya <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>

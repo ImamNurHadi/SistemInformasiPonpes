@@ -126,9 +126,30 @@ class BeritaController extends Controller
     /**
      * Display berita for public view.
      */
-    public function detail(string $slug)
+    public function detail(string $slugOrId)
     {
-        $berita = Berita::where('slug', $slug)->firstOrFail();
+        // Try to find by slug first
+        $berita = Berita::where('slug', $slugOrId)->first();
+        
+        // If not found by slug, try finding by ID
+        if (!$berita) {
+            $berita = Berita::find($slugOrId);
+        }
+        
+        // If still not found, get the first berita as a fallback
+        if (!$berita) {
+            $berita = Berita::first();
+        }
+        
+        // If there's absolutely no berita in the database, create a placeholder
+        if (!$berita) {
+            $berita = new Berita();
+            $berita->judul = 'Berita tidak ditemukan';
+            $berita->tanggal = now();
+            $berita->image = 'img/default.jpg';
+            $berita->ringkasan = 'Maaf, berita yang Anda cari tidak ditemukan.';
+            $berita->konten = 'Konten berita tidak tersedia.';
+        }
         
         return view('berita.detail', compact('berita'));
     }

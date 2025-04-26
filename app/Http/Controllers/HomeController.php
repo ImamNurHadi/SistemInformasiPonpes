@@ -43,7 +43,7 @@ class HomeController extends Controller
                 'image' => $item->image,
                 'ringkasan' => $item->ringkasan,
                 'id' => $item->id,
-                'slug' => $item->slug
+                'slug' => $item->slug ?? $item->id
             ];
         });
         
@@ -55,36 +55,48 @@ class HomeController extends Controller
                     'tanggal' => '1 Mei 2024',
                     'image' => 'img/news/santri-baru.jpg',
                     'ringkasan' => 'Pendaftaran santri baru telah dibuka untuk tahun ajaran 2024/2025. Segera daftarkan putra-putri Anda untuk mendapatkan pendidikan terbaik.',
+                    'id' => 1,
+                    'slug' => 'pembukaan-pendaftaran-santri-baru-2024'
                 ],
                 [
                     'judul' => 'Peringatan Hari Santri Nasional',
                     'tanggal' => '22 Oktober 2023',
                     'image' => 'img/news/hari-santri.jpg',
                     'ringkasan' => 'Pondok pesantren mengadakan kegiatan besar untuk memperingati Hari Santri Nasional dengan berbagai lomba dan kajian.',
+                    'id' => 2,
+                    'slug' => 'peringatan-hari-santri-nasional'
                 ],
                 [
                     'judul' => 'Peresmian Gedung Koperasi Baru',
                     'tanggal' => '15 Januari 2024',
                     'image' => 'img/news/koperasi.jpg',
                     'ringkasan' => 'Gedung koperasi baru telah diresmikan untuk mendukung kegiatan ekonomi santri dan masyarakat sekitar pondok pesantren.',
+                    'id' => 3,
+                    'slug' => 'peresmian-gedung-koperasi-baru'
                 ],
                 [
                     'judul' => 'Prestasi Hafalan Quran Santri',
                     'tanggal' => '3 Maret 2024',
                     'image' => 'img/news/hafalan.jpg',
                     'ringkasan' => 'Beberapa santri berhasil menyelesaikan hafalan 30 juz Al-Quran dan mendapatkan penghargaan dari Kementerian Agama.',
+                    'id' => 4,
+                    'slug' => 'prestasi-hafalan-quran-santri'
                 ],
                 [
                     'judul' => 'Workshop Kewirausahaan Santri',
                     'tanggal' => '12 Februari 2024',
                     'image' => 'img/news/wirausaha.jpg',
                     'ringkasan' => 'Workshop kewirausahaan diadakan untuk membekali santri dengan keterampilan bisnis dan ekonomi kreatif.',
+                    'id' => 5,
+                    'slug' => 'workshop-kewirausahaan-santri'
                 ],
                 [
                     'judul' => 'Pengembangan Sistem Informasi Pondok Modern',
                     'tanggal' => '20 April 2024',
                     'image' => 'img/news/teknologi.jpg',
                     'ringkasan' => 'Sistem informasi pondok telah diperbarui untuk meningkatkan efisiensi pengelolaan data santri dan keuangan.',
+                    'id' => 6,
+                    'slug' => 'pengembangan-sistem-informasi-pondok-modern'
                 ],
             ]);
         }
