@@ -99,6 +99,14 @@ class PengurusSeeder extends Seeder
             $email = $data['email'];
             unset($data['email']);
             
+            // Check if user already exists
+            $existingUser = User::where('email', $email)->first();
+            
+            if ($existingUser) {
+                $this->command->info("User with email {$email} already exists, skipping creation.");
+                continue;
+            }
+            
             // Buat user untuk pengurus
             $user = User::create([
                 'name' => $data['nama'],
@@ -112,6 +120,8 @@ class PengurusSeeder extends Seeder
             
             // Buat pengurus
             Pengurus::create($data);
+            
+            $this->command->info("Created user and pengurus for {$data['nama']} with email {$email}");
         }
     }
 }

@@ -27,6 +27,10 @@ class DataKoperasiSeeder extends Seeder
             return; // Jika tidak ada pengurus, tidak perlu membuat data koperasi
         }
         
+        // Get the first available pengurus ID
+        $firstPengurusId = $pengurusIds[0];
+        $this->command->info("Using pengurus ID: $firstPengurusId for all koperasi");
+        
         // Cari role koperasi
         $koperasiRole = Role::where('name', 'Koperasi')->first();
         
@@ -40,7 +44,7 @@ class DataKoperasiSeeder extends Seeder
             [
                 'nama_koperasi' => 'Koperasi Putra',
                 'lokasi' => 'Gedung A, Lantai 1',
-                'pengurus_id' => $pengurusIds[0], // Ahmad Fauzi
+                'pengurus_id' => $firstPengurusId, // Using the first available pengurus
                 'username' => 'koperasiputra',
                 'email' => 'koperasi.putra@ponpes.com',
                 'password' => 'koperasi123',
@@ -49,7 +53,7 @@ class DataKoperasiSeeder extends Seeder
             [
                 'nama_koperasi' => 'Koperasi Putri',
                 'lokasi' => 'Gedung B, Lantai 1',
-                'pengurus_id' => $pengurusIds[1], // Siti Aminah
+                'pengurus_id' => $firstPengurusId, // Using the first available pengurus
                 'username' => 'koperasiputri',
                 'email' => 'koperasi.putri@ponpes.com',
                 'password' => 'koperasi123',
@@ -58,7 +62,7 @@ class DataKoperasiSeeder extends Seeder
             [
                 'nama_koperasi' => 'Koperasi Umum',
                 'lokasi' => 'Gedung Utama, Lantai 2',
-                'pengurus_id' => $pengurusIds[2], // Muhammad Rizki
+                'pengurus_id' => $firstPengurusId, // Using the first available pengurus
                 'username' => 'koperasiumum',
                 'email' => 'koperasi.umum@ponpes.com',
                 'password' => 'koperasi123',
