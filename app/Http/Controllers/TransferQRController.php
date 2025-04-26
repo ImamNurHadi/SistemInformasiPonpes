@@ -137,13 +137,17 @@ class TransferQRController extends Controller
     {
         $saldo = [];
         
-        // Cek berdasarkan role user
-        if ($user->hasRole('santri')) {
-            $santri = Santri::where('user_id', $user->id)->first();
-            if ($santri) {
-                $saldo['utama'] = $santri->saldo_utama;
+        // Cek saldo di tabel Santri
+        $santri = Santri::where('user_id', $user->id)->first();
+        if ($santri) {
+            // Untuk koperasi/supplier, selalu tambahkan saldo belanja
+            if ($user->hasRole('koperasi') || $user->hasRole('supplier')) {
                 $saldo['belanja'] = $santri->saldo_belanja;
-                $saldo['tabungan'] = $santri->saldo_tabungan;
+            } else {
+                // Untuk santri, tambahkan semua jenis saldo yang nilainya > 0
+                if ($santri->saldo_utama > 0) $saldo['utama'] = $santri->saldo_utama;
+                if ($santri->saldo_belanja > 0) $saldo['belanja'] = $santri->saldo_belanja;
+                if ($santri->saldo_tabungan > 0) $saldo['tabungan'] = $santri->saldo_tabungan;
             }
         }
         
@@ -197,6 +201,27 @@ class TransferQRController extends Controller
                 return response()->json([
                     'success' => true, 
                     'message' => 'Login berhasil sebagai ' . $santri->nama,
+                    'redirect' => route('transfer.qrcode.standalone')
+                ]);
+            } 
+            // Handle format QR koperasi
+            elseif (isset($qrData['type']) && $qrData['type'] === 'koperasi_qr') {
+                // QR Code dari model Koperasi
+                if (!isset($qrData['id'])) {
+                    return response()->json(['success' => false, 'message' => 'ID koperasi tidak ditemukan dalam QR Code'], 400);
+                }
+                
+                $koperasi = \App\Models\DataKoperasi::find($qrData['id']);
+                if (!$koperasi) {
+                    return response()->json(['success' => false, 'message' => 'Koperasi tidak ditemukan'], 404);
+                }
+                
+                // Login sebagai user koperasi
+                Auth::login($koperasi->user);
+                
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Login berhasil sebagai ' . $koperasi->nama,
                     'redirect' => route('transfer.qrcode.standalone')
                 ]);
             }
@@ -395,7 +420,7 @@ class TransferQRController extends Controller
         $request->validate([
             'target_id' => 'required',
             'amount' => 'required|numeric|min:1000',
-            'source_type' => 'required|in:utama,belanja,tabungan',
+            'source_type' => 'required',
             'target_type' => 'required|in:utama,belanja,tabungan'
         ]);
         
@@ -404,18 +429,27 @@ class TransferQRController extends Controller
         
         try {
             $user = Auth::user();
-            $sourceSantri = Santri::where('user_id', $user->id)->first();
             
-            if (!$sourceSantri) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data santri pengirim tidak ditemukan'
-                ], 404);
-            }
-            
-            // Perbaiki error UUID dengan memastikan format target_id benar
-            try {
-                // Mencoba menemukan santri dari user_id, bukan langsung mencari santri by ID
+            // Jika user adalah koperasi/supplier dan source type adalah belanja
+            if (($user->hasRole('koperasi') || $user->hasRole('supplier')) && $request->source_type === 'belanja') {
+                $sourceSantri = Santri::where('user_id', $user->id)->first();
+                
+                if (!$sourceSantri) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data akun tidak ditemukan'
+                    ], 404);
+                }
+                
+                // Validasi saldo belanja
+                if ($sourceSantri->saldo_belanja < $request->amount) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Saldo belanja tidak mencukupi untuk transfer'
+                    ], 400);
+                }
+                
+                // Temukan santri tujuan
                 $targetSantri = Santri::where('user_id', $request->target_id)->first();
                 
                 if (!$targetSantri) {
@@ -424,61 +458,180 @@ class TransferQRController extends Controller
                         'message' => 'Data santri penerima tidak ditemukan'
                     ], 404);
                 }
-            } catch (\Exception $e) {
+                
+                // Kurangi saldo belanja pengirim
+                $sourceSantri->saldo_belanja -= $request->amount;
+                $sourceSantri->save();
+                
+                // Tambahkan saldo ke akun target
+                $targetSaldoField = 'saldo_' . $request->target_type;
+                $targetSantri->{$targetSaldoField} += $request->amount;
+                $targetSantri->save();
+                
+                // Catat histori transfer
+                HistoriTransfer::create([
+                    'santri_pengirim_id' => $sourceSantri->id,
+                    'santri_penerima_id' => $targetSantri->id,
+                    'jumlah' => $request->amount,
+                    'tipe_sumber' => 'belanja',
+                    'tipe_tujuan' => $request->target_type,
+                    'keterangan' => $request->keterangan ?? 'Transfer QR dari ' . $user->name,
+                    'tanggal' => now()
+                ]);
+                
+                DB::commit();
+                
+                // Ambil saldo terbaru
+                $updatedSaldo = $this->getUserSaldo($user);
+                
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Format ID penerima tidak valid'
-                ], 400);
+                    'success' => true,
+                    'message' => 'Transfer berhasil dilakukan',
+                    'saldo' => $updatedSaldo
+                ]);
             }
-            
-            // Self transfer atau transfer ke orang lain
-            $isSelfTransfer = $sourceSantri->id === $targetSantri->id;
-            
-            // Validasi saldo sumber cukup
-            $sourceSaldoField = 'saldo_' . $request->source_type;
-            
-            if ($sourceSantri->{$sourceSaldoField} < $request->amount) {
+            // Jika bukan koperasi/supplier, proses sebagai transfer santri biasa
+            else {
+                $sourceSantri = Santri::where('user_id', $user->id)->first();
+                
+                if (!$sourceSantri) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data santri pengirim tidak ditemukan'
+                    ], 404);
+                }
+                
+                // Perbaiki error UUID dengan memastikan format target_id benar
+                try {
+                    // Mencoba menemukan santri dari user_id, bukan langsung mencari santri by ID
+                    $targetSantri = Santri::where('user_id', $request->target_id)->first();
+                    
+                    if (!$targetSantri) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Data santri penerima tidak ditemukan'
+                        ], 404);
+                    }
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Format ID penerima tidak valid'
+                    ], 400);
+                }
+                
+                // Self transfer atau transfer ke orang lain
+                $isSelfTransfer = $sourceSantri->id === $targetSantri->id;
+                
+                // Validasi saldo sumber cukup
+                $sourceSaldoField = 'saldo_' . $request->source_type;
+                
+                if ($sourceSantri->{$sourceSaldoField} < $request->amount) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Saldo tidak mencukupi untuk transfer'
+                    ], 400);
+                }
+                
+                // Kurangi saldo sumber
+                $sourceSantri->{$sourceSaldoField} -= $request->amount;
+                $sourceSantri->save();
+                
+                // Tambahkan saldo target
+                $targetSaldoField = 'saldo_' . $request->target_type;
+                $targetSantri->{$targetSaldoField} += $request->amount;
+                $targetSantri->save();
+                
+                // Catat histori transfer
+                HistoriTransfer::create([
+                    'santri_pengirim_id' => $sourceSantri->id,
+                    'santri_penerima_id' => $targetSantri->id,
+                    'jumlah' => $request->amount,
+                    'tipe_sumber' => $request->source_type,
+                    'tipe_tujuan' => $request->target_type,
+                    'keterangan' => $request->keterangan ?? ($isSelfTransfer ? 'Transfer antar saldo' : 'Transfer via QR Code'),
+                    'tanggal' => now()
+                ]);
+                
+                DB::commit();
+                
+                // Ambil saldo terbaru
+                $updatedSaldo = $this->getUserSaldo($user);
+                
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Saldo tidak mencukupi untuk transfer'
-                ], 400);
+                    'success' => true,
+                    'message' => 'Transfer berhasil dilakukan',
+                    'saldo' => $updatedSaldo
+                ]);
             }
-            
-            // Kurangi saldo sumber
-            $sourceSantri->{$sourceSaldoField} -= $request->amount;
-            $sourceSantri->save();
-            
-            // Tambahkan saldo target
-            $targetSaldoField = 'saldo_' . $request->target_type;
-            $targetSantri->{$targetSaldoField} += $request->amount;
-            $targetSantri->save();
-            
-            // Catat histori transfer
-            HistoriTransfer::create([
-                'santri_pengirim_id' => $sourceSantri->id,
-                'santri_penerima_id' => $targetSantri->id,
-                'jumlah' => $request->amount,
-                'tipe_sumber' => $request->source_type,
-                'tipe_tujuan' => $request->target_type,
-                'keterangan' => $request->keterangan ?? ($isSelfTransfer ? 'Transfer antar saldo' : 'Transfer via QR Code'),
-                'tanggal' => now()
-            ]);
-            
-            DB::commit();
-            
-            // Ambil saldo terbaru
-            $updatedSaldo = $this->getUserSaldo($user);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Transfer berhasil dilakukan',
-                'saldo' => $updatedSaldo
-            ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * API untuk mendapatkan jenis saldo yang tersedia untuk user
+     */
+    public function getAvailableSaldo($userId)
+    {
+        try {
+            $santri = Santri::where('user_id', $userId)->first();
+            $availableSaldo = [];
+            
+            if ($santri) {
+                if ($santri->saldo_utama > 0) $availableSaldo[] = 'utama';
+                if ($santri->saldo_belanja > 0) $availableSaldo[] = 'belanja';
+                if ($santri->saldo_tabungan > 0) $availableSaldo[] = 'tabungan';
+            }
+            
+            // Jika tidak ada saldo, berikan default saldo belanja
+            if (empty($availableSaldo)) {
+                $availableSaldo[] = 'belanja';
+            }
+            
+            return response()->json([
+                'success' => true,
+                'available_saldo' => $availableSaldo
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendapatkan informasi saldo'
+            ], 500);
+        }
+    }
+    
+    /**
+     * API untuk mendapatkan jenis saldo yang tersedia untuk santri by ID
+     */
+    public function getSantriSaldo($santriId)
+    {
+        try {
+            $santri = Santri::find($santriId);
+            $availableSaldo = [];
+            
+            if ($santri) {
+                if ($santri->saldo_utama > 0) $availableSaldo[] = 'utama';
+                if ($santri->saldo_belanja > 0) $availableSaldo[] = 'belanja';
+                if ($santri->saldo_tabungan > 0) $availableSaldo[] = 'tabungan';
+            }
+            
+            // Jika tidak ada saldo, berikan default saldo belanja
+            if (empty($availableSaldo)) {
+                $availableSaldo[] = 'belanja';
+            }
+            
+            return response()->json([
+                'success' => true,
+                'available_saldo' => $availableSaldo
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendapatkan informasi saldo santri'
             ], 500);
         }
     }
