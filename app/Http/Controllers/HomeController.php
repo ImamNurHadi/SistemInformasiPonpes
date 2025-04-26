@@ -114,7 +114,7 @@ class HomeController extends Controller
             ],
         ];
         
-        return view('welcome', compact('totalSantri', 'totalPengurus', 'totalKoperasi', 'berita', 'keunggulan', 'isLoggedIn', 'userSaldo'));
+        return view('home', compact('totalSantri', 'totalPengurus', 'totalKoperasi', 'berita', 'keunggulan', 'isLoggedIn', 'userSaldo'));
     }
 
     /**
