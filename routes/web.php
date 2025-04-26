@@ -328,12 +328,6 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('auth')->group(function () {
         // Route untuk QR Code
         Route::get('/my-qrcode', [App\Http\Controllers\TransferQRController::class, 'generateLoginQR'])->name('my.qrcode');
-        
-        // Route untuk Transfer QR
-        Route::get('/transfer-qr', [App\Http\Controllers\TransferQRController::class, 'index'])->name('transfer.qrcode');
-        Route::get('/transfer-qr/show', [App\Http\Controllers\TransferQRController::class, 'showQRCode'])->name('transfer.qrcode.show');
-        Route::get('/transfer-qr/form', [App\Http\Controllers\TransferQRController::class, 'showTransferForm'])->name('transfer.qrcode.form');
-        Route::post('/transfer-qr/process', [App\Http\Controllers\TransferQRController::class, 'processTransfer'])->name('transfer.qrcode.process');
     });
 
     // Transfer QR Code
